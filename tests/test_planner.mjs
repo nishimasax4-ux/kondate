@@ -74,4 +74,43 @@ r.days.forEach((d, i) => {
   else assert.ok(!l.bento);
 });
 console.log("お弁当: OK");
+// 9) メイン(主菜・一品)は1週間で同じものを2回出さない
+for (const seed of [1, 2, 3, 4, 5]) {
+  const rr = generatePlan({ ...base, budgetWeek: 30000, seed });
+  const mn = rr.days.flatMap((d) => d.meals.flatMap((m) => m.dishes.filter((x) => x.role === "主菜" || x.role === "一品").map((x) => x.id)));
+  assert.equal(new Set(mn).size, mn.length, `seed ${seed}: メイン重複 ${mn.filter((x, i) => mn.indexOf(x) !== i)}`);
+}
+console.log("メイン重複なし: OK");
+
+// 10) 朝・昼・夜の予算配分: 夜を多め・朝を少なめにすると、夜の食費が朝より多くなり、配分に近づく
+const split = generatePlan({ ...base, budgetWeek: 24000, budgetSplit: [15, 25, 60], seed: 4 });
+console.log("配分 15/25/60 →", split.slotCost, "配分額", split.slotBudget, "合計", split.cost);
+assert.ok(split.slotCost[2] > split.slotCost[0] * 1.5, "夜が朝より十分多い");
+const flat = generatePlan({ ...base, budgetWeek: 24000, budgetSplit: [45, 25, 30], seed: 4 });
+console.log("配分 45/25/30 →", flat.slotCost, "配分額", flat.slotBudget, "合計", flat.cost);
+assert.ok(flat.slotCost[0] > split.slotCost[0], "朝の配分を増やすと朝の食費が増える");
+// 11) 夜の残り: 前日の夜と同じ料理が「残り」として翌日の昼(メイン)・朝(汁物)に出る。週に3回まで。手動で決めた食事とは組み合わせない
+let seen = 0;
+for (const seed of [1, 2, 3, 4, 5, 6]) {
+  const rr = generatePlan({ ...base, budgetWeek: 30000, seed, leftover: true });
+  let nMain = 0, nSoup = 0;
+  rr.days.forEach((d, i) => d.meals.forEach((m, j) => m.dishes.forEach((x) => {
+    if (x.leftover) {
+      const prev = rr.days[i - 1].meals[2].dishes.find((y) => y.id === x.id);
+      assert.ok(i > 0 && prev && prev.carryTo, `seed ${seed}: 残りに前夜の元がない ${x.id}`);
+      if (x.role === "汁物") { assert.equal(j, 0); nSoup++; } else { assert.equal(j, 1); nMain++; }
+      seen++;
+    }
+  })));
+  assert.ok(nMain <= 3 && nSoup <= 3);
+  const mn = rr.days.flatMap((d) => d.meals.flatMap((m) => m.dishes.filter((x) => (x.role === "主菜" || x.role === "一品") && !x.leftover).map((x) => x.id)));
+  assert.equal(new Set(mn).size, mn.length, "残りを除いてメインは重複しない");
+}
+assert.ok(seen > 0, "残りが1度も出ない");
+const off = generatePlan({ ...base, budgetWeek: 30000, seed: 2, leftover: false });
+assert.ok(!off.days.some((d) => d.meals.some((m) => m.dishes.some((x) => x.leftover || x.carryTo))));
+const fx = generatePlan({ ...base, budgetWeek: 30000, seed: 2, leftover: true, fixed: { 1: { 0: { ids: ["j01"] }, 1: { ids: ["m03"] } } } });
+assert.ok(!fx.days[1].meals[0].dishes.some((x) => x.leftover) && !fx.days[1].meals[1].dishes.some((x) => x.leftover));
+assert.ok(!fx.days[0].meals[2].dishes.some((x) => x.carryTo), "翌日の朝・昼を自分で決めた日は、前夜に残りを作らない");
+console.log("夜の残り: OK 出現", seen);
 console.log("ALL OK");

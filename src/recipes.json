@@ -43,7 +43,8 @@
    "鶏肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m02",
@@ -93,7 +94,8 @@
    "豚肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m03",
@@ -165,7 +167,8 @@
    "さば",
    "大豆"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m05",
@@ -214,7 +217,8 @@
    "小麦",
    "豚肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m06",
@@ -269,7 +273,8 @@
    "豚肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m07",
@@ -315,7 +320,8 @@
    "鶏肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m08",
@@ -421,7 +427,8 @@
    "小麦",
    "牛肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m10",
@@ -1248,7 +1255,8 @@
    "小麦",
    "豚肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "d03",
@@ -1338,7 +1346,8 @@
    "鶏肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m14",
@@ -1397,7 +1406,8 @@
    "鶏肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m15",
@@ -1490,7 +1500,8 @@
   "allergens": [
    "鶏肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m17",
@@ -1543,7 +1554,8 @@
    "豚肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m18",
@@ -1588,7 +1600,8 @@
    "小麦",
    "豚肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m19",
@@ -1732,7 +1745,8 @@
    "牛肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m22",
@@ -1780,7 +1794,8 @@
    "小麦",
    "豚肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m23",
@@ -1907,7 +1922,8 @@
    "魚(あじ・ぶり等)"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m26",
@@ -1948,7 +1964,8 @@
    "小麦",
    "魚(あじ・ぶり等)"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m27",
@@ -2084,7 +2101,8 @@
    "大豆",
    "小麦"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m30",
@@ -2294,7 +2312,8 @@
    "小麦",
    "豚肉"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m35",
@@ -2353,7 +2372,8 @@
    "鶏肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "m36",
@@ -2518,7 +2538,8 @@
    "小麦",
    "魚(あじ・ぶり等)"
   ],
-  "special": false
+  "special": false,
+  "keep": true
  },
  {
   "id": "m40",
@@ -2568,7 +2589,8 @@
    "鶏肉"
   ],
   "special": false,
-  "bento": true
+  "bento": true,
+  "keep": true
  },
  {
   "id": "s13",

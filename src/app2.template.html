@@ -204,6 +204,15 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       <div class="field"><label for="budgetWeek">1週間(円)</label><input type="number" id="budgetWeek" inputmode="numeric" min="0" step="500"></div>
       <div class="field"><label for="budgetMonth">1か月(円)</label><input type="number" id="budgetMonth" inputmode="numeric" min="0" step="1000"></div>
     </div>
+    <label class="chip" style="margin:6px 0"><input type="checkbox" id="leftover"> 夜の残りを、翌日の朝・昼に回す</label>
+    <div class="small">日持ちのよいおかずは翌日の昼に、汁物は翌朝に回します(週に3回まで)。「昨夜の残り」と表示されます。</div>
+    <div class="lab" style="margin-top:8px">朝・昼・夜への割り振り(%)</div>
+    <div class="two" style="grid-template-columns:repeat(3,1fr)">
+      <div class="field"><label for="bsB">朝</label><input type="number" id="bsB" inputmode="numeric" min="0" max="100" step="5"></div>
+      <div class="field"><label for="bsL">昼</label><input type="number" id="bsL" inputmode="numeric" min="0" max="100" step="5"></div>
+      <div class="field"><label for="bsD">夜</label><input type="number" id="bsD" inputmode="numeric" min="0" max="100" step="5"></div>
+    </div>
+    <div class="small" id="bsYen"></div>
     <div class="small" id="budgetHint" style="margin-bottom:6px">金額を入れないでおくと、家族の人数から自動で決めます。自分で入れると、その金額になります。</div>
     <div class="field"><label for="adj">いつも行くお店の値段</label>
       <select id="adj"><option value="-30">とても安い</option><option value="-20">かなり安い</option><option value="-10">やや安い</option><option value="0">ふつう</option><option value="10">やや高い</option><option value="20">かなり高い</option><option value="30">とても高い</option></select>
@@ -304,8 +313,8 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   var RICE_K = FM[RICE].kcal / 342;             // 炊いたご飯の重さ→精米の重さ
   var LOADED = null;
 
-  var S = { counts: { a: { m: 1, f: 1 }, s: { m: 0, f: 0 }, c: { m: 0, f: 1 } }, child: "e", budgetWeek: 20000, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } } };
-  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!S.lunch) S.lunch = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } }; } } catch (e) {}
+  var S = { counts: { a: { m: 1, f: 1 }, s: { m: 0, f: 0 }, c: { m: 0, f: 1 } }, child: "e", budgetWeek: 20000, budgetSplit: [25, 30, 45], leftover: true, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } } };
+  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!Array.isArray(S.budgetSplit) || S.budgetSplit.length !== 3) S.budgetSplit = [25, 30, 45]; if (!S.lunch) S.lunch = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } }; } } catch (e) {}
   // 保存された内容が古かったり壊れていても動くように、形をそろえる
   ["a", "s", "c"].forEach(function (k) {
     var c = S.counts && S.counts[k]; if (!c || typeof c !== "object") c = { m: 0, f: 0 };
@@ -499,13 +508,19 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     return x;
   }
   // 予算を自分で決めていないときは、家族の人数（必要エネルギーの合計）から決める。自分で入れたら、その金額を使う。
+  function fillSplit() {
+    var ids = ["bsB", "bsL", "bsD"], sum = S.budgetSplit[0] + S.budgetSplit[1] + S.budgetSplit[2] || 1;
+    ids.forEach(function (id, i) { if (document.activeElement !== $(id)) $(id).value = S.budgetSplit[i]; });
+    $("bsYen").textContent = "1週間 " + yen(S.budgetWeek) + "円 → 朝 " + yen(Math.round(S.budgetWeek * S.budgetSplit[0] / sum)) + "円 / 昼 " + yen(Math.round(S.budgetWeek * S.budgetSplit[1] / sum)) + "円 / 夜 " + yen(Math.round(S.budgetWeek * S.budgetSplit[2] / sum)) + "円(合計が100%にならなくても、割合で分けます)";
+  }
   function autoBudget(ms) { var kc = 0; ms.forEach(function (m) { kc += m.kcal; }); return Math.max(3000, Math.round(kc / 2000 * 6500 / 500) * 500); }
   function replan() {
     var ms = members();
     PRICES = effPrices();
     if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
     if (!ms.length) { LAST = null; }
-    else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
+    else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, budgetSplit: S.budgetSplit, leftover: S.leftover !== false, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
+    if ($("bsYen")) fillSplit();
     var bh = $("budgetHint");
     if (bh) bh.textContent = LAST && LAST.plan.overBudget ? "いまの家族(" + LAST.ms.length + "人)では、いちばん切りつめても週" + yen(LAST.plan.suggestBudget) + "円ほどかかります。これより低い予算にはできません。" : "予算は「これに収まるように組む目標」です。収まらないときは、品数を減らし、ご飯を多めにして安くします。金額を入れないと、人数から自動で決めます。";
     renderAll();
@@ -545,7 +560,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
         var c = costOf(RM[x.id].ingredients, FM, PRICES).yen;
         var tg = tasteTag(x.id);
         var rt = (m.slot === "夕食" || m.bento) ? (x.role === "主菜" ? "おかず" : x.role === "副菜" ? (x.sub === "salad" ? "サラダ" : "小鉢") : x.role === "汁物" ? "汁物" : "") : "";
-        h += "<li><em style=\"font-style:normal\">" + (rt ? '<span class="tag" style="margin:0 6px 0 0">' + rt + "</span>" : "") + esc(x.name) + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span></li>';
+        h += "<li><em style=\"font-style:normal\">" + (rt ? '<span class="tag" style="margin:0 6px 0 0">' + rt + "</span>" : "") + esc(x.name) + (x.leftover ? '<span class="tag">昨夜の残り</span>' : "") + (x.carryTo ? '<span class="tag">' + x.carryTo + "にも</span>" : "") + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span></li>';
       });
       h += "</ul></div>";
     });
@@ -579,7 +594,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       var names = d.meals.map(function (m) { return m.off ? "なし" : m.skip ? "昼はなし" : (m.bento ? "弁当:" : "") + esc((m.dishes.filter(function (x) { return x.role !== "副菜" && x.role !== "汁物"; })[0] || m.dishes[0] || { name: "-" }).name); }).join(" ／ ");
       h += '<button type="button" class="dayrow' + (i === 0 ? " today" : "") + (di.w === 6 ? " sat" : "") + (di.w === 0 ? " sun" : "") + '" data-sel="' + i + '" data-open="today"><span class="wd">' + WD[di.w] + '</span><span class="t"><b>' + di.m + "/" + di.d + (i === 0 ? " きょう" : "") + (holName(di.y, di.m, di.d) ? " " + holName(di.y, di.m, di.d) : "") + eventsOn(di.y, di.m, di.d).map(function (e) { return " ・" + evLabel(e); }).join("") + "</b>" + names + '</span><span class="y">' + yen(d.cost) + "円</span></button>";
     });
-    h += '<div class="cost" style="margin-top:4px"><div class="row"><span>1週間の食費(めやす)</span><span class="big">' + yen(plan.cost) + '円</span></div><div class="small">予算 ' + yen(plan.budgetWeek || 0) + "円 / 1か月にすると約" + yen(plan.cost * 4.3) + "円</div></div>";
+    h += '<div class="cost" style="margin-top:4px"><div class="row"><span>1週間の食費(めやす)</span><span class="big">' + yen(plan.cost) + '円</span></div><div class="small">予算 ' + yen(plan.budgetWeek || 0) + "円 / 1か月にすると約" + yen(plan.cost * 4.3) + "円</div>" + (plan.slotBudget ? '<div class="small">朝 ' + yen(plan.slotCost[0]) + "円(割り振り " + yen(plan.slotBudget[0]) + "円) ／ 昼 " + yen(plan.slotCost[1]) + "円(" + yen(plan.slotBudget[1]) + "円) ／ 夜 " + yen(plan.slotCost[2]) + "円(" + yen(plan.slotBudget[2]) + "円)" + (plan.slotCost[3] ? " ／ 間食 " + yen(plan.slotCost[3]) + "円" : "") + "</div>" : "") + "</div>";
     h += '<div class="cost" style="border-style:solid;border-color:var(--line)"><div class="lab">実際に使った食費</div>' + (S.spend.length ? spendSummaryHtml() : '<div class="small">「買い物」タブの下で、レジで払った金額を記録すると、ここに予算とくらべて出ます。</div>') + "</div>";
     h += '<div class="btns"><button type="button" class="btn" id="againBtn">別の案にする</button><button type="button" class="btn solid" data-go="shop">買い物リストへ</button></div>';
     box.innerHTML = h;
@@ -859,7 +874,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   function buildConditions() {
     $("allergens").innerHTML = ALLERGENS.map(function (a) { return '<label class="chip"><input type="checkbox" data-al="' + esc(a) + '"' + (S.allergens.indexOf(a) >= 0 ? " checked" : "") + ">" + esc(a) + "</label>"; }).join("");
     $("dislikes").innerHTML = ["主菜", "副菜", "汁物", "一品"].map(function (role) { return '<div class="lab" style="margin:8px 0 4px;width:100%">' + role + '</div>' + RECIPES.filter(function (r) { return !r.special && r.role === role; }).map(function (r) { return '<label class="chip"><input type="checkbox" data-dl="' + r.id + '"' + (S.dislikes.indexOf(r.id) >= 0 ? " checked" : "") + ">" + esc(r.name) + "</label>"; }).join(""); }).join("");
-    $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3);
+    $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); fillSplit(); $("leftover").checked = S.leftover !== false;
     var opts = [-30, -20, -10, 0, 10, 20, 30], near = opts.reduce(function (a, b) { return Math.abs(b - S.adj) < Math.abs(a - S.adj) ? b : a; });
     S.adj = near; $("adj").value = String(near);
   }
@@ -980,6 +995,12 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       save(); replan();
     } else if (t.id === "budgetWeek") {
       S.budgetAuto = false; S.budgetWeek = Math.max(0, +t.value || 0); $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); save(); replan();
+    } else if (t.id === "leftover") {
+      S.leftover = t.checked; save(); replan();
+    } else if (t.id === "bsB" || t.id === "bsL" || t.id === "bsD") {
+      S.budgetSplit = [+$("bsB").value || 0, +$("bsL").value || 0, +$("bsD").value || 0].map(function (x) { return Math.max(0, Math.min(100, x)); });
+      if (S.budgetSplit[0] + S.budgetSplit[1] + S.budgetSplit[2] <= 0) S.budgetSplit = [25, 30, 45];
+      save(); replan();
     } else if (t.id === "budgetMonth") {
       S.budgetAuto = false; S.budgetWeek = Math.round(Math.max(0, +t.value || 0) / 4.3); $("budgetWeek").value = S.budgetWeek; save(); replan();
     } else if (t.hasAttribute("data-pnq")) {

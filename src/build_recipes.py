@@ -187,6 +187,9 @@ SALADS={"s02","s11","s13","s19","s25","s28","s30","s37","s38","s39","s40","s41"}
 BENTO_MAIN={"m01","m02","m03","m06","m07","m10","m13","m14","m15","m17","m20","m21","m25","m27","m30","m32","m33","m35","m36","m37","m40"}
 BENTO_SIDE={"s01","s05","s06","s07","s08","s10","s12","s15","s17","s18","s20","s24","s26","s29","s30","s32","s35","s36","s41","s13","s09"}
 
+# 翌日の昼に回しやすいメイン(日持ちがよく、温め直し・冷めてもおいしい)
+KEEP={"m01","m02","m04","m05","m06","m07","m09","m13","m14","m16","m17","m18","m21","m22","m25","m26","m29","m34","m35","m39","m40","d02"}
+
 def add(a,b):
     return a+(b or 0)
 
@@ -208,7 +211,7 @@ for rid,name,role,b,ings in R:
         if fid in FISH_OTHER: al.add("魚(あじ・ぶり等)")
     tot={k:round(v,1) for k,v in tot.items()}
     out.append({"id":rid,"name":name,"role":role,"breakfast":b,"ingredients":[{"food":f,"g":g} for f,g in ings],"nutrition":tot,"allergens":sorted(al),"special":rid.startswith("x"),
-                **({"sub":"salad"} if rid in SALADS else {}),**({"bento":True} if rid in BENTO_MAIN|BENTO_SIDE else {})})
+                **({"sub":"salad"} if rid in SALADS else {}),**({"bento":True} if rid in BENTO_MAIN|BENTO_SIDE else {}),**({"keep":True} if rid in KEEP else {})})
     # 妥当性チェック(1人前)
     rng={"主菜":(90,480),"副菜":(15,160),"汁物":(15,140),"一品":(250,750),"デザート":(50,450)}[role]
     if not(rng[0]<=tot["kcal"]<=rng[1]): problems.append((rid,name,"kcal範囲外",tot["kcal"]))
