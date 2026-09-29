@@ -1,0 +1,25 @@
+name = "kondate-prices"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# 月1回（毎月10日 03:00 日本時間 = 前日18:00 UTC）に価格を更新する
+[triggers]
+crons = ["0 18 9 * *"]
+
+# 価格表の保存先。最初に `npx wrangler kv namespace create PRICES` を実行し、
+# 表示された id をここに貼る。
+[[kv_namespaces]]
+binding = "PRICES"
+id = "5afb5e5e95c54471b13a2449e8c1feef"
+
+[vars]
+# e-Stat「小売物価統計調査（動向編）主要品目の都市別小売価格」の統計表ID
+STATS_DATA_ID = "0003421913"
+# 価格の基準にする都市名（統計表の地域名に含まれる文字）
+AREA_NAME = "名古屋"
+# アプリからこのAPIを読むことを許可するサイト（開発中は * のまま）
+ALLOW_ORIGIN = "*"
+
+# 秘密情報は wrangler secret で設定する（ファイルには書かない）
+#   npx wrangler secret put ESTAT_APP_ID   ← e-Stat のアプリケーションID
+#   npx wrangler secret put ADMIN_TOKEN    ← 管理用の合言葉（自分で決める）

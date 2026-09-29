@@ -1,0 +1,514 @@
+{
+ "01088": {
+  "yen100g": 34.2,
+  "placeholder": true
+ },
+ "01083": {
+  "yen100g": 75,
+  "placeholder": true
+ },
+ "01085": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01026": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01039": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01064": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01063": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01128": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01048": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01004": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01015": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "01077": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "02017": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "02006": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "02010": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "02005": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "02004": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "04032": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "04033": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "04046": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "04040": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "04039": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "11220": {
+  "yen100g": 55,
+  "placeholder": true
+ },
+ "11213": {
+  "yen100g": 50,
+  "placeholder": true
+ },
+ "11224": {
+  "yen100g": 70,
+  "placeholder": true
+ },
+ "11221": {
+  "yen100g": 65,
+  "placeholder": true
+ },
+ "11227": {
+  "yen100g": 90,
+  "placeholder": true
+ },
+ "11230": {
+  "yen100g": 60,
+  "placeholder": true
+ },
+ "11126": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11129": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11131": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11163": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11076": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11089": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11183": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11186": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "11176": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "12004": {
+  "yen100g": 60,
+  "placeholder": true
+ },
+ "13003": {
+  "yen100g": 23,
+  "placeholder": true
+ },
+ "13025": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "13040": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "10134": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10154": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10003": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10047": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10205": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10241": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10173": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10100": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10329": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10345": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10260": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10281": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10055": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10386": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10313": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "06061": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06153": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06214": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06134": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06233": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06267": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06086": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06263": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06182": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06183": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06065": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06191": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06245": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06048": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06226": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06287": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06289": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06312": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06084": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06317": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06207": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06205": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06032": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06010": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06007": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06038": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06223": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06119": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06054": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06175": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06015": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06020": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06072": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "06160": {
+  "yen100g": 40,
+  "placeholder": true
+ },
+ "08039": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "08001": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "08016": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "09040": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "09004": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "09050": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "09017": {
+  "yen100g": 100,
+  "placeholder": true
+ },
+ "07148": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07107": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07027": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07012": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07054": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07116": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07136": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07088": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "07049": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "17045": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "17007": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "03003": {
+  "yen100g": 25,
+  "placeholder": true
+ },
+ "17012": {
+  "yen100g": 10,
+  "placeholder": true
+ },
+ "17015": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "17036": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "17042": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "17051": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "16001": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "14006": {
+  "yen100g": 60,
+  "placeholder": true
+ },
+ "14002": {
+  "yen100g": 60,
+  "placeholder": true
+ },
+ "14001": {
+  "yen100g": 60,
+  "placeholder": true
+ },
+ "14017": {
+  "yen100g": 60,
+  "placeholder": true
+ },
+ "05018": {
+  "yen100g": 20,
+  "placeholder": true
+ },
+ "01117": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "01044": {
+  "yen100g": 25,
+  "placeholder": true
+ },
+ "01118": {
+  "yen100g": 150,
+  "placeholder": true
+ },
+ "10379": {
+  "yen100g": 250,
+  "placeholder": true
+ },
+ "10376": {
+  "yen100g": 220,
+  "placeholder": true
+ },
+ "04106": {
+  "yen100g": 80,
+  "placeholder": true
+ },
+ "15170": {
+  "yen100g": 420,
+  "placeholder": true
+ },
+ "15008": {
+  "yen100g": 250,
+  "placeholder": true
+ }
+}
