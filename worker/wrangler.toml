@@ -10,7 +10,7 @@ crons = ["0 18 9 * *"]
 # 表示された id をここに貼る。
 [[kv_namespaces]]
 binding = "PRICES"
-id = "ここにKVのidを貼る"
+id = "5afb5e5e95c54471b13a2449e8c1feef"
 
 [vars]
 # e-Stat「小売物価統計調査（動向編）主要品目の都市別小売価格」の統計表ID
