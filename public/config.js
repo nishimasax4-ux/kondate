@@ -1,6 +1,5 @@
-// 公開後に自分で書き換える設定ファイル。
-// 価格取得Worker(worker/)を公開したら、その /prices.json のURLを入れると、食材の値段が公式統計になります。
-// 例: pricesUrl: "https://kondate-prices.あなたの名前.workers.dev/prices.json"
+// 設定ファイル。価格取得Worker(worker/)の /prices.json のアドレスです。
+// ここに入れると、食材の値段が公式統計(小売物価統計調査)の価格になります。空にすると、仮の値段に戻ります。
 window.KONDATE_CONFIG = {
-  pricesUrl: ""
+  pricesUrl: "https://kondate-prices.nishimasax4.workers.dev/prices.json"
 };

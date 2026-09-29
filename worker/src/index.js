@@ -51,10 +51,12 @@ async function loadMeta(env) {
   };
 }
 
-async function refresh(env) {
+// opts.area: 地域名を一時的に変えて試す。opts.dry: 保存せずに結果だけ返す（地域どうしの比較用）
+async function refresh(env, opts = {}) {
   const meta = await loadMeta(env);
-  const area = meta.areas.find((a) => a.name.includes(env.AREA_NAME));
-  if (!area) throw new Error(`地域「${env.AREA_NAME}」が統計表にありません`);
+  const areaName = opts.area || env.AREA_NAME;
+  const area = meta.areas.find((a) => a.name.includes(areaName));
+  if (!area) throw new Error(`地域「${areaName}」が統計表にありません`);
 
   if (meta.others.length) throw new Error("品目以外の軸に複数の選択肢があります: " + meta.others.join(",") + "（/admin/meta で確認してください）");
   // 新しい月から3か月分を候補にして、品目ごとに最新の値を採用する
@@ -87,6 +89,12 @@ async function refresh(env) {
     count: Object.keys(prices).length,
     prices
   };
+  if (opts.dry) {
+    // 保存せず、主な食材の値段(100gあたり円)と、取れなかった品目を返す
+    const key = { 精米: "01083", 食パン: "01026", 卵: "12004", 牛乳: "13003", 豆腐: "04032", 鶏もも: "11221", 豚バラ: "11129", キャベツ: "06061", たまねぎ: "06153", じゃがいも: "02017", トマト: "06182", バナナ: "07107" };
+    const sample = Object.fromEntries(Object.entries(key).map(([k, id]) => [k, prices[id]?.yen100g ?? null]));
+    return { dry: true, area: area.name, count: out.count, unmatched, unresolved, sample, times };
+  }
   await env.PRICES.put("prices", JSON.stringify(out));
   await env.PRICES.put("diag", JSON.stringify({ updatedAt: out.updatedAt, unmatched, unresolved }));
   return { count: Object.keys(prices).length, unmatched: unmatched.length, unresolved: unresolved.length, area: area.name, times };
@@ -142,7 +150,8 @@ export default {
     if (url.pathname === "/admin/refresh" && (request.method === "POST" || request.method === "GET")) {   // ブラウザで開くだけでも更新できるよう GET も受ける
       if (!authorized(request, url, env)) return new Response("unauthorized", { status: 401, headers: { "cache-control": "no-store" } });
       try {
-        return new Response(JSON.stringify(await refresh(env)), { headers: ADMIN_HEADERS });
+        const opts = { area: url.searchParams.get("area") || undefined, dry: url.searchParams.get("dry") === "1" };
+        return new Response(JSON.stringify(await refresh(env, opts)), { headers: ADMIN_HEADERS });
       } catch (e) {
         return new Response(JSON.stringify({ error: String(e.message || e) }), { status: 502, headers: ADMIN_HEADERS });
       }

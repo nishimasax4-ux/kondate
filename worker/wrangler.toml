@@ -17,8 +17,8 @@ id = "5afb5e5e95c54471b13a2449e8c1feef"
 STATS_DATA_ID = "0003421913"
 # 価格の基準にする都市名（統計表の地域名に含まれる文字）
 AREA_NAME = "名古屋"
-# アプリからこのAPIを読むことを許可するサイト（開発中は * のまま）
-ALLOW_ORIGIN = "*"
+# アプリからこのAPIを読むことを許可するサイト（アプリの公開アドレス）
+ALLOW_ORIGIN = "https://kondate-9e5.pages.dev"
 
 # 秘密情報は wrangler secret で設定する（ファイルには書かない）
 #   npx wrangler secret put ESTAT_APP_ID   ← e-Stat のアプリケーションID
