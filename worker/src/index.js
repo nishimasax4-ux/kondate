@@ -7,7 +7,7 @@
 //   POST /admin/refresh?token=.. 今すぐ更新する
 //   Cron                         毎月自動で更新する
 import { MAPPING, DERIVED } from "./mapping.js";
-import { asArray, buildPrices } from "./logic.js";
+import { asArray, buildPrices, mergeAreas } from "./logic.js";
 
 const API = "https://api.e-stat.go.jp/rest/3.0/app/json";
 const CREDIT = "このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。";
@@ -51,16 +51,10 @@ async function loadMeta(env) {
   };
 }
 
-// opts.area: 地域名を一時的に変えて試す。opts.dry: 保存せずに結果だけ返す（地域どうしの比較用）
-async function refresh(env, opts = {}) {
-  const meta = await loadMeta(env);
-  const areaName = opts.area || env.AREA_NAME;
+// 1つの地域について、使う品目の価格を取って、食品ごとの価格表にする
+async function pricesFor(meta, areaName, times, env) {
   const area = meta.areas.find((a) => a.name.includes(areaName));
   if (!area) throw new Error(`地域「${areaName}」が統計表にありません`);
-
-  if (meta.others.length) throw new Error("品目以外の軸に複数の選択肢があります: " + meta.others.join(",") + "（/admin/meta で確認してください）");
-  // 新しい月から3か月分を候補にして、品目ごとに最新の値を採用する
-  const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 3);
   const values = [];
   // 使う品目だけを取る（872品目すべてを取ると、リクエストが増えて遅い）
   const known = new Set(meta.items.map((i) => i.code));
@@ -77,13 +71,31 @@ async function refresh(env, opts = {}) {
       values.push({ cat01: v["@" + meta.itemDim.id], time: v["@time"], value: v["$"] });
     }
   }
+  const label = area.name.replace(/【.*$/, "");   // 「豊橋市【2010年1月～…】」→「豊橋市」
+  return { label, ...buildPrices(meta.items, values, MAPPING, DERIVED) };
+}
 
-  const { prices, unmatched, unresolved } = buildPrices(meta.items, values, MAPPING, DERIVED);
+// opts.area: 地域名を一時的に変えて試す（「豊橋,名古屋」のように、カンマで並べると優先順）。
+// opts.dry: 保存せずに結果だけ返す（地域どうしの比較用）
+async function refresh(env, opts = {}) {
+  const meta = await loadMeta(env);
+  if (meta.others.length) throw new Error("品目以外の軸に複数の選択肢があります: " + meta.others.join(",") + "（/admin/meta で確認してください）");
+  const names = String(opts.area || env.AREA_NAME).split(/[,、]/).map((s) => s.trim()).filter(Boolean);
+  // 新しい月から3か月分を候補にして、品目ごとに最新の値を採用する
+  const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 3);
+  const results = [];
+  for (const n of names) results.push(await pricesFor(meta, n, times, env));
+  const prices = mergeAreas(results.map((r) => ({ label: r.label, prices: r.prices })));
+  // 全地域で取れなかった品目（診断用）
+  const unresolved = results[results.length - 1].unresolved.filter((u) => results.every((r) => r.unresolved.some((x) => x.item === u.item)));
+  const unmatched = results[0].unmatched;
+  const filled = Object.values(prices).filter((p) => p.fromArea).length;
+  const areaLabel = results.length === 1 ? results[0].label : `${results[0].label}(ない品目は${results.slice(1).map((r) => r.label).join("・")})`;
   // アプリに配る本体。調整用の診断（未対応の品目など）は別に保存し、公開側には出さない。
   const out = {
     updatedAt: new Date().toISOString(),
     source: "総務省統計局 小売物価統計調査（動向編）主要品目の都市別小売価格",
-    area: area.name,
+    area: areaLabel,
     statsDataId: env.STATS_DATA_ID,
     credit: CREDIT,
     count: Object.keys(prices).length,
@@ -92,12 +104,12 @@ async function refresh(env, opts = {}) {
   if (opts.dry) {
     // 保存せず、主な食材の値段(100gあたり円)と、取れなかった品目を返す
     const key = { 精米: "01083", 食パン: "01026", 卵: "12004", 牛乳: "13003", 豆腐: "04032", 鶏もも: "11221", 豚バラ: "11129", キャベツ: "06061", たまねぎ: "06153", じゃがいも: "02017", トマト: "06182", バナナ: "07107" };
-    const sample = Object.fromEntries(Object.entries(key).map(([k, id]) => [k, prices[id]?.yen100g ?? null]));
-    return { dry: true, area: area.name, count: out.count, unmatched, unresolved, sample, times };
+    const sample = Object.fromEntries(Object.entries(key).map(([k, id]) => [k, prices[id] ? `${prices[id].yen100g}${prices[id].fromArea ? "(" + prices[id].fromArea + ")" : ""}` : null]));
+    return { dry: true, area: areaLabel, count: out.count, filledFromOtherArea: filled, unmatched, unresolved, sample, times };
   }
   await env.PRICES.put("prices", JSON.stringify(out));
   await env.PRICES.put("diag", JSON.stringify({ updatedAt: out.updatedAt, unmatched, unresolved }));
-  return { count: Object.keys(prices).length, unmatched: unmatched.length, unresolved: unresolved.length, area: area.name, times };
+  return { count: out.count, filledFromOtherArea: filled, unmatched: unmatched.length, unresolved: unresolved.length, area: areaLabel, times };
 }
 
 function cors(env) {

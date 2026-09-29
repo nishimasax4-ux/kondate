@@ -875,7 +875,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     for (var i = 0; i < rows.length; i++) {
       var tr = rows[i], id = tr.getAttribute("data-food"), input = tr.querySelector("input");
       if (document.activeElement !== input) input.value = Math.round(PRICES[id].yen100g / fac(id) * 10) / 10;
-      tr.querySelector(".st").textContent = priceHas(id) ? "入力済み" : (LOADED && LOADED[id] ? "公式統計" : "仮");
+      tr.querySelector(".st").textContent = priceHas(id) ? "入力済み" : (LOADED && LOADED[id] ? (LOADED[id].fromArea ? "公式統計(" + esc(LOADED[id].fromArea) + ")" : "公式統計") : "仮");
     }
   }
   function filterPrices() {

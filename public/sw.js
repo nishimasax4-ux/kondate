@@ -1,6 +1,6 @@
 // 開いたことのある画面をオフラインでも表示するための簡単なキャッシュ。
 // 新しい版を配信したら VERSION を変えると、古いキャッシュが入れ替わる。
-const VERSION = "v1.6.2";
+const VERSION = "v1.7.0";
 const CACHE = "kondate-" + VERSION;
 const FILES = ["/", "/index.html", "/config.js", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 

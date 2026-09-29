@@ -82,3 +82,16 @@ export function buildPrices(items, values, mapping, derived) {
   }
   return { prices, unmatched, unresolved };
 }
+
+// 地域を優先順に並べ、先の地域で価格がない食材だけ、次の地域の価格で補う。
+//   list: [{ label: "豊橋市", prices: {...} }, { label: "名古屋市", prices: {...} }]  ← 優先順
+// 補ったものには fromArea（どの地域の価格か）を付ける。先頭の地域の価格には付けない。
+export function mergeAreas(list) {
+  const prices = {};
+  list.forEach((a, i) => {
+    for (const [id, p] of Object.entries(a.prices)) {
+      if (!prices[id]) prices[id] = i === 0 ? p : { ...p, fromArea: a.label };
+    }
+  });
+  return prices;
+}

@@ -1,6 +1,6 @@
 // 価格換算ロジックの確認用テスト（ネットワーク不要）。実行: node test/logic.test.mjs
 import assert from "node:assert/strict";
-import { buildPrices, parseValue } from "../src/logic.js";
+import { buildPrices, parseValue, mergeAreas } from "../src/logic.js";
 import { MAPPING, DERIVED } from "../src/mapping.js";
 
 assert.equal(parseValue("1,234"), 1234);
@@ -42,4 +42,13 @@ for (const e of MAPPING) {
   assert.ok(e.codes.length && e.grams > 0, JSON.stringify(e));
   for (const f of e.foods) { assert.ok(!seen.has(f), "重複: " + f); seen.add(f); }
 }
+// 地域の優先順: 先の地域の価格を使い、ない食材だけ次の地域で補う
+const m = mergeAreas([
+  { label: "豊橋市", prices: { "12004": { yen100g: 50 } } },
+  { label: "名古屋市", prices: { "12004": { yen100g: 60 }, "06061": { yen100g: 26 } } }
+]);
+assert.equal(m["12004"].yen100g, 50);
+assert.ok(!m["12004"].fromArea);
+assert.equal(m["06061"].yen100g, 26);
+assert.equal(m["06061"].fromArea, "名古屋市");
 console.log("OK", Object.keys(r.prices).length, "件の価格を作成 / 対応表", MAPPING.length, "行");
