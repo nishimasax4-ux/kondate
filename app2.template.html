@@ -1,0 +1,1045 @@
+<title>献立ノート</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kurenaido&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* 構成A(きょうが入口) × スタイル1(ノート・付箋)。1週間分の献立・食費・買い物を4つのタブで見る */
+:root{
+  --paper:#fbfbf6; --rule:#d6e6f2; --margin:#efb1b1; --ink:#2b3a4a; --sub:#566b7d;
+  --n1:#fff3b8; --n2:#ffe0d6; --n3:#d9efdc; --card:#ffffff; --line:#d9dfe6;
+  --red:#c0392b; --green:#2d7d6f; --green-ink:#ffffff; --shadow:rgba(43,58,74,.16);
+  --font:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;
+  --hand:"Zen Kurenaido","Zen Maru Gothic",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#1b2027; --rule:#2a3441; --margin:#7a4444; --ink:#e8ecf1; --sub:#a3b0bd;
+  --n1:#4b4526; --n2:#523430; --n3:#2e4a36; --card:#232a33; --line:#38424f;
+  --red:#ff8a78; --green:#6fc2ad; --green-ink:#10241f; --shadow:rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1b2027; --rule:#2a3441; --margin:#7a4444; --ink:#e8ecf1; --sub:#a3b0bd;
+  --n1:#4b4526; --n2:#523430; --n3:#2e4a36; --card:#232a33; --line:#38424f;
+  --red:#ff8a78; --green:#6fc2ad; --green-ink:#10241f; --shadow:rgba(0,0,0,.4); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--paper) repeating-linear-gradient(to bottom,transparent 0,transparent 31px,var(--rule) 31px,var(--rule) 32px);color:var(--ink);font-family:var(--font);padding-inline:0;line-height:1.6;font-size:16px}
+#app{max-width:520px;margin:0 auto;position:relative;min-height:100vh;padding:18px 16px 190px 44px}
+#app::before{content:"";position:absolute;left:30px;top:0;bottom:0;width:2px;background:var(--margin)}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+h1{font-family:var(--font);font-weight:900;font-size:28px;line-height:1.3;letter-spacing:.02em;margin:0}
+h2{font-family:var(--font);font-weight:900;font-size:22px;margin:22px 0 6px}
+.date{color:var(--sub);font-size:15px;margin:0 0 12px}
+.pane{display:none;flex-direction:column;gap:12px}
+.pane.on{display:flex}
+.note{border-radius:10px;padding:10px 14px;box-shadow:0 2px 0 var(--shadow);background:var(--n1)}
+.note:nth-of-type(2){background:var(--n2)} .note:nth-of-type(3){background:var(--n3)}
+.note .slot{font-size:13px;color:var(--sub);font-weight:700;letter-spacing:.08em}
+.note ul{list-style:none;margin:2px 0 0;padding:0}
+.note li{display:block;font-size:17px;font-weight:700;padding:3px 0;line-height:1.4}
+.note li>span{display:block;font-weight:500;font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+.note li .tag{display:inline-block}
+.note li.rice{font-weight:500;font-size:15px;color:var(--sub)}
+.cost{background:var(--card);border:2px dashed var(--red);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.cost .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cost .big{font-size:26px;font-weight:900;color:var(--red);font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:99px;background:var(--rule);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+.bar.over i{background:var(--red)}
+.small{font-size:13px;color:var(--sub)}
+.tag{display:inline-block;font-size:11px;font-weight:700;background:var(--n1);border-radius:4px;padding:0 6px;margin-left:6px;vertical-align:middle;color:var(--ink)}
+.btn{border:2px solid var(--green);background:var(--card);color:var(--green);font-weight:700;border-radius:999px;padding:9px 16px;cursor:pointer;min-height:44px}
+.btn.solid{background:var(--green);color:var(--green-ink)}
+.btn.link{border:0;background:none;padding:6px 0;text-decoration:underline;min-height:0;color:var(--sub);font-weight:500}
+.btns{display:flex;gap:10px;flex-wrap:wrap}.btns .btn{flex:1;text-align:center}
+.warn{background:var(--n2);border-radius:10px;padding:8px 12px;font-size:14px}
+details{background:var(--card);border-radius:10px;padding:8px 12px;border:1px solid var(--line)}
+summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}
+.wrap{overflow-x:auto;margin-top:6px}
+table{border-collapse:collapse;font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+/* 1週間 */
+.dayrow{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:10px;padding:8px 10px;box-shadow:0 2px 0 var(--shadow);width:100%;border:0;text-align:left;cursor:pointer}
+.dayrow .wd{flex:0 0 40px;height:40px;border-radius:50%;background:#7aa7d9;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.dayrow.sat .wd{background:#6fb3a3}.dayrow.sun .wd{background:#e2574c}
+.dayrow.today{background:var(--n1)}
+.dayrow .t{flex:1;min-width:0;font-size:14px;line-height:1.45}
+.dayrow .t b{display:block;font-size:12px;color:var(--sub);font-weight:700}
+.dayrow .y{font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:15px}
+/* 買い物 */
+.sec{font-family:var(--hand);font-size:22px;color:var(--red);margin:10px 0 0}
+.item{display:flex;align-items:center;gap:12px;min-height:60px;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left;padding:6px 0;cursor:pointer}
+.item .ck{flex:0 0 32px;height:32px;border:3px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;color:transparent}
+.item.done .ck{background:var(--ink);color:var(--paper)}
+.item .nm{flex:1;min-width:0;font-size:18px;font-weight:900;line-height:1.3}
+.item .nm small{display:block;font-size:12px;font-weight:500;color:var(--sub)}
+.item.done .nm{text-decoration:line-through;opacity:.55}
+.item .q{text-align:right;line-height:1.35}
+.item .q b{display:block;font-size:16px}
+.item .q span{font-size:15px;font-weight:900;color:var(--red);font-variant-numeric:tabular-nums}
+.item.done .q{opacity:.55}
+.edit{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--sub);cursor:pointer}
+.itemrow{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line)}
+.itemrow .item{border-top:0;flex:1;min-width:0}
+/* 固定バー */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:5}
+.dock .in{max-width:520px;margin:0 auto}
+.basket{display:none;background:var(--ink);color:var(--paper);padding:10px 16px;justify-content:space-between;gap:12px;font-weight:900}
+.basket.on{display:flex}.basket small{font-weight:500;opacity:.85}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;min-width:0;border:0;background:none;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;color:var(--sub);cursor:pointer;min-height:60px}
+nav button.on{color:var(--green);font-weight:700}
+nav svg{width:24px;height:24px}
+/* 家族 */
+.card{background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.fam{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;align-items:center;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.fam:last-child{border-bottom:0;padding-bottom:0}
+.fam .age{grid-column:1/-1;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.fam .age small{font-weight:500;color:var(--sub);font-size:12px}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:2px;background:var(--paper);border-radius:999px;padding:2px 2px 2px 10px}
+.ctl .sx{font-size:14px;color:var(--sub);font-weight:700}
+.ctl .mid{display:flex;align-items:center;gap:2px}
+.fam select{min-height:40px;padding:6px 8px;font-size:14px;width:100%}
+.fam .fld{display:flex;flex-direction:column;gap:2px;min-width:0}.fam .fld span{font-size:12px;color:var(--sub)}
+.ctl output{min-width:1.2em;text-align:center;font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+.step{width:40px;height:40px;flex:0 0 auto;border-radius:50%;border:2px solid var(--ink);background:var(--card);font-size:22px;font-weight:700;cursor:pointer;line-height:1}
+select,input[type=number]{border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;max-width:100%}
+input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--card);min-height:40px;cursor:pointer;font-size:14px}
+.chip:has(input:checked){border-color:var(--red);background:var(--n2);font-weight:700}
+.chip input{width:16px;height:16px;accent-color:var(--red)}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lab{font-size:14px;font-weight:700}
+.pt input{width:7em}
+/* カレンダー */
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.calhead b{font-family:var(--hand);font-size:24px;font-weight:400}
+.navb{width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:var(--card);font-size:20px;cursor:pointer;color:var(--ink)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.cal .wh{text-align:center;font-size:12px;color:var(--sub);padding:2px 0}
+.cal .wh:first-child,.cell.sun{color:var(--red)}.cal .wh:nth-child(7),.cell.sat{color:#3b78c2}
+.cell{background:var(--card);border-radius:8px;min-height:58px;padding:3px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-weight:700;font-size:15px;color:var(--ink);border:1px solid var(--line)}
+.cell.hol{color:var(--red)}.cell.out{opacity:.4}.cell.today{background:var(--n1);border:2px solid var(--ink)}
+.cell .dots{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;min-height:8px}
+.cell .dots i{width:7px;height:7px;border-radius:50%;background:#e8833a}
+.cell .dots i.b{background:#e2574c}.cell .dots i.a{background:var(--green)}
+.evrow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}
+.evrow .dt{flex:0 0 3.6em;font-weight:900;font-variant-numeric:tabular-nums}
+.evrow .tx{flex:1;min-width:0}.evrow .tx small{display:block;color:var(--sub);font-size:12px}
+.evtag{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:0 6px;color:#fff;background:#c9701f;margin-right:6px}
+.evtag.b{background:#c93d32}.evtag.a{background:#2d7d6f}
+.budrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.budrow input{width:7.5em;min-height:40px}
+/* 献立を自分で決める */
+.chgbtn{float:right;border:1px solid var(--ink);background:var(--card);border-radius:999px;padding:2px 12px;font-size:13px;font-weight:700;cursor:pointer;min-height:32px;color:var(--ink)}
+.sheet.tall{max-height:88vh;overflow-y:auto}
+.cur{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:10px;padding:6px 6px 6px 12px}
+.cur b{flex:1;min-width:0}.cur .rm{border:0;background:var(--n2);border-radius:8px;padding:6px 12px;min-height:40px;cursor:pointer;font-weight:700;color:var(--ink)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer;font-weight:700;color:var(--ink)}
+.tabs button.on{border-color:var(--green);background:var(--green);color:var(--green-ink)}
+.rec{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;border-top:1px solid var(--line);background:none;padding:10px 0;min-height:48px;text-align:left;cursor:pointer;color:var(--ink)}
+.rec span{font-size:13px;color:var(--sub);white-space:nowrap}
+.rec[disabled]{opacity:.45;cursor:default}
+/* 値段シート */
+.veil{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:none;align-items:flex-end;justify-content:center}
+.veil.on{display:flex}
+.sheet{background:var(--paper);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.sheet h3{font-family:var(--font);font-weight:900;font-size:24px;margin:0}
+.two{display:flex;gap:10px}.two .field{flex:1;min-width:0}.two input{width:100%}
+.res{background:var(--card);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline}
+.res b{font-size:24px;color:var(--red);font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+@media (max-width:380px){#app{padding-left:40px;padding-right:12px}#app::before{left:26px}}
+</style>
+
+<div id="app">
+
+<section class="pane on" id="p-today">
+  <div>
+    <h1 id="tTitle">きょうのごはん</h1>
+    <p class="date" id="tDate"></p>
+  </div>
+  <div id="tBody"></div>
+</section>
+
+<section class="pane" id="p-week">
+  <h1>1週間のごはん</h1>
+  <p class="date" id="wDate">日ごとに押すと、その日の献立が見られます。</p>
+  <div id="wBody" style="display:flex;flex-direction:column;gap:10px"></div>
+</section>
+
+<section class="pane" id="p-cal">
+  <h1>予定カレンダー</h1>
+  <p class="date">誕生日・記念日・季節の行事を入れておくと、その日にお知らせして、ごちそうの予算を食費に足せます。</p>
+  <div id="cBody" style="display:flex;flex-direction:column;gap:12px"></div>
+</section>
+
+<section class="pane" id="p-shop">
+  <h1>買い物リスト</h1>
+  <p class="date" id="sSub"></p>
+  <p class="small" id="priceDate"></p>
+  <div id="sBody"></div>
+  <div id="spBody" style="display:flex;flex-direction:column;gap:12px;margin-top:14px"></div>
+</section>
+
+<section class="pane" id="p-family">
+  <h1>家族と予算</h1>
+  <p class="date">ここを変えると、献立と食費がすぐ作り直されます。</p>
+  <div class="card">
+    <div class="lab">家族の人数</div>
+    <div id="groups" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div class="small" id="kcalLine"></div>
+  </div>
+  <div class="card" id="nameCard">
+    <div class="lab">家族の呼び名(あれば)</div>
+    <div class="small">入れておくと、栄養の表や感想の記録に使います。</div>
+    <div id="nameRows" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+  <div class="card">
+    <div class="lab">お昼ごはん</div>
+    <div class="small">お弁当や給食で、家で昼を食べない人がいるときに合わせます。「作らない」の人は、昼ごはんの材料と食費を引き、足りないエネルギーは朝・夜と間食で補います。</div>
+    <div id="lunchRows" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+  <div class="card">
+    <div class="lab">食費</div>
+    <div class="two">
+      <div class="field"><label for="budgetWeek">1週間(円)</label><input type="number" id="budgetWeek" inputmode="numeric" min="0" step="500"></div>
+      <div class="field"><label for="budgetMonth">1か月(円)</label><input type="number" id="budgetMonth" inputmode="numeric" min="0" step="1000"></div>
+    </div>
+    <div class="small" id="budgetHint" style="margin-bottom:6px">金額を入れないでおくと、家族の人数から自動で決めます。自分で入れると、その金額になります。</div>
+    <div class="field"><label for="adj">いつも行くお店の値段</label>
+      <select id="adj"><option value="-30">とても安い</option><option value="-20">かなり安い</option><option value="-10">やや安い</option><option value="0">ふつう</option><option value="10">やや高い</option><option value="20">かなり高い</option><option value="30">とても高い</option></select>
+      <span class="small" id="priceNote">値段は仮の値です。買い物リストで実際の値段を入れると置き換わります。</span></div>
+  </div>
+  <div class="card">
+    <div class="lab">食べられないもの(アレルギーなど)</div>
+    <div class="chips" id="allergens"></div>
+  </div>
+  <details><summary>家族の好み(感想の記録)</summary><div id="tasteList" style="margin-top:8px"></div></details>
+  <details><summary>苦手な料理をはずす</summary><div class="chips" id="dislikes" style="margin-top:8px"></div></details>
+  <details><summary>食材ごとの値段を見る・直す</summary>
+    <p class="small" id="priceDate2" style="margin:8px 0 0"></p>
+    <div class="field" style="margin:8px 0"><input type="search" id="priceFilter" placeholder="食材名でさがす(例: たまご)" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>
+    <div id="priceTable"></div>
+    <button type="button" class="btn link" id="resetPrices">入力した値段をぜんぶ仮の値にもどす</button>
+  </details>
+  <details><summary>データの控えをとる・もどす</summary>
+    <div class="small" style="margin-top:8px">この記録はこの端末の中だけに保存されています。機種変更や、ブラウザのデータを消したときに備えて、ときどき控えを取っておくと安心です。</div>
+    <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
+    <input type="file" id="bkFile" accept="application/json,.json" hidden>
+  </details>
+  <p class="small" id="verLine">献立ノート バージョン @@VERSION@@(@@BUILD@@版)</p>
+  <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
+</section>
+
+</div>
+
+<div class="dock"><div class="in">
+  <div class="basket" id="basket"><div><small>カゴの中</small><div id="bIn">0円</div></div><div style="text-align:right"><small>全部で約</small><div id="bAll">0円</div></div></div>
+  <nav id="nav">
+    <button type="button" data-tab="today" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>きょう</button>
+    <button type="button" data-tab="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>1週間</button>
+    <button type="button" data-tab="cal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 14h2M14 14h2M8 17.5h2"/></svg>予定</button>
+    <button type="button" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11L21 7H6"/></svg>買い物</button>
+    <button type="button" data-tab="family"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.5 2 4.5 5"/></svg>家族</button>
+  </nav>
+</div></div>
+
+<div class="veil" id="veil4"><div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="pnTitle">
+  <h3 id="pnTitle">家にあるもの</h3>
+  <div class="small">入れた食材を先に使う献立にして、その分は買い物リストと食費から引きます。</div>
+  <div id="pnList" style="display:flex;flex-direction:column;gap:8px"></div>
+  <div class="field"><label for="pnSearch">食材をさがして足す</label><input type="search" id="pnSearch" placeholder="例: たまご、キャベツ" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>
+  <div id="pnFound"></div>
+  <button type="button" class="btn solid" id="pnDone">できた</button>
+</div></div>
+
+<div class="veil" id="veil5"><div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="tsTitle">
+  <h3 id="tsTitle">感想</h3>
+  <div class="small">よく食べたら献立に出やすく、残したら出にくくなります。次に献立を作り直すときから使われます。</div>
+  <div id="tsBody" style="display:flex;flex-direction:column;gap:10px"></div>
+  <button type="button" class="btn solid" id="tsDone">できた</button>
+</div></div>
+
+<div class="veil" id="veil3"><div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="dyTitle">
+  <h3 id="dyTitle"></h3>
+  <div id="dyBody" style="display:flex;flex-direction:column;gap:10px"></div>
+  <button type="button" class="btn solid" id="dyClose">とじる</button>
+</div></div>
+
+<div class="veil" id="veil2"><div class="sheet tall" role="dialog" aria-modal="true" aria-labelledby="edTitle">
+  <h3 id="edTitle">献立を決める</h3>
+  <div class="small">自分で決めた食事は、「別の案にする」を押しても変わりません。</div>
+  <div id="edBody" style="display:flex;flex-direction:column;gap:10px"></div>
+  <div class="btns"><button type="button" class="btn" id="edAuto">自動にもどす</button><button type="button" class="btn solid" id="edDone">できた</button></div>
+</div></div>
+
+<div class="veil" id="veil"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <h3 id="shTitle">食材</h3>
+  <div class="small" id="shNow"></div>
+  <div class="two">
+    <div class="field"><label for="shPrice">パックの値段(円)</label><input type="number" id="shPrice" inputmode="decimal" min="0" placeholder="例 398"></div>
+    <div class="field"><label for="shWeight">パックの重さ(g)</label><input type="number" id="shWeight" inputmode="decimal" min="0" placeholder="例 300"></div>
+  </div>
+  <div class="res"><span class="small">100gあたり</span><b id="shRes">-</b></div>
+  <div class="small" id="shHint">重さがわからないときは、下の「100gの値段」を直接入れてください。</div>
+  <div class="field"><label for="shDirect">100gの値段(円)</label><input type="number" id="shDirect" inputmode="decimal" min="0"></div>
+  <div class="btns"><button type="button" class="btn" id="shReset">仮の値にもどす</button><button type="button" class="btn solid" id="shOk">この値段にする</button></div>
+  <button type="button" class="btn link" id="shClose">とじる</button>
+</div></div>
+
+<script>
+//@@DATA@@
+//@@PLANNER@@
+(function () {
+  var FOODS = window.__FOODS, RECIPES = window.__RECIPES, BASE_PRICES = window.__PRICES;
+  var FM = {}; FOODS.forEach(function (f) { FM[f.id] = f; });
+  var RM = {}; RECIPES.forEach(function (r) { RM[r.id] = r; });
+  var PRICES_URL = (window.KONDATE_CONFIG && window.KONDATE_CONFIG.pricesUrl) || "";   // public/config.js に価格取得Workerの /prices.json を入れると、公式統計の価格になる
+  var KEY = "kondate-note-v1";
+  var CAT = { a: { label: "大人", hint: "18〜64歳", m: 2650, f: 2000 }, s: { label: "高齢者", hint: "65歳以上", m: 2300, f: 1800 }, c: { label: "子ども", hint: "", m: 0, f: 0 } };
+  var CHILD = { y: { label: "幼児(3〜5歳)", m: 1300, f: 1250 }, e: { label: "小学生(6〜11歳)", m: 1900, f: 1750 }, j: { label: "中高生(12〜17歳)", m: 2750, f: 2350 } };
+  var ALLERGENS = ["卵", "乳", "小麦", "そば", "大豆", "ごま", "えび", "いか", "さけ", "さば", "鶏肉", "豚肉", "牛肉", "魚(あじ・ぶり等)"];
+  var GROUPS = [["主食", ["主食"]], ["野菜・きのこ・いも", ["野菜", "きのこ海藻", "いも"]], ["肉", ["肉"]], ["魚", ["魚介"]], ["卵・乳・大豆", ["卵乳", "大豆"]], ["果物", ["果物"]], ["調味料・油", ["調味料", "油脂"]], ["菓子", ["菓子"]]];
+  var CAT_ORDER = ["主食", "いも", "大豆", "肉", "魚介", "卵乳", "野菜", "きのこ海藻", "果物", "調味料", "油脂", "菓子"];
+  var WD = ["日", "月", "火", "水", "木", "金", "土"];
+  var RICE_K = FM[RICE].kcal / 342;             // 炊いたご飯の重さ→精米の重さ
+  var LOADED = null;
+
+  var S = { counts: { a: { m: 1, f: 1 }, s: { m: 0, f: 0 }, c: { m: 0, f: 1 } }, child: "e", budgetWeek: 20000, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } } };
+  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!S.lunch) S.lunch = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } }; } } catch (e) {}
+  // 保存された内容が古かったり壊れていても動くように、形をそろえる
+  ["a", "s", "c"].forEach(function (k) {
+    var c = S.counts && S.counts[k]; if (!c || typeof c !== "object") c = { m: 0, f: 0 };
+    S.counts[k] = { m: Math.max(0, Math.min(20, Math.round(+c.m || 0))), f: Math.max(0, Math.min(20, Math.round(+c.f || 0))) };
+    if (!S.lunch[k] || typeof S.lunch[k] !== "object") S.lunch[k] = { wd: "home", we: "home" };
+  });
+  if (!CHILD[S.child]) S.child = "e";
+  ["allergens", "dislikes", "spend", "events"].forEach(function (k) { if (!Array.isArray(S[k])) S[k] = []; });
+  if (!S.counts.a.m && !S.counts.a.f && !S.counts.s.m && !S.counts.s.f && !S.counts.c.m && !S.counts.c.f) S.counts.a.f = 1;
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function yen(n) { return Math.round(n).toLocaleString("ja-JP"); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function $(id) { return document.getElementById(id); }
+  function fac(id) { return id === RICE ? RICE_K : 1; }          // ご飯は「精米の100g」で見せる
+  function niceG(g) { return g >= 1000 ? "約" + (Math.round(g / 100) / 10) + "kg" : "約" + Math.max(10, Math.round(g / 10) * 10) + "g"; }
+
+  function members() {
+    var out = [];
+    ["a", "s", "c"].forEach(function (c) {
+      ["m", "f"].forEach(function (sx) {
+        var kcal = c === "c" ? CHILD[S.child][sx] : CAT[c][sx];
+        var label = (c === "c" ? "子ども" : CAT[c].label) + (sx === "m" ? "・男" : "・女");
+        var lu = [];
+        for (var d = 0; d < 7; d++) { var di = dayInfo(d); lu.push(S.lunch[c][isRest(di.y, di.m, di.d) ? "we" : "wd"]); }
+        for (var i = 0; i < S.counts[c][sx]; i++) out.push({ kcal: kcal, label: label, key: c + sx, lunch: lu });
+      });
+    });
+    return out;
+  }
+  function priceHas(id) { return S.overrides[id] !== undefined && S.overrides[id] !== null && S.overrides[id] !== ""; }
+  function effPrices() {
+    var out = {}, k = 1 + (S.adj || 0) / 100;
+    FOODS.forEach(function (f) {
+      var base = (LOADED && LOADED[f.id]) ? LOADED[f.id].yen100g : BASE_PRICES[f.id].yen100g;
+      out[f.id] = { yen100g: priceHas(f.id) ? +S.overrides[f.id] : base * k };
+    });
+    return out;
+  }
+  function isTemp(id) { return !(LOADED && LOADED[id]) && !priceHas(id); }
+
+  var LAST = null, PRICES = null, SEL = 0, TAB = "today", TODAY = new Date();
+  function dayInfo(i) { var d = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + i); return { y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate(), w: d.getDay() }; }
+
+  // ---- 祝日(日本)と行事
+  var HOL_CACHE = {};
+  function nthMon(y, m, n) { var f = new Date(y, m - 1, 1).getDay(); return 1 + ((1 - f + 7) % 7) + 7 * (n - 1); }
+  function nthSun(y, m, n) { var f = new Date(y, m - 1, 1).getDay(); return 1 + ((7 - f) % 7) + 7 * (n - 1); }
+  function holidays(y) {
+    if (HOL_CACHE[y]) return HOL_CACHE[y];
+    var h = {}, k = function (m, d) { return m + "-" + d; };
+    var sh = Math.floor(20.8431 + 0.242194 * (y - 1980) - Math.floor((y - 1980) / 4)), au = Math.floor(23.2488 + 0.242194 * (y - 1980) - Math.floor((y - 1980) / 4));
+    h[k(1, 1)] = "元日"; h[k(1, nthMon(y, 1, 2))] = "成人の日"; h[k(2, 11)] = "建国記念の日"; h[k(2, 23)] = "天皇誕生日"; h[k(3, sh)] = "春分の日";
+    h[k(4, 29)] = "昭和の日"; h[k(5, 3)] = "憲法記念日"; h[k(5, 4)] = "みどりの日"; h[k(5, 5)] = "こどもの日"; h[k(7, nthMon(y, 7, 3))] = "海の日"; h[k(8, 11)] = "山の日";
+    h[k(9, nthMon(y, 9, 3))] = "敬老の日"; h[k(9, au)] = "秋分の日"; h[k(10, nthMon(y, 10, 2))] = "スポーツの日"; h[k(11, 3)] = "文化の日"; h[k(11, 23)] = "勤労感謝の日";
+    Object.keys(h).forEach(function (key) {
+      var mm = +key.split("-")[0], dd = +key.split("-")[1];
+      if (new Date(y, mm - 1, dd).getDay() === 0) { var n = new Date(y, mm - 1, dd + 1); while (h[k(n.getMonth() + 1, n.getDate())]) n = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1); h[k(n.getMonth() + 1, n.getDate())] = "振替休日"; }
+    });
+    for (var m = 1; m <= 12; m++) for (var d = 1; d <= 31; d++) {
+      var dt = new Date(y, m - 1, d); if (dt.getMonth() !== m - 1 || dt.getDay() === 0 || h[k(m, d)]) continue;
+      var pv = new Date(y, m - 1, d - 1), nx = new Date(y, m - 1, d + 1);
+      if (h[k(pv.getMonth() + 1, pv.getDate())] && h[k(nx.getMonth() + 1, nx.getDate())]) h[k(m, d)] = "国民の休日";
+    }
+    return (HOL_CACHE[y] = h);
+  }
+  function holName(y, m, d) { return holidays(y)[m + "-" + d] || ""; }
+  function isRest(y, m, d) { var w = new Date(y, m - 1, d).getDay(); return w === 0 || w === 6 || !!holName(y, m, d); }
+  var SEASON = [
+    [1, 1, "お正月", "おせち、お雑煮"], [2, 3, "節分", "恵方巻き、いわし"], [3, 3, "ひなまつり", "ちらし寿司、はまぐりのお吸い物"], [5, 5, "こどもの日", "ちまき、柏餅"],
+    [7, 7, "七夕", "そうめん"], [12, 24, "クリスマスイブ", "チキン、ケーキ"], [12, 25, "クリスマス", "チキン、ケーキ"], [12, 31, "大晦日", "年越しそば"]
+  ];
+  function builtinEvents(y) {
+    var out = SEASON.map(function (s) { return { key: "b:" + s[2], name: s[2], hint: s[3], m: s[0], d: s[1], type: "season" }; });
+    out.push({ key: "b:冬至", name: "冬至", hint: "かぼちゃの煮物", m: 12, d: Math.floor(22.2747 + 0.242194 * (y - 1980) - Math.floor((y - 1980) / 4)), type: "season" });
+    return out;
+  }
+  function eventsOn(y, m, d) {
+    var out = builtinEvents(y).filter(function (e) { return e.m === m && e.d === d; });
+    S.events.forEach(function (e) { if (e.m === m && e.d === d) out.push({ key: "c:" + e.id, name: e.name, hint: "", m: m, d: d, type: e.type, custom: true, id: e.id }); });
+    return out;
+  }
+  var EV_RECIPES = { "お正月": ["x07", "x08", "x09", "x10"], "節分": ["x03", "x04"], "ひなまつり": ["x01", "x02"], "こどもの日": ["x13", "m07"], "七夕": ["x06"], "クリスマスイブ": ["x11", "x12", "s02"], "クリスマス": ["x11", "x12", "s02"], "大晦日": ["x05"], "冬至": ["s07", "m12"] };
+  // お祝いの献立の案。k: b=誕生日 a=記念日 x=クリスマス。
+  // 誕生日の案には、かならずケーキかプリンを入れる。案は年ごと・予定ごとに自動で変わり、「別のお祝い料理にする」でも選べる。
+  var EV_SETS = [
+    { n: "ローストチキンの洋風ごちそう", ids: ["x11", "x29", "x26", "x12"], k: "bax" },
+    { n: "ステーキのごちそう", ids: ["x16", "x29", "x26", "x12"], k: "ba" },
+    { n: "ローストビーフのごちそう", ids: ["x15", "x29", "x26", "x12"], k: "bax" },
+    { n: "ローストポークのごちそう", ids: ["x40", "x30", "x38", "x12"], k: "bax" },
+    { n: "手巻き寿司パーティー", ids: ["x18", "x25", "x12"], k: "ba" },
+    { n: "ちらし寿司のお祝い", ids: ["x01", "x02", "x25", "x12"], k: "ba" },
+    { n: "すき焼き", ids: ["x20", "x29", "x12"], k: "ba" },
+    { n: "ハンバーグ(子どもが喜ぶ)", ids: ["x17", "x29", "x26", "x27"], k: "b" },
+    { n: "ミートソースとピザトースト(子ども向け)", ids: ["x32", "x33", "x29", "x41"], k: "b" },
+    { n: "焼肉パーティー", ids: ["x45", "x29", "x42"], k: "b" },
+    { n: "から揚げとグラタン", ids: ["x21", "x22", "x29", "x12"], k: "bx" },
+    { n: "えびフライのごちそう", ids: ["x31", "x30", "x37", "x12"], k: "ba" },
+    { n: "ロールキャベツ", ids: ["x36", "x30", "x38", "x12"], k: "bax" },
+    { n: "チーズフォンデュ", ids: ["x39", "x29", "x37", "x12"], k: "bax" },
+    { n: "チキンとグラタンのクリスマス", ids: ["x11", "x22", "x29", "x12"], k: "x" },
+    { n: "ビーフシチュー", ids: ["x23", "x29", "x12"], k: "bax" },
+    { n: "天ぷらと茶碗蒸し", ids: ["x19", "x25", "x28"], k: "a" },
+    { n: "お刺身と天ぷらの和のごちそう", ids: ["x24", "x19", "x25", "x28"], k: "a" },
+    { n: "ぶりの照り焼きの和膳", ids: ["x34", "x25", "x02", "x42"], k: "a" },
+    { n: "寄せ鍋", ids: ["x44", "x25", "x43"], k: "a" },
+    { n: "カルパッチョとパスタの洋風ディナー", ids: ["x35", "x32", "x29", "x12"], k: "a" }
+  ];
+  function evKind(e) {
+    if (e.type === "birthday") return "b";
+    if (e.type === "anniv") return "a";
+    if (e.name === "クリスマスイブ" || e.name === "クリスマス") return "x";
+    return "";
+  }
+  function okDish(id) { return RM[id] && !RM[id].allergens.some(function (a) { return S.allergens.indexOf(a) >= 0; }); }
+  function hashStr(s) { var h = 7; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+  function setDishes(ids, kind) {   // アレルギーで外れた料理を除く。主役の料理が残らなければ null
+    var use = ids.filter(okDish);
+    if (!use.some(function (id) { return RM[id].role === "主菜" || RM[id].role === "一品"; })) return null;
+    if (!use.some(function (id) { return RM[id].role === "デザート"; })) {   // ケーキやプリンが使えないときは、フルーツのデザートで補う
+      if (kind === "b" || ids.some(function (id) { return RM[id].role === "デザート"; })) { if (okDish("x28")) use.push("x28"); else if (okDish("x43")) use.push("x43"); }
+    }
+    return use;
+  }
+  function evMenus(e) {          // その予定で選べるお祝い料理の案(アレルギーに合うものだけ)
+    var kind = evKind(e), out = [];
+    if (kind) EV_SETS.forEach(function (s) { if (s.k.indexOf(kind) >= 0) { var u = setDishes(s.ids, kind); if (u) out.push({ n: s.n, ids: u }); } });
+    return out;
+  }
+  function evMenu(e) {
+    var list = evMenus(e);
+    if (!list.length) {           // お正月・節分など、決まった行事料理
+      var ids = (EV_RECIPES[e.name] || []).filter(okDish);
+      return { n: "", ids: ids, count: ids.length ? 1 : 0, idx: 0 };
+    }
+    var yr = dayYear(e), pick = (S.evPick && S.evPick[e.key + "|" + yr]) || 0;
+    var idx = (hashStr(e.key + "|" + yr) + pick) % list.length;
+    return { n: list[idx].n, ids: list[idx].ids, count: list.length, idx: idx };
+  }
+  function dayYear(e) { for (var i = 0; i < 7; i++) { var di = dayInfo(i); if (di.m === e.m && di.d === e.d) return di.y; } return TODAY.getFullYear(); }
+  function evRecipes(e) { return evMenu(e).ids; }
+  function putRow(e, idx) {
+    var mn = evMenu(e), ids = mn.ids; if (!ids.length || idx !== 0) return "";
+    var yen1 = 0; ids.forEach(function (id) { yen1 += costOf(RM[id].ingredients, FM, PRICES).yen; });
+    var people = Math.max(1, members().length), cost = Math.round(yen1 * people / 10) * 10;
+    var names = ids.map(function (id) { return esc(RM[id].name); }).join("・");
+    if (S.evAuto !== false && mn.n) {
+      return '<div class="small"><b>お祝いの献立: ' + esc(mn.n) + '</b>(約' + yen(cost) + '円)<br>' + names + '</div>' +
+        (mn.count > 1 ? '<button type="button" class="btn" data-evnext="' + esc(e.key) + '">別のお祝い料理にする</button>' : "");
+    }
+    return '<button type="button" class="btn" data-evput="' + esc(e.key) + '" style="text-align:left;line-height:1.4">晩ごはんにする' + (mn.n ? "(" + esc(mn.n) + ")" : "") + '<br><span class="small">' + names + "</span></button>" +
+      (mn.count > 1 ? '<button type="button" class="btn" data-evnext="' + esc(e.key) + '">別のお祝い料理にする</button>' : "");
+  }
+  function evLabel(e) { return e.type === "birthday" ? esc(e.name) + "の誕生日" : esc(e.name); }
+  function evTagHtml(e) { var c = e.type === "birthday" ? "b" : e.type === "anniv" ? "a" : ""; return '<span class="evtag ' + c + '">' + (e.type === "birthday" ? "誕生日" : e.type === "anniv" ? "記念日" : "行事") + "</span>"; }
+  function budgetRow(e) {
+    return '<div class="budrow"><label for="eb-' + esc(e.key) + '" class="small">ごちそうの予算(食費に足す)</label><input type="number" id="eb-' + esc(e.key) + '" data-eb="' + esc(e.key) + '" inputmode="numeric" min="0" step="500" value="' + (S.evBudget[e.key] || "") + '" placeholder="0"><span class="small">円</span></div>';
+  }
+
+  function dkey(i) { var d = dayInfo(i); return TODAY.getFullYear() + "-" + (d.m < 10 ? "0" : "") + d.m + "-" + (d.d < 10 ? "0" : "") + d.d; }
+  // その日に、お祝い料理を自動で入れる行事(誕生日・記念日・クリスマスなど)。自分で決めた晩ごはんがある日は対象外。
+  function autoEvent(i) {
+    if (S.evAuto === false) return null;
+    var di = dayInfo(i), mm = S.manual[dkey(i)];
+    if (mm && mm[2]) return null;
+    var evs = eventsOn(di.y, di.m, di.d).filter(function (x) { return evRecipes(x).length; });
+    if (!evs.length) return null;
+    return evs.filter(function (x) { return x.custom; })[0] || evs[0];   // 自分で入れた誕生日・記念日を優先
+  }
+  function fixedPlan() {
+    var f = {};
+    for (var i = 0; i < 7; i++) {
+      var m = S.manual[dkey(i)], ae = autoEvent(i);
+      if (m || ae) { f[i] = Object.assign({}, m || {}); if (ae) f[i][2] = { ids: evRecipes(ae) }; }
+    }
+    return f;
+  }
+  function tastePenalty() {
+    var keys = {}; members().forEach(function (m) { keys[m.key] = 1; });
+    var out = {};
+    Object.keys(S.taste).forEach(function (id) {
+      var pen = 0; Object.keys(S.taste[id]).forEach(function (k) { if (!keys[k]) return; var v = S.taste[id][k]; pen += v < 0 ? 12 : v > 0 ? -4 : 0; });
+      if (pen) out[id] = Math.max(-8, Math.min(30, pen));
+    });
+    return out;
+  }
+  function memLabel(m) { return S.names[m.key] || m.label; }
+  function dayExtras() {
+    var x = {};
+    for (var i = 0; i < 7; i++) { var di = dayInfo(i), sum = 0; eventsOn(di.y, di.m, di.d).forEach(function (e) { sum += +S.evBudget[e.key] || 0; }); if (sum) x[i] = sum; }
+    return x;
+  }
+  // 予算を自分で決めていないときは、家族の人数（必要エネルギーの合計）から決める。自分で入れたら、その金額を使う。
+  function autoBudget(ms) { var kc = 0; ms.forEach(function (m) { kc += m.kcal; }); return Math.max(3000, Math.round(kc / 2000 * 6500 / 500) * 500); }
+  function replan() {
+    var ms = members();
+    PRICES = effPrices();
+    if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
+    if (!ms.length) { LAST = null; }
+    else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
+    renderAll();
+  }
+  function renderAll() { renderToday(); renderWeek(); renderShop(); renderSpend(); renderCal(); renderNames(); renderTasteList(); refreshPriceTable(); }
+
+  function emptyMsg() { return '<div class="card"><div>家族の人数がまだ入っていません。</div><button type="button" class="btn solid" data-go="family">家族を入れる</button></div>'; }
+  function warnHtml(plan) { return plan.warnings.map(function (w) { return '<div class="warn">' + esc(w) + "</div>"; }).join(""); }
+
+  // ---- きょう
+  function renderToday() {
+    var di = dayInfo(SEL);
+    $("tTitle").textContent = SEL === 0 ? "きょうのごはん" : di.m + "月" + di.d + "日(" + WD[di.w] + ")のごはん";
+    var hn = holName(di.y, di.m, di.d);
+    $("tDate").textContent = di.m + "月" + di.d + "日 " + WD[di.w] + "曜日" + (hn ? "(" + hn + ")" : "");
+    if (!LAST) { $("tBody").innerHTML = emptyMsg(); return; }
+    var plan = LAST.plan, d = plan.days[SEL], h = warnHtml(plan);
+    if (SEL !== 0) h += '<div class="btns" style="margin-bottom:10px"><button type="button" class="btn" data-sel="0">きょうにもどる</button></div>';
+    var slots = { "朝食": "朝ごはん", "昼食": "お昼ごはん", "夕食": "晩ごはん" };
+    eventsOn(di.y, di.m, di.d).forEach(function (e) {
+      h += '<div class="card" style="border:2px solid var(--red);margin-bottom:10px"><div>' + evTagHtml(e) + "<b>" + evLabel(e) + "</b></div>" + (e.hint ? '<div class="small">おすすめ: ' + esc(e.hint) + "</div>" : "") + putRow(e, SEL === 0 || true ? 0 : 1) + budgetRow(e) + "</div>";
+    });
+    h += '<div style="display:flex;flex-direction:column;gap:12px">';
+    d.meals.forEach(function (m) {
+      var mj = d.meals.indexOf(m);
+      var chg = '<button type="button" class="chgbtn" data-edit="' + mj + '">変える</button>';
+      if (m.skip) { h += '<div class="note"><div class="slot">' + slots[m.slot] + chg + '</div><ul><li class="rice">' + (m.off ? "家では作りません(外食・食べない)" : "今日は家では作りません(お弁当・給食・外食)") + "</li></ul></div>"; return; }
+      var lm = "";
+      if (m.slot === "昼食" && m.lunchModes) {
+        var groups = {}; m.lunchModes.forEach(function (x, i) { var lb = LAST.ms[i].label.split("・")[0]; (groups[x] = groups[x] || {})[lb] = 1; });
+        var nm = { home: "家で", bento: "お弁当", none: "作らない" }, parts = [];
+        ["home", "bento", "none"].forEach(function (k) { if (groups[k]) parts.push(nm[k] + ": " + Object.keys(groups[k]).join("・")); });
+        if (Object.keys(groups).length > 1 || groups.bento) lm = '<div class="small">' + parts.join(" ／ ") + "</div>";
+      }
+      h += '<div class="note"><div class="slot">' + (m.bento ? "お昼ごはん(お弁当)" : slots[m.slot]) + (m.manual ? (m.slot === "夕食" && autoEvent(SEL) ? '<span class="tag">お祝い</span>' : '<span class="tag">自分で決めた</span>') : "") + chg + "</div>" + lm + '<ul>' + (m.rice ? '<li class="rice"><em style="font-style:normal">ご飯</em></li>' : "") + '';
+      m.dishes.forEach(function (x) {
+        var c = costOf(RM[x.id].ingredients, FM, PRICES).yen;
+        var tg = tasteTag(x.id);
+        var rt = (m.slot === "夕食" || m.bento) ? (x.role === "主菜" ? "おかず" : x.role === "副菜" ? (x.sub === "salad" ? "サラダ" : "小鉢") : x.role === "汁物" ? "汁物" : "") : "";
+        h += "<li><em style=\"font-style:normal\">" + (rt ? '<span class="tag" style="margin:0 6px 0 0">' + rt + "</span>" : "") + esc(x.name) + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span></li>';
+      });
+      h += "</ul></div>";
+    });
+    var week = plan.cost, bud = plan.budgetWeek || 0, left = bud - week, pct = bud ? Math.min(100, Math.round(week / bud * 100)) : 0;
+    var anyTemp = plan.shopping.some(function (s) { return isTemp(s.food); });
+    h += '<div class="cost"><div class="row"><span>この日の食費(家族全員)' + (anyTemp ? '<span class="tag">仮の値段を含む</span>' : "") + '</span><span class="big">' + yen(d.cost) + "円</span></div>" + (d.extra ? '<div class="small">うち、お祝いのごちそう予算 ' + yen(d.extra) + "円</div>" : "") +
+      '<div class="bar' + (plan.overBudget ? " over" : "") + '"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="row small"><span>今週の見込み ' + yen(week) + "円 / 予算 " + yen(bud) + '円</span><span style="font-weight:700;color:var(' + (left < 0 ? "--red" : "--green") + ')">' + (left < 0 ? yen(-left) + "円 オーバー" : "あと" + yen(left) + "円") + "</span></div></div>";
+    h += '<details><summary>家族それぞれの量と栄養</summary><div class="small" style="margin-top:6px">目標は1日に必要なエネルギー。足りない分は間食(牛乳・ヨーグルト・果物)で補います。</div><div class="wrap"><table><thead><tr><th>誰の分</th><th>量</th><th>目標kcal(家で食べる分)</th><th>実際kcal</th><th>たんぱく質g</th><th>脂質g</th><th>炭水化物g</th><th>塩分g</th><th>間食</th></tr></thead><tbody>';
+    var seen = {};
+    LAST.ms.forEach(function (m, i) {
+      if (seen[m.key]) return; seen[m.key] = 1;
+      var n = LAST.ms.filter(function (x) { return x.key === m.key; }).length, p = d.persons[i], nu = p.nutrition;
+      var sn = p.snacks.map(function (s) { return esc(FM[s.food].name) + s.g + "g"; }).join("、") || "なし";
+      h += "<tr><td>" + esc(memLabel(m)) + (n > 1 ? " ×" + n : "") + (p.lunch === "none" ? "(昼なし)" : "") + "</td><td>×" + p.scale + "</td><td>" + yen(p.targetKcal) + "</td><td>" + yen(nu.kcal) + "</td><td>" + nu.protein + "</td><td>" + nu.fat + "</td><td>" + nu.carb + "</td><td>" + nu.salt_g + "</td><td>" + sn + "</td></tr>";
+    });
+    h += "</tbody></table></div></details></div>";
+    $("tBody").innerHTML = h;
+  }
+
+  // ---- 1週間
+  function renderWeek() {
+    var box = $("wBody");
+    if (!LAST) { box.innerHTML = emptyMsg(); return; }
+    var plan = LAST.plan;
+    var di0 = dayInfo(0), di6 = dayInfo(6);
+    $("wDate").textContent = di0.m + "月" + di0.d + "日〜" + di6.m + "月" + di6.d + "日。日ごとに押すと、その日の献立が見られます。";
+    var h = warnHtml(plan);
+    plan.days.forEach(function (d, i) {
+      var di = dayInfo(i);
+      var names = d.meals.map(function (m) { return m.off ? "なし" : m.skip ? "昼はなし" : (m.bento ? "弁当:" : "") + esc((m.dishes.filter(function (x) { return x.role !== "副菜" && x.role !== "汁物"; })[0] || m.dishes[0] || { name: "-" }).name); }).join(" ／ ");
+      h += '<button type="button" class="dayrow' + (i === 0 ? " today" : "") + (di.w === 6 ? " sat" : "") + (di.w === 0 ? " sun" : "") + '" data-sel="' + i + '" data-open="today"><span class="wd">' + WD[di.w] + '</span><span class="t"><b>' + di.m + "/" + di.d + (i === 0 ? " きょう" : "") + (holName(di.y, di.m, di.d) ? " " + holName(di.y, di.m, di.d) : "") + eventsOn(di.y, di.m, di.d).map(function (e) { return " ・" + evLabel(e); }).join("") + "</b>" + names + '</span><span class="y">' + yen(d.cost) + "円</span></button>";
+    });
+    h += '<div class="cost" style="margin-top:4px"><div class="row"><span>1週間の食費(めやす)</span><span class="big">' + yen(plan.cost) + '円</span></div><div class="small">予算 ' + yen(plan.budgetWeek || 0) + "円 / 1か月にすると約" + yen(plan.cost * 4.3) + "円</div></div>";
+    h += '<div class="cost" style="border-style:solid;border-color:var(--line)"><div class="lab">実際に使った食費</div>' + (S.spend.length ? spendSummaryHtml() : '<div class="small">「買い物」タブの下で、レジで払った金額を記録すると、ここに予算とくらべて出ます。</div>') + "</div>";
+    h += '<div class="btns"><button type="button" class="btn" id="againBtn">別の案にする</button><button type="button" class="btn solid" data-go="shop">買い物リストへ</button></div>';
+    box.innerHTML = h;
+  }
+
+  // ---- 買い物
+  function renderShop() {
+    var box = $("sBody");
+    if (!LAST) { box.innerHTML = emptyMsg(); $("basket").classList.remove("on"); return; }
+    var items = LAST.plan.shopping, total = 0, inBag = 0, h = "";
+    var buy = items.filter(function (s) { return s.grams > 0; }), have = items.filter(function (s) { return s.grams <= 0; });
+    buy.forEach(function (s) { if (s.yen !== null) { total += s.yen; if (S.checked[s.food]) inBag += s.yen; } });
+    $("sSub").textContent = "1週間分・" + LAST.ms.length + "人・" + buy.length + "品目。金額の右の「値段」を押すと、お店の値段を入れられます。";
+    var pn = Object.keys(S.pantry).length;
+    h += '<div class="card" style="margin-bottom:6px"><div class="lab">家にあるもの' + (pn ? "(" + pn + "品)" : "") + '</div><div class="small">' + (pn ? "先に使う献立にして、その分は買いません。" : "卵や野菜が余っているときに入れると、使い切る献立になります。") + '</div><button type="button" class="btn" data-pantry="1">' + (pn ? "家にあるものを直す" : "家にあるものを入れる") + "</button></div>";
+    GROUPS.forEach(function (g) {
+      var list = buy.filter(function (s) { return g[1].indexOf(s.cat) >= 0; });
+      if (!list.length) return;
+      h += '<div class="sec">' + g[0] + "</div>";
+      list.forEach(function (s) {
+        var f = fac(s.food), grams = s.grams * f, per100 = PRICES[s.food].yen100g / f;
+        var name = s.food === RICE ? "お米" : s.name;
+        var sub = "100gあたり " + (Math.round(per100 * 10) / 10) + "円" + (isTemp(s.food) ? "(仮)" : "") + (s.have > 0 ? " ・ 家に" + niceG(s.have * f).replace("約", "約") + "あり" : "");
+        h += '<div class="itemrow"><button type="button" class="item' + (S.checked[s.food] ? " done" : "") + '" data-ck="' + s.food + '"><span class="ck" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="nm">' + esc(name) + "<small>" + esc(sub) + '</small></span><span class="q"><b>' + niceG(grams) + "</b><span>" + (s.yen === null ? "-" : yen(s.yen) + "円") + '</span></span></button><button type="button" class="edit" data-price="' + s.food + '">値段</button></div>';
+      });
+    });
+    if (have.length) {
+      h += '<div class="sec">家にあるので買わなくてOK</div>';
+      have.forEach(function (s) { h += '<div class="itemrow"><div class="item" style="cursor:default"><span class="nm">' + esc(s.food === RICE ? "お米" : s.name) + '<small>使う量 ' + niceG(s.need * fac(s.food)) + "</small></span></div></div>"; });
+    }
+    h += '<div class="btns" style="margin-top:14px"><button type="button" class="btn" id="unck">チェックをぜんぶ外す</button></div>';
+    box.innerHTML = h;
+    $("bIn").textContent = yen(inBag) + "円"; $("bAll").textContent = yen(total) + "円";
+    $("basket").classList.toggle("on", TAB === "shop");
+  }
+  function shopTotal() {   // チェックした品があればその合計、なければリスト全体
+    var all = 0, chk = 0; if (LAST) LAST.plan.shopping.forEach(function (x) { if (x.grams > 0 && x.yen !== null) { all += x.yen; if (S.checked[x.food]) chk += x.yen; } });
+    return chk > 0 ? chk : all;
+  }
+
+  // ---- 家にあるもの
+  var UNIT = { "12004": ["個", 50], "06153": ["個", 200], "06214": ["本", 150], "02017": ["個", 130], "06061": ["玉", 1000], "06134": ["本", 1000], "06182": ["個", 150], "06065": ["本", 100], "06191": ["本", 80], "06245": ["個", 30], "13003": ["本(1L)", 1000], "06267": ["束", 200], "01088": ["kg", 1000] };
+  function unitOf(id) { return UNIT[id] || ["g", 1]; }
+  function renderPantry() {
+    var ids = Object.keys(S.pantry), h = "";
+    if (!ids.length) h = '<div class="small">まだ入っていません。下からさがして足してください。</div>';
+    ids.forEach(function (id) {
+      var u = unitOf(id), v = Math.round(S.pantry[id] * fac(id) / u[1] * 10) / 10;
+      h += '<div class="cur"><b>' + esc(id === RICE ? "お米" : FM[id].name) + '</b><input type="number" data-pnq="' + id + '" value="' + v + '" min="0" step="' + (u[1] === 1 ? 50 : 0.5) + '" inputmode="decimal" style="width:5.5em;min-height:40px" aria-label="' + esc(FM[id].name) + 'の量"><span class="small">' + u[0] + '</span><button type="button" class="rm" data-pnrm="' + id + '">消す</button></div>';
+    });
+    $("pnList").innerHTML = h;
+  }
+  function renderPantryFound() {
+    var q = $("pnSearch").value.trim(), h = "";
+    if (q) FOODS.filter(function (f) { return f.name.indexOf(q) >= 0 && f.cat !== "調味料" && f.cat !== "油脂" && !S.pantry[f.id]; }).slice(0, 12).forEach(function (f) { h += '<button type="button" class="rec" data-pnadd="' + f.id + '">' + esc(f.id === RICE ? "お米(精米)" : f.name) + "<span>足す</span></button>"; });
+    $("pnFound").innerHTML = h;
+  }
+  function openPantry() { renderPantry(); $("pnSearch").value = ""; renderPantryFound(); $("veil4").classList.add("on"); }
+  function closePantry() { $("veil4").classList.remove("on"); }
+  $("pnDone").addEventListener("click", function () { closePantry(); replan(); });
+  $("veil4").addEventListener("click", function (e) { if (e.target === $("veil4")) { closePantry(); replan(); } });
+  $("pnSearch").addEventListener("input", renderPantryFound);
+
+  // ---- 支払いの記録
+  function ymd(d) { return d.getFullYear() + "-" + (d.getMonth() < 9 ? "0" : "") + (d.getMonth() + 1) + "-" + (d.getDate() < 10 ? "0" : "") + d.getDate(); }
+  function spendBetween(a, b) { var s = 0; S.spend.forEach(function (e) { if (e.date >= a && e.date <= b) s += e.yen; }); return s; }
+  function weekRange() { var n = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()), off = (n.getDay() + 6) % 7, a = new Date(n.getFullYear(), n.getMonth(), n.getDate() - off), b = new Date(a.getFullYear(), a.getMonth(), a.getDate() + 6); return [ymd(a), ymd(b)]; }
+  function monthRange() { var y = TODAY.getFullYear(), m = TODAY.getMonth(); return [ymd(new Date(y, m, 1)), ymd(new Date(y, m + 1, 0))]; }
+  function spendSummaryHtml() {
+    var wr = weekRange(), mr = monthRange(), w = spendBetween(wr[0], wr[1]), mo = spendBetween(mr[0], mr[1]), bw = S.budgetWeek || 0, bm = Math.round(bw * 4.3);
+    function line(lb, v, b) { var left = b - v; return '<div class="row"><span>' + lb + "</span><span><b>" + yen(v) + "円</b> / 予算 " + yen(b) + '円 <span style="font-weight:700;color:var(' + (left < 0 ? "--red" : "--green") + ')">' + (left < 0 ? yen(-left) + "円オーバー" : "あと" + yen(left) + "円") + "</span></span></div>"; }
+    return line("今週(月〜日)に使った額", w, bw) + line(TODAY.getMonth() + 1 + "月に使った額", mo, bm);
+  }
+  function adjSuggest() {
+    var es = S.spend.filter(function (e) { return e.est > 0; }).slice(-3); if (!es.length) return "";
+    var a = 0, b = 0; es.forEach(function (e) { a += e.yen; b += e.est; });
+    var ratio = a / b, na = Math.round(((1 + S.adj / 100) * ratio - 1) * 100 / 10) * 10; na = Math.max(-30, Math.min(30, na));
+    if (Math.abs(ratio - 1) < 0.08 || na === S.adj) return '<div class="small">最近の買い物は、見込みとほぼ同じです。</div>';
+    var lbl = { "-30": "とても安い", "-20": "かなり安い", "-10": "やや安い", "0": "ふつう", "10": "やや高い", "20": "かなり高い", "30": "とても高い" };
+    return '<div class="warn">最近' + es.length + "回の買い物は、見込みより約" + Math.round(Math.abs(ratio - 1) * 100) + "%" + (ratio > 1 ? "高く" : "安く") + '済みました。お店の値段を「' + lbl[na] + '」にすると、見込みが近づきます。<div class="btns" style="margin-top:6px"><button type="button" class="btn" data-adjto="' + na + '">「' + lbl[na] + '」にする</button></div></div>';
+  }
+  function renderSpend() {
+    var keep = { y: ($("spYen") || {}).value || "", m: ($("spMemo") || {}).value || "", d: ($("spDate") || {}).value || ymd(TODAY) };
+    var h = '<div class="card"><div class="lab">レジで払った金額を記録</div>' + spendSummaryHtml() + adjSuggest() +
+      '<div class="two"><div class="field"><label for="spYen">金額(円)</label><input type="number" id="spYen" inputmode="numeric" min="0" value="' + esc(keep.y) + '" placeholder="例 5230"></div><div class="field"><label for="spDate">日付</label><input type="date" id="spDate" value="' + esc(keep.d) + '" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div></div>' +
+      '<div class="field"><label for="spMemo">メモ(お店の名前など・なくてもよい)</label><input type="text" id="spMemo" value="' + esc(keep.m) + '" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>' +
+      '<label class="chip" style="align-self:flex-start"><input type="checkbox" id="spEst" checked>この買い物の見込みと比べる(カゴにチェックした品があればその分)</label><button type="button" class="btn solid" id="spAdd">記録する</button>';
+    var list = S.spend.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 8);
+    if (list.length) h += '<div class="lab" style="margin-top:6px">最近の記録</div>' + list.map(function (e) { return '<div class="evrow"><span class="dt">' + e.date.slice(5).replace("-", "/") + '</span><span class="tx"><b>' + yen(e.yen) + "円</b>" + (e.memo ? " " + esc(e.memo) : "") + (e.est ? "<small>見込み " + yen(e.est) + "円</small>" : "") + '</span><button type="button" class="btn link" data-spdel="' + e.id + '">消す</button></div>'; }).join("");
+    $("spBody").innerHTML = h + "</div>";
+  }
+
+  // ---- 感想
+  function tasteTag(id) {
+    var m = S.taste[id]; if (!m) return ""; var keys = {}; members().forEach(function (x) { keys[x.key] = 1; });
+    var pos = 0, neg = 0; Object.keys(m).forEach(function (k) { if (!keys[k]) return; if (m[k] > 0) pos++; if (m[k] < 0) neg++; });
+    return neg ? "残しがち" : pos ? "好評" : "";
+  }
+  function groupKeys() { var seen = {}, out = []; members().forEach(function (m) { if (!seen[m.key]) { seen[m.key] = 1; out.push(m); } }); return out; }
+  var TS = null;
+  function renderTaste() {
+    if (!TS) return; $("tsTitle").textContent = RM[TS].name + "の感想";
+    var cur = S.taste[TS] || {}, h = "";
+    groupKeys().forEach(function (m) {
+      h += '<div class="card"><div class="lab">' + esc(memLabel(m)) + '</div><div class="tabs">' + [[1, "よく食べた"], [0, "ふつう"], [-1, "残した"]].map(function (o) { return '<button type="button" data-tk="' + m.key + '" data-tv="' + o[0] + '" class="' + ((cur[m.key] || 0) === o[0] ? "on" : "") + '">' + o[1] + "</button>"; }).join("") + "</div></div>";
+    });
+    $("tsBody").innerHTML = h;
+  }
+  function renderTasteList() {
+    var ids = Object.keys(S.taste).filter(function (id) { return RM[id] && Object.keys(S.taste[id]).length; }), lab = {};
+    members().forEach(function (m) { lab[m.key] = memLabel(m); });
+    if (!ids.length) { $("tasteList").innerHTML = '<div class="small">まだ記録がありません。「きょう」の料理の横の「感想」から記録できます。</div>'; return; }
+    $("tasteList").innerHTML = ids.map(function (id) {
+      var parts = Object.keys(S.taste[id]).map(function (k) { var v = S.taste[id][k]; return (lab[k] || k) + (v > 0 ? "○" : "×"); }).join(" ");
+      return '<div class="evrow"><span class="tx"><b>' + esc(RM[id].name) + "</b><small>" + esc(parts) + '</small></span><button type="button" class="btn link" data-tkclear="' + id + '">消す</button></div>';
+    }).join("");
+  }
+  function renderNames() {
+    var h = ""; groupKeys().forEach(function (m) { h += '<div class="field"><label for="nm-' + m.key + '">' + esc(m.label) + '</label><input type="text" id="nm-' + m.key + '" data-nm="' + m.key + '" value="' + esc(S.names[m.key] || "") + '" placeholder="例: パパ、たろう" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>'; });
+    if (document.activeElement && document.activeElement.hasAttribute && document.activeElement.hasAttribute("data-nm")) return;
+    $("nameRows").innerHTML = h || '<div class="small">人数を入れると、ここに出ます。</div>';
+  }
+
+  // ---- 値段シート
+  var EDIT = null;
+  function openSheet(id) {
+    EDIT = id;
+    var f = FM[id], k = fac(id), per = PRICES[id].yen100g / k;
+    $("shTitle").textContent = id === RICE ? "お米(精米)" : f.name;
+    $("shNow").textContent = "いまの値段: 100gあたり " + (Math.round(per * 10) / 10) + "円" + (isTemp(id) ? "(仮の値)" : "");
+    $("shPrice").value = ""; $("shWeight").value = ""; $("shDirect").value = ""; $("shRes").textContent = "-";
+    $("shReset").style.visibility = priceHas(id) ? "visible" : "hidden";
+    $("veil").classList.add("on"); setTimeout(function () { $("shPrice").focus(); }, 50);
+  }
+  function closeSheet() { $("veil").classList.remove("on"); EDIT = null; }
+  function sheetValue() {
+    var p = +$("shPrice").value, w = +$("shWeight").value, d = +$("shDirect").value;
+    if (p > 0 && w > 0) return p / w * 100;
+    if (d > 0) return d;
+    return null;
+  }
+  function updateRes() { var v = sheetValue(); $("shRes").textContent = v === null ? "-" : (Math.round(v * 10) / 10) + "円"; }
+  ["shPrice", "shWeight", "shDirect"].forEach(function (id) { $(id).addEventListener("input", updateRes); });
+  $("shOk").addEventListener("click", function () {
+    var v = sheetValue(); if (v === null || !EDIT) return;
+    S.overrides[EDIT] = v * fac(EDIT); save(); closeSheet(); replan();
+  });
+  $("shReset").addEventListener("click", function () { if (EDIT) { delete S.overrides[EDIT]; save(); closeSheet(); replan(); } });
+  $("shClose").addEventListener("click", closeSheet);
+  $("veil").addEventListener("click", function (e) { if (e.target === $("veil")) closeSheet(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeSheet(); closeEditor(); closeDay(); if ($("veil4").classList.contains("on")) { closePantry(); replan(); } $("veil5").classList.remove("on"); } });
+
+  // ---- 献立を自分で決める
+  var ED = null;
+  var ROLES = ["主菜", "副菜", "汁物", "一品", "行事・お祝い"];
+  function curMeal() { return LAST.plan.days[ED.day].meals[ED.slot]; }
+  function setManual(ids, off) {
+    var k = dkey(ED.day); S.manual[k] = S.manual[k] || {};
+    S.manual[k][ED.slot] = off ? { off: true } : { ids: ids };
+    save(); replan(); renderEditor();
+  }
+  function openEditor(slot) {
+    ED = { day: SEL, slot: slot, role: "主菜" };
+    $("veil2").classList.add("on"); renderEditor();
+  }
+  function renderEditor() {
+    if (!ED || !LAST) return;
+    var m = curMeal(), di = dayInfo(ED.day), names = ["朝ごはん", "お昼ごはん", "晩ごはん"];
+    $("edTitle").textContent = di.m + "月" + di.d + "日 " + names[ED.slot];
+    var ids = m.dishes.map(function (x) { return x.id; });
+    var h = '<div class="lab">いまの献立</div>';
+    if (m.off) h += '<div class="small">この食事は家では作りません。</div>';
+    else ids.forEach(function (id) { h += '<div class="cur"><b>' + esc(RM[id].name) + '</b><button type="button" class="rm" data-rm="' + id + '">はずす</button></div>'; });
+    h += '<button type="button" class="btn" data-edoff="' + (m.off ? 0 : 1) + '">' + (m.off ? "家で作ることにする" : "この食事は作らない(外食・食べない)") + "</button>";
+    if (!m.off) {
+      h += '<div class="lab" style="margin-top:6px">料理を足す</div><div class="tabs">' + ROLES.map(function (r) { return '<button type="button" data-role="' + r + '" class="' + (ED.role === r ? "on" : "") + '">' + r + "</button>"; }).join("") + "</div><div>";
+      RECIPES.filter(function (r) { return ED.role === "行事・お祝い" ? r.special : (!r.special && r.role === ED.role); }).forEach(function (r) {
+        var bad = r.allergens.some(function (a) { return S.allergens.indexOf(a) >= 0; }), have = ids.indexOf(r.id) >= 0;
+        h += '<button type="button" class="rec" data-add="' + r.id + '"' + (bad || have ? " disabled" : "") + ">" + esc(r.name) + "<span>" + (bad ? "食べられないもの入り" : have ? "入っています" : "1人 " + yen(costOf(r.ingredients, FM, PRICES).yen) + "円") + "</span></button>";
+      });
+      h += "</div>";
+    }
+    $("edBody").innerHTML = h;
+  }
+  function closeEditor() { $("veil2").classList.remove("on"); ED = null; }
+  $("edDone").addEventListener("click", closeEditor);
+  $("veil2").addEventListener("click", function (e) { if (e.target === $("veil2")) closeEditor(); });
+  $("edAuto").addEventListener("click", function () {
+    if (!ED) return; var k = dkey(ED.day);
+    if (S.manual[k]) { delete S.manual[k][ED.slot]; if (!Object.keys(S.manual[k]).length) delete S.manual[k]; }
+    save(); replan(); renderEditor();
+  });
+
+  // ---- 予定カレンダー
+  var CAL = { y: TODAY.getFullYear(), m: TODAY.getMonth() + 1 };
+  function planIndex(y, m, d) { var t0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()).getTime(), t1 = new Date(y, m - 1, d).getTime(); var i = Math.round((t1 - t0) / 86400000); return i >= 0 && i < 7 ? i : -1; }
+  function renderCal() {
+    var y = CAL.y, m = CAL.m, first = new Date(y, m - 1, 1).getDay(), days = new Date(y, m, 0).getDate();
+    var h = '<div class="calhead"><button type="button" class="navb" data-cal="-1" aria-label="前の月">‹</button><b>' + y + "年" + m + '月</b><button type="button" class="navb" data-cal="1" aria-label="次の月">›</button></div>';
+    h += '<div class="cal">' + WD.map(function (w) { return '<div class="wh">' + w + "</div>"; }).join("");
+    for (var i = 0; i < first; i++) h += "<div></div>";
+    for (var d = 1; d <= days; d++) {
+      var w = new Date(y, m - 1, d).getDay(), hn = holName(y, m, d), evs = eventsOn(y, m, d), pi = planIndex(y, m, d);
+      h += '<button type="button" class="cell' + (w === 0 ? " sun" : "") + (w === 6 ? " sat" : "") + (hn ? " hol" : "") + (pi === 0 ? " today" : "") + '" data-day="' + y + "-" + m + "-" + d + '" aria-label="' + m + "月" + d + "日" + (hn ? " " + hn : "") + (evs.length ? " 予定あり" : "") + '">' + d + '<span class="dots">' + evs.map(function (e) { return '<i class="' + (e.type === "birthday" ? "b" : e.type === "anniv" ? "a" : "") + '"></i>'; }).join("") + "</span></button>";
+    }
+    h += "</div>";
+    h += '<div class="small"><span class="evtag b">誕生日</span><span class="evtag a">記念日</span><span class="evtag">行事</span> 赤い日は祝日です。日を押すと詳しく見られます。</div>';
+    // この月の予定
+    var rows = [];
+    for (var dd = 1; dd <= days; dd++) { var hn2 = holName(y, m, dd); if (hn2) rows.push({ d: dd, t: hn2, tag: "" }); eventsOn(y, m, dd).forEach(function (e) { rows.push({ d: dd, t: evLabel(e), tag: evTagHtml(e), hint: e.hint, e: e }); }); }
+    h += '<div class="card"><div class="lab">' + m + "月の予定</div>" + (rows.length ? rows.map(function (r) { return '<div class="evrow"><span class="dt">' + m + "/" + r.d + '</span><span class="tx">' + r.tag + r.t + (r.hint ? "<small>おすすめ: " + esc(r.hint) + "</small>" : "") + (r.e && S.evBudget[r.e.key] ? "<small>ごちそう予算 " + yen(S.evBudget[r.e.key]) + "円</small>" : "") + "</span></div>"; }).join("") : '<div class="small">この月の予定はありません。</div>') + "</div>";
+    // 予定をふやす
+    var mo = "", dyo = "";
+    for (var a = 1; a <= 12; a++) mo += '<option value="' + a + '"' + (a === m ? " selected" : "") + ">" + a + "月</option>";
+    for (var b = 1; b <= 31; b++) dyo += '<option value="' + b + '">' + b + "日</option>";
+    h += '<div class="card"><div class="lab">予定をふやす(毎年くりかえします)</div><div class="two"><div class="field"><label for="evType">種類</label><select id="evType"><option value="birthday">誕生日</option><option value="anniv">記念日</option></select></div><div class="field"><label for="evName">名前・内容</label><input type="text" id="evName" placeholder="例: パパ、結婚記念日" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div></div>' +
+      '<div class="two"><div class="field"><label for="evM">月</label><select id="evM">' + mo + '</select></div><div class="field"><label for="evD">日</label><select id="evD">' + dyo + '</select></div></div>' +
+      '<label class="chip" style="margin:8px 0"><input type="checkbox" id="evAuto"' + (S.evAuto === false ? "" : " checked") + '>お祝いの日は、晩ごはんを自動でお祝い料理にする</label>' +
+      '<div class="field"><label for="evB">ごちそうの予算(円・あとで変えられます)</label><input type="number" id="evB" inputmode="numeric" min="0" step="500" placeholder="0"></div><button type="button" class="btn solid" id="evAdd">予定を入れる</button>' +
+      (S.events.length ? '<div class="lab" style="margin-top:6px">入れた予定</div>' + S.events.map(function (e) { return '<div class="evrow"><span class="dt">' + e.m + "/" + e.d + '</span><span class="tx">' + evTagHtml(e) + evLabel(e) + '</span><button type="button" class="btn link" data-evdel="' + e.id + '">消す</button></div>'; }).join("") : "") + "</div>";
+    $("cBody").innerHTML = h;
+  }
+  function openDay(y, m, d) {
+    var hn = holName(y, m, d), pi = planIndex(y, m, d), evs = eventsOn(y, m, d);
+    $("dyTitle").textContent = m + "月" + d + "日 " + WD[new Date(y, m - 1, d).getDay()] + "曜日" + (hn ? "(" + hn + ")" : "");
+    var h = evs.length ? "" : '<div class="small">予定はありません。上のカレンダーの下から、誕生日や記念日を入れられます。</div>';
+    evs.forEach(function (e) { h += '<div class="card"><div>' + evTagHtml(e) + "<b>" + evLabel(e) + "</b></div>" + (e.hint ? '<div class="small">おすすめ: ' + esc(e.hint) + "</div>" : "") + budgetRow(e) + "</div>"; });
+    if (pi >= 0) h += '<button type="button" class="btn" data-sel="' + pi + '" data-open="today" data-closeday="1">この日の献立を見る</button>';
+    else h += '<div class="small">献立は、きょうから7日先まで作ります。</div>';
+    $("dyBody").innerHTML = h; $("veil3").classList.add("on");
+  }
+  function closeDay() { $("veil3").classList.remove("on"); }
+  $("dyClose").addEventListener("click", closeDay);
+  $("tsDone").addEventListener("click", function () { $("veil5").classList.remove("on"); TS = null; renderTasteList(); renderToday(); });
+  $("veil5").addEventListener("click", function (e) { if (e.target === $("veil5")) { $("veil5").classList.remove("on"); TS = null; renderTasteList(); renderToday(); } });
+  $("veil3").addEventListener("click", function (e) { if (e.target === $("veil3")) closeDay(); });
+
+  // ---- 家族タブ
+  var rowEls = {};
+  function buildHousehold() {
+    var g = $("groups");
+    ["a", "s", "c"].forEach(function (c) {
+      var row = document.createElement("div"); row.className = "fam";
+      var head;
+      if (c === "c") {
+        var opts = Object.keys(CHILD).map(function (k) { return '<option value="' + k + '"' + (k === S.child ? " selected" : "") + ">" + CHILD[k].label + "</option>"; }).join("");
+        head = '<span class="age">子ども<select id="childLevel" aria-label="子どもの年齢層">' + opts + "</select></span>";
+      } else head = '<span class="age">' + CAT[c].label + "<small>" + CAT[c].hint + "</small></span>";
+      row.innerHTML = head;
+      [["m", "男"], ["f", "女"]].forEach(function (sx) {
+        var ctl = document.createElement("div"); ctl.className = "ctl";
+        ctl.innerHTML = '<span class="sx">' + sx[1] + '</span><span class="mid"><button type="button" class="step" data-c="' + c + '" data-sx="' + sx[0] + '" data-d="-1" aria-label="' + CAT[c].label + sx[1] + 'を1人減らす">−</button><output id="o-' + c + sx[0] + '">0</output><button type="button" class="step" data-c="' + c + '" data-sx="' + sx[0] + '" data-d="1" aria-label="' + CAT[c].label + sx[1] + 'を1人増やす">＋</button></span>';
+        row.appendChild(ctl);
+      });
+      g.appendChild(row); rowEls[c] = row;
+    });
+    $("childLevel").addEventListener("change", function (e) { S.child = e.target.value; save(); refreshHousehold(); replan(); });
+  }
+  var LMODE = [["home", "家で食べる"], ["bento", "お弁当を作る"], ["none", "作らない(給食・外食)"]];
+  function buildLunch() {
+    var h = "";
+    ["a", "s", "c"].forEach(function (c) {
+      h += '<div class="fam" data-lunch-group="' + c + '"><span class="age">' + CAT[c].label + "</span>";
+      [["wd", "平日"], ["we", "休日"]].forEach(function (k) {
+        h += '<label class="fld"><span>' + k[1] + '</span><select data-lu="' + c + '" data-k="' + k[0] + '">' + LMODE.map(function (o) { return '<option value="' + o[0] + '"' + (S.lunch[c][k[0]] === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>";
+      });
+      h += "</div>";
+    });
+    $("lunchRows").innerHTML = h;
+  }
+  function refreshHousehold() {
+    ["a", "s", "c"].forEach(function (c) { var g = document.querySelector('[data-lunch-group="' + c + '"]'); if (g) g.style.display = (S.counts[c].m + S.counts[c].f) > 0 ? "" : "none"; });
+    ["a", "s", "c"].forEach(function (c) { ["m", "f"].forEach(function (sx) { $("o-" + c + sx).textContent = S.counts[c][sx]; }); });
+    var ms = members(), kc = 0; ms.forEach(function (m) { kc += m.kcal; });
+    $("kcalLine").textContent = ms.length ? ms.length + "人 ／ 1日に必要なエネルギーの合計 " + yen(kc) + " kcal" : "人数を選んでください。";
+  }
+  function buildConditions() {
+    $("allergens").innerHTML = ALLERGENS.map(function (a) { return '<label class="chip"><input type="checkbox" data-al="' + esc(a) + '"' + (S.allergens.indexOf(a) >= 0 ? " checked" : "") + ">" + esc(a) + "</label>"; }).join("");
+    $("dislikes").innerHTML = ["主菜", "副菜", "汁物", "一品"].map(function (role) { return '<div class="lab" style="margin:8px 0 4px;width:100%">' + role + '</div>' + RECIPES.filter(function (r) { return !r.special && r.role === role; }).map(function (r) { return '<label class="chip"><input type="checkbox" data-dl="' + r.id + '"' + (S.dislikes.indexOf(r.id) >= 0 ? " checked" : "") + ">" + esc(r.name) + "</label>"; }).join(""); }).join("");
+    $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3);
+    var opts = [-30, -20, -10, 0, 10, 20, 30], near = opts.reduce(function (a, b) { return Math.abs(b - S.adj) < Math.abs(a - S.adj) ? b : a; });
+    S.adj = near; $("adj").value = String(near);
+  }
+  function buildPriceTable() {
+    var by = {}; FOODS.forEach(function (f) { (by[f.cat] = by[f.cat] || []).push(f); });
+    var h = "";
+    CAT_ORDER.forEach(function (c) {
+      if (!by[c]) return;
+      h += '<details data-cat="' + c + '" style="margin-bottom:6px"><summary>' + c + "(" + by[c].length + '品)</summary><div class="wrap"><table><thead><tr><th>食材</th><th>100gの値段(円)</th><th>状態</th></tr></thead><tbody>';
+      by[c].forEach(function (f) {
+        h += '<tr data-food="' + f.id + '" data-name="' + esc(f.name) + '"><td>' + esc(f.id === RICE ? "お米(精米)" : f.name) + '</td><td><input type="number" min="0" step="1" style="width:6em;min-height:36px;padding:4px 8px" data-ov="' + f.id + '" aria-label="' + esc(f.name) + 'の100gの値段"></td><td class="st"></td></tr>';
+      });
+      h += "</tbody></table></div></details>";
+    });
+    $("priceTable").innerHTML = h;
+  }
+  function refreshPriceTable() {
+    if (!PRICES) return;
+    var rows = $("priceTable").querySelectorAll("tr[data-food]");
+    for (var i = 0; i < rows.length; i++) {
+      var tr = rows[i], id = tr.getAttribute("data-food"), input = tr.querySelector("input");
+      if (document.activeElement !== input) input.value = Math.round(PRICES[id].yen100g / fac(id) * 10) / 10;
+      tr.querySelector(".st").textContent = priceHas(id) ? "入力済み" : (LOADED && LOADED[id] ? (LOADED[id].fromArea || LOADED[id].asOf ? "公式統計(" + esc([LOADED[id].fromArea, LOADED[id].asOf ? LOADED[id].asOf + "分" : ""].filter(Boolean).join("・")) + ")" : "公式統計") : "仮");
+    }
+  }
+  function filterPrices() {
+    var q = $("priceFilter").value.trim(), ds = $("priceTable").querySelectorAll("details");
+    for (var i = 0; i < ds.length; i++) {
+      var any = false, trs = ds[i].querySelectorAll("tr[data-food]");
+      for (var j = 0; j < trs.length; j++) { var show = !q || trs[j].getAttribute("data-name").indexOf(q) >= 0; trs[j].hidden = !show; if (show) any = true; }
+      ds[i].hidden = !any; if (q && any) ds[i].open = true;
+    }
+  }
+
+  // ---- タブと操作
+  function go(tab) {
+    TAB = tab;
+    ["today", "week", "cal", "shop", "family"].forEach(function (t) { $("p-" + t).classList.toggle("on", t === tab); });
+    var bs = $("nav").querySelectorAll("button");
+    for (var i = 0; i < bs.length; i++) bs[i].classList.toggle("on", bs[i].getAttribute("data-tab") === tab);
+    $("basket").classList.toggle("on", tab === "shop" && !!LAST);
+    if (tab === "today" && SEL !== 0 && arguments[1] !== "keep") { /* 選んだ日を表示 */ }
+    window.scrollTo(0, 0);
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest("button,[data-go]") : e.target; if (!t) return;
+    if (t.hasAttribute("data-tab")) { if (t.getAttribute("data-tab") === "today") { SEL = 0; renderToday(); } go(t.getAttribute("data-tab")); return; }
+    if (t.hasAttribute("data-cal")) { CAL.m += +t.getAttribute("data-cal"); if (CAL.m < 1) { CAL.m = 12; CAL.y--; } if (CAL.m > 12) { CAL.m = 1; CAL.y++; } renderCal(); return; }
+    if (t.hasAttribute("data-day")) { var pp = t.getAttribute("data-day").split("-"); openDay(+pp[0], +pp[1], +pp[2]); return; }
+    if (t.hasAttribute("data-closeday")) closeDay();
+    if (t.id === "evAdd") {
+      var nm = $("evName").value.trim().slice(0, 40); if (!nm) { $("evName").focus(); return; }
+      var ev = { id: String(Date.now()), type: $("evType").value, name: nm, m: +$("evM").value, d: +$("evD").value };
+      S.events.push(ev); if (+$("evB").value > 0) S.evBudget["c:" + ev.id] = +$("evB").value;
+      save(); replan(); return;
+    }
+    if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
+    if (t.id === "bkSave") {
+      var bk = { app: "kondate-note", version: "@@VERSION@@", savedAt: new Date().toISOString(), data: S };
+      var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
+      var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      return;
+    }
+    if (t.id === "bkLoad") { $("bkFile").click(); return; }
+    if (t.hasAttribute("data-pantry")) { openPantry(); return; }
+    if (t.hasAttribute("data-pnrm")) { delete S.pantry[t.getAttribute("data-pnrm")]; save(); renderPantry(); renderPantryFound(); return; }
+    if (t.hasAttribute("data-pnadd")) { var pid = t.getAttribute("data-pnadd"), u0 = unitOf(pid); S.pantry[pid] = (u0[1] === 1 ? 300 : u0[1]) / fac(pid); save(); $("pnSearch").value = ""; renderPantry(); renderPantryFound(); return; }
+    if (t.id === "spAdd") {
+      var yv = +$("spYen").value; if (!(yv > 0)) { $("spYen").focus(); return; }
+      S.spend.push({ id: String(Date.now()), date: $("spDate").value || ymd(TODAY), yen: Math.round(yv), memo: $("spMemo").value.trim().slice(0, 60), est: $("spEst").checked ? Math.round(shopTotal()) : 0 });
+      $("spYen").value = ""; $("spMemo").value = ""; save(); renderSpend(); renderWeek(); return;
+    }
+    if (t.hasAttribute("data-spdel")) { var sid = t.getAttribute("data-spdel"); S.spend = S.spend.filter(function (x) { return x.id !== sid; }); save(); renderSpend(); renderWeek(); return; }
+    if (t.hasAttribute("data-adjto")) { S.adj = +t.getAttribute("data-adjto"); $("adj").value = String(S.adj); save(); replan(); return; }
+    if (t.hasAttribute("data-taste")) { TS = t.getAttribute("data-taste"); renderTaste(); $("veil5").classList.add("on"); return; }
+    if (t.hasAttribute("data-tk")) { var tk = t.getAttribute("data-tk"), tv = +t.getAttribute("data-tv"); S.taste[TS] = S.taste[TS] || {}; if (tv === 0) delete S.taste[TS][tk]; else S.taste[TS][tk] = tv; if (!Object.keys(S.taste[TS]).length) delete S.taste[TS]; save(); renderTaste(); return; }
+    if (t.hasAttribute("data-tkclear")) { delete S.taste[t.getAttribute("data-tkclear")]; save(); renderTasteList(); return; }
+    if (t.hasAttribute("data-evnext")) {
+      var nk = t.getAttribute("data-evnext"), di4 = dayInfo(SEL), ev4 = eventsOn(di4.y, di4.m, di4.d).filter(function (x) { return x.key === nk; })[0];
+      if (ev4) { S.evPick = S.evPick || {}; var pk = nk + "|" + dayYear(ev4); S.evPick[pk] = (S.evPick[pk] || 0) + 1; save(); replan(); }
+      return;
+    }
+    if (t.hasAttribute("data-evput")) {
+      var di3 = dayInfo(SEL), ek2 = t.getAttribute("data-evput"), evx = eventsOn(di3.y, di3.m, di3.d).filter(function (x) { return x.key === ek2; })[0];
+      if (evx) { var kk = dkey(SEL); S.manual[kk] = S.manual[kk] || {}; S.manual[kk][2] = { ids: evRecipes(evx) }; save(); replan(); }
+      return;
+    }
+    if (t.hasAttribute("data-edit")) { openEditor(+t.getAttribute("data-edit")); return; }
+    if (t.hasAttribute("data-rm") && ED) { var rid = t.getAttribute("data-rm"); setManual(curMeal().dishes.map(function (x) { return x.id; }).filter(function (x) { return x !== rid; })); return; }
+    if (t.hasAttribute("data-add") && ED) { setManual(curMeal().dishes.map(function (x) { return x.id; }).concat([t.getAttribute("data-add")])); return; }
+    if (t.hasAttribute("data-role") && ED) { ED.role = t.getAttribute("data-role"); renderEditor(); return; }
+    if (t.hasAttribute("data-edoff") && ED) { if (t.getAttribute("data-edoff") === "1") setManual([], true); else { var k2 = dkey(ED.day); delete S.manual[k2][ED.slot]; save(); replan(); renderEditor(); } return; }
+    if (t.hasAttribute("data-go")) { go(t.getAttribute("data-go")); return; }
+    if (t.hasAttribute("data-sel")) { SEL = +t.getAttribute("data-sel"); renderToday(); if (t.hasAttribute("data-open")) go("today"); return; }
+    if (t.hasAttribute("data-ck")) { var id = t.getAttribute("data-ck"); if (S.checked[id]) delete S.checked[id]; else S.checked[id] = 1; save(); renderShop(); return; }
+    if (t.hasAttribute("data-price")) { openSheet(t.getAttribute("data-price")); return; }
+    if (t.id === "unck") { S.checked = {}; save(); renderShop(); return; }
+    if (t.id === "againBtn") { S.seed += 1; save(); replan(); return; }
+    if (t.id === "resetPrices") { S.overrides = {}; save(); replan(); return; }
+    if (t.classList.contains("step")) {
+      var c = t.getAttribute("data-c"), sx = t.getAttribute("data-sx"), d = +t.getAttribute("data-d");
+      S.counts[c][sx] = Math.max(0, Math.min(9, S.counts[c][sx] + d)); save(); refreshHousehold(); replan();
+    }
+  });
+  $("priceFilter").addEventListener("input", filterPrices);
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.hasAttribute("data-al")) {
+      var a = t.getAttribute("data-al"), i = S.allergens.indexOf(a);
+      if (t.checked && i < 0) S.allergens.push(a); if (!t.checked && i >= 0) S.allergens.splice(i, 1); save(); replan();
+    } else if (t.hasAttribute("data-dl")) {
+      var r = t.getAttribute("data-dl"), j = S.dislikes.indexOf(r);
+      if (t.checked && j < 0) S.dislikes.push(r); if (!t.checked && j >= 0) S.dislikes.splice(j, 1); save(); replan();
+    } else if (t.hasAttribute("data-ov")) {
+      var id = t.getAttribute("data-ov");
+      if (t.value === "") delete S.overrides[id]; else S.overrides[id] = +t.value * fac(id);
+      save(); replan();
+    } else if (t.id === "budgetWeek") {
+      S.budgetAuto = false; S.budgetWeek = Math.max(0, +t.value || 0); $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); save(); replan();
+    } else if (t.id === "budgetMonth") {
+      S.budgetAuto = false; S.budgetWeek = Math.round(Math.max(0, +t.value || 0) / 4.3); $("budgetWeek").value = S.budgetWeek; save(); replan();
+    } else if (t.hasAttribute("data-pnq")) {
+      var qid = t.getAttribute("data-pnq"), qv = +t.value; if (qv > 0) S.pantry[qid] = qv * unitOf(qid)[1] / fac(qid); else delete S.pantry[qid]; save(); renderPantry();
+    } else if (t.hasAttribute("data-nm")) {
+      S.names[t.getAttribute("data-nm")] = t.value.trim().slice(0, 20); save(); renderToday(); renderTasteList();
+    } else if (t.hasAttribute("data-eb")) {
+      var ek = t.getAttribute("data-eb"); if (+t.value > 0) S.evBudget[ek] = +t.value; else delete S.evBudget[ek]; save(); replan();
+    } else if (t.hasAttribute("data-lu")) {
+      S.lunch[t.getAttribute("data-lu")][t.getAttribute("data-k")] = t.value; save(); replan();
+    } else if (t.id === "evAuto") { S.evAuto = !!t.checked; save(); replan();
+    } else if (t.id === "adj") { S.adj = +t.value || 0; save(); replan(); }
+  });
+
+  var UPDATED = "";
+  function setPriceDate() {
+    var d = UPDATED ? UPDATED.slice(0, 10).split("-") : null;
+    var s = d ? "値段の更新日: " + d[0] + "年" + (+d[1]) + "月" + (+d[2]) + "日(公式統計)" : "値段の更新日: まだありません(仮の値を使っています)";
+    ["priceDate", "priceDate2"].forEach(function (id) { var el = $(id); if (el) el.textContent = s; });
+  }
+
+  function loadRemotePrices() {
+    if (!PRICES_URL) return;
+    try {
+      fetch(PRICES_URL).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.prices) { LOADED = j.prices; UPDATED = j.updatedAt || ""; setPriceDate(); $("priceNote").textContent = "値段は公式統計(小売物価統計調査・" + (j.area || "") + ")の最新値です。更新: " + (j.updatedAt || "").slice(0, 10) + "。" + (j.credit || ""); replan(); }
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  $("bkFile").addEventListener("change", function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var j = JSON.parse(String(fr.result));
+        var d = (j && j.data) ? j.data : j;
+        if (!d || typeof d !== "object" || !d.counts) throw new Error("形式ちがい");
+        delete d.__proto__; delete d.constructor; delete d.prototype;
+        if (!window.confirm("いまの記録を、控えの内容で置きかえます。よろしいですか。")) return;
+        localStorage.setItem(KEY, JSON.stringify(d));
+        location.reload();
+      } catch (e) { window.alert("この控えは読み込めませんでした。書き出したファイルをそのまま選んでください。"); }
+    };
+    fr.readAsText(f);
+    this.value = "";
+  });
+
+  try {
+    buildHousehold(); buildLunch(); buildConditions(); buildPriceTable(); refreshHousehold(); setPriceDate(); replan(); loadRemotePrices();
+  } catch (err) {
+    // 何かの理由で画面が作れなかったときも、何もできない状態にはしない
+    document.getElementById("app").insertAdjacentHTML("afterbegin",
+      '<div class="card" style="border:2px solid var(--red)"><b>画面をうまく作れませんでした。</b>' +
+      '<div class="small">保存された記録がこのアプリの形と合っていないようです。控えがあれば戻せます。なければ、はじめから設定し直してください。</div>' +
+      '<div class="btns"><button type="button" class="btn" id="bkSave2">控えを書き出す</button>' +
+      '<button type="button" class="btn solid" id="bkReset">記録を消してやり直す</button></div></div>');
+    document.getElementById("bkSave2").addEventListener("click", function () { document.getElementById("bkSave").click(); });
+    document.getElementById("bkReset").addEventListener("click", function () {
+      if (window.confirm("この端末に保存された記録をすべて消します。よろしいですか。")) { try { localStorage.removeItem(KEY); } catch (e2) {} location.reload(); }
+    });
+    throw err;
+  }
+})();
+</script>

@@ -1,0 +1,6792 @@
+[
+ {
+  "id": "m01",
+  "name": "鶏むね肉の照り焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11220",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 153.2,
+   "protein": 23.8,
+   "fat": 4.9,
+   "carb": 7.2,
+   "fiber": 0.0,
+   "salt_g": 1.0,
+   "k_mg": 393.7,
+   "ca_mg": 5.9,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m02",
+  "name": "豚肉のしょうが焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11126",
+    "g": 90
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 230.0,
+   "protein": 20.0,
+   "fat": 13.8,
+   "carb": 9.1,
+   "fiber": 0.6,
+   "salt_g": 1.2,
+   "k_mg": 397.5,
+   "ca_mg": 13.8,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m03",
+  "name": "鮭の塩焼き",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "10134",
+    "g": 80
+   },
+   {
+    "food": "17012",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 99.2,
+   "protein": 17.8,
+   "fat": 3.3,
+   "carb": 3.1,
+   "fiber": 0.0,
+   "salt_g": 1.2,
+   "k_mg": 281.0,
+   "ca_mg": 11.4,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "さけ"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m04",
+  "name": "さばのみそ煮",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10154",
+    "g": 80
+   },
+   {
+    "food": "17045",
+    "g": 12
+   },
+   {
+    "food": "03003",
+    "g": 5
+   },
+   {
+    "food": "16001",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 215.5,
+   "protein": 18.0,
+   "fat": 14.2,
+   "carb": 12.4,
+   "fiber": 0.6,
+   "salt_g": 1.7,
+   "k_mg": 310.0,
+   "ca_mg": 17.0,
+   "fe_mg": 1.4
+  },
+  "allergens": [
+   "さば",
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "m05",
+  "name": "麻婆豆腐",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "04032",
+    "g": 150
+   },
+   {
+    "food": "11163",
+    "g": 40
+   },
+   {
+    "food": "06226",
+    "g": 15
+   },
+   {
+    "food": "17045",
+    "g": 5
+   },
+   {
+    "food": "17007",
+    "g": 5
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 237.8,
+   "protein": 18.8,
+   "fat": 17.5,
+   "carb": 4.7,
+   "fiber": 2.3,
+   "salt_g": 1.4,
+   "k_mg": 349.5,
+   "ca_mg": 153.8,
+   "fe_mg": 3.0
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m06",
+  "name": "ハンバーグ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11163",
+    "g": 50
+   },
+   {
+    "food": "11089",
+    "g": 50
+   },
+   {
+    "food": "06153",
+    "g": 30
+   },
+   {
+    "food": "01077",
+    "g": 8
+   },
+   {
+    "food": "12004",
+    "g": 10
+   },
+   {
+    "food": "17036",
+    "g": 10
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 314.4,
+   "protein": 20.0,
+   "fat": 23.6,
+   "carb": 11.9,
+   "fiber": 0.9,
+   "salt_g": 0.6,
+   "k_mg": 379.8,
+   "ca_mg": 19.3,
+   "fe_mg": 2.1
+  },
+  "allergens": [
+   "卵",
+   "小麦",
+   "牛肉",
+   "豚肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m07",
+  "name": "鶏の唐揚げ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11224",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "16001",
+    "g": 3
+   },
+   {
+    "food": "01015",
+    "g": 10
+   },
+   {
+    "food": "14006",
+    "g": 12
+   }
+  ],
+  "nutrition": {
+   "kcal": 262.0,
+   "protein": 20.3,
+   "fat": 17.1,
+   "carb": 10.7,
+   "fiber": 0.2,
+   "salt_g": 1.1,
+   "k_mg": 354.5,
+   "ca_mg": 8.8,
+   "fe_mg": 0.8
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m08",
+  "name": "豚肉と野菜の炒め物",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11131",
+    "g": 70
+   },
+   {
+    "food": "06061",
+    "g": 80
+   },
+   {
+    "food": "06214",
+    "g": 20
+   },
+   {
+    "food": "06245",
+    "g": 15
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "14006",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 164.4,
+   "protein": 16.7,
+   "fat": 8.4,
+   "carb": 8.2,
+   "fiber": 2.3,
+   "salt_g": 1.5,
+   "k_mg": 516.4,
+   "ca_mg": 44.7,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m09",
+  "name": "肉じゃが",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11076",
+    "g": 40
+   },
+   {
+    "food": "02017",
+    "g": 100
+   },
+   {
+    "food": "06153",
+    "g": 50
+   },
+   {
+    "food": "06214",
+    "g": 30
+   },
+   {
+    "food": "17007",
+    "g": 10
+   },
+   {
+    "food": "03003",
+    "g": 5
+   },
+   {
+    "food": "16001",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 170.8,
+   "protein": 11.3,
+   "fat": 2.9,
+   "carb": 21.2,
+   "fiber": 10.5,
+   "salt_g": 1.5,
+   "k_mg": 742.4,
+   "ca_mg": 24.0,
+   "fe_mg": 1.8
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "牛肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m10",
+  "name": "だし巻き卵",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "12004",
+    "g": 100
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "17007",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 173.0,
+   "protein": 12.4,
+   "fat": 12.2,
+   "carb": 6.6,
+   "fiber": 0.0,
+   "salt_g": 0.7,
+   "k_mg": 137.9,
+   "ca_mg": 46.6,
+   "fe_mg": 1.5
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m11",
+  "name": "あじの塩焼き",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "10003",
+    "g": 100
+   },
+   {
+    "food": "17012",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 112.0,
+   "protein": 19.7,
+   "fat": 4.5,
+   "carb": 3.3,
+   "fiber": 0.0,
+   "salt_g": 1.3,
+   "k_mg": 361.0,
+   "ca_mg": 66.2,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "m12",
+  "name": "ぶりの照り焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10241",
+    "g": 80
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "16001",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 199.2,
+   "protein": 17.6,
+   "fat": 14.1,
+   "carb": 9.9,
+   "fiber": 0.0,
+   "salt_g": 0.9,
+   "k_mg": 327.7,
+   "ca_mg": 5.9,
+   "fe_mg": 1.1
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "s01",
+  "name": "ほうれんそうのおひたし",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06267",
+    "g": 80
+   },
+   {
+    "food": "17007",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 17.4,
+   "protein": 2.1,
+   "fat": 0.3,
+   "carb": 0.4,
+   "fiber": 2.2,
+   "salt_g": 0.6,
+   "k_mg": 567.6,
+   "ca_mg": 40.4,
+   "fe_mg": 1.7
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s02",
+  "name": "キャベツとトマトのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06061",
+    "g": 70
+   },
+   {
+    "food": "06182",
+    "g": 40
+   },
+   {
+    "food": "17042",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 77.5,
+   "protein": 1.2,
+   "fat": 6.2,
+   "carb": 4.6,
+   "fiber": 1.7,
+   "salt_g": 0.2,
+   "k_mg": 218.0,
+   "ca_mg": 32.8,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "卵"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s03",
+  "name": "冷奴",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "04033",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "06226",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 60.0,
+   "protein": 5.6,
+   "fat": 3.5,
+   "carb": 1.7,
+   "fiber": 1.0,
+   "salt_g": 0.4,
+   "k_mg": 171.7,
+   "ca_mg": 77.7,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "s04",
+  "name": "納豆",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "04046",
+    "g": 45
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 85.1,
+   "protein": 7.7,
+   "fat": 4.5,
+   "carb": 2.4,
+   "fiber": 4.3,
+   "salt_g": 0.4,
+   "k_mg": 308.7,
+   "ca_mg": 41.4,
+   "fe_mg": 1.5
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "s05",
+  "name": "ひじきの煮物",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "09050",
+    "g": 8
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "04040",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 5
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 86.2,
+   "protein": 3.6,
+   "fat": 5.7,
+   "carb": 4.2,
+   "fiber": 4.7,
+   "salt_g": 1.1,
+   "k_mg": 585.1,
+   "ca_mg": 116.1,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s06",
+  "name": "きんぴらごぼう",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06084",
+    "g": 60
+   },
+   {
+    "food": "06214",
+    "g": 20
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "14006",
+    "g": 3
+   },
+   {
+    "food": "05018",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 90.1,
+   "protein": 1.9,
+   "fat": 3.6,
+   "carb": 11.1,
+   "fiber": 4.1,
+   "salt_g": 0.9,
+   "k_mg": 279.6,
+   "ca_mg": 46.2,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s07",
+  "name": "かぼちゃの煮物",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06048",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 98.2,
+   "protein": 2.4,
+   "fat": 0.3,
+   "carb": 22.1,
+   "fiber": 3.5,
+   "salt_g": 0.9,
+   "k_mg": 453.5,
+   "ca_mg": 23.8,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s08",
+  "name": "ブロッコリーのごま和え",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06263",
+    "g": 80
+   },
+   {
+    "food": "05018",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "03003",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 63.9,
+   "protein": 5.4,
+   "fat": 2.6,
+   "carb": 5.1,
+   "fiber": 4.6,
+   "salt_g": 0.4,
+   "k_mg": 396.1,
+   "ca_mg": 88.9,
+   "fe_mg": 1.5
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s09",
+  "name": "大根と油揚げの煮物",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06134",
+    "g": 120
+   },
+   {
+    "food": "04040",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 72.0,
+   "protein": 3.3,
+   "fat": 3.6,
+   "carb": 7.4,
+   "fiber": 1.7,
+   "salt_g": 0.9,
+   "k_mg": 308.1,
+   "ca_mg": 60.4,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s10",
+  "name": "もやしとにらの炒め物",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06287",
+    "g": 80
+   },
+   {
+    "food": "06207",
+    "g": 20
+   },
+   {
+    "food": "14006",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 53.4,
+   "protein": 3.2,
+   "fat": 4.2,
+   "carb": 1.4,
+   "fiber": 2.4,
+   "salt_g": 0.5,
+   "k_mg": 230.5,
+   "ca_mg": 29.7,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s11",
+  "name": "トマトときゅうりのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06182",
+    "g": 60
+   },
+   {
+    "food": "06065",
+    "g": 40
+   },
+   {
+    "food": "14001",
+    "g": 3
+   },
+   {
+    "food": "17015",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 44.8,
+   "protein": 0.8,
+   "fat": 3.1,
+   "carb": 3.0,
+   "fiber": 1.0,
+   "salt_g": 0.3,
+   "k_mg": 206.4,
+   "ca_mg": 14.7,
+   "fe_mg": 0.2
+  },
+  "allergens": [],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s12",
+  "name": "小松菜と油揚げの煮びたし",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06086",
+    "g": 80
+   },
+   {
+    "food": "04040",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 4
+   },
+   {
+    "food": "03003",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 55.0,
+   "protein": 3.8,
+   "fat": 3.6,
+   "carb": 2.3,
+   "fiber": 1.6,
+   "salt_g": 0.6,
+   "k_mg": 424.2,
+   "ca_mg": 168.2,
+   "fe_mg": 2.6
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "j01",
+  "name": "豆腐とわかめのみそ汁",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "04032",
+    "g": 30
+   },
+   {
+    "food": "09040",
+    "g": 1
+   },
+   {
+    "food": "17045",
+    "g": 10
+   },
+   {
+    "food": "06226",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 43.6,
+   "protein": 3.6,
+   "fat": 2.1,
+   "carb": 2.6,
+   "fiber": 1.2,
+   "salt_g": 1.4,
+   "k_mg": 141.0,
+   "ca_mg": 48.0,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j02",
+  "name": "大根・にんじん・油揚げのみそ汁",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06134",
+    "g": 30
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "04040",
+    "g": 5
+   },
+   {
+    "food": "17045",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 44.8,
+   "protein": 2.6,
+   "fat": 2.4,
+   "carb": 3.5,
+   "fiber": 1.2,
+   "salt_g": 1.2,
+   "k_mg": 141.3,
+   "ca_mg": 34.8,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j03",
+  "name": "豚汁",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11129",
+    "g": 20
+   },
+   {
+    "food": "06134",
+    "g": 30
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "02010",
+    "g": 30
+   },
+   {
+    "food": "17045",
+    "g": 12
+   },
+   {
+    "food": "06226",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 122.0,
+   "protein": 5.1,
+   "fat": 7.9,
+   "carb": 7.9,
+   "fiber": 2.2,
+   "salt_g": 1.5,
+   "k_mg": 409.6,
+   "ca_mg": 27.9,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "大豆",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d01",
+  "name": "親子丼",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "11224",
+    "g": 60
+   },
+   {
+    "food": "12004",
+    "g": 50
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "17007",
+    "g": 10
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "16001",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 492.6,
+   "protein": 23.7,
+   "fat": 8.7,
+   "carb": 83.2,
+   "fiber": 3.6,
+   "salt_g": 1.8,
+   "k_mg": 414.3,
+   "ca_mg": 41.9,
+   "fe_mg": 1.6
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d02",
+  "name": "カレーライス",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "11131",
+    "g": 60
+   },
+   {
+    "food": "02017",
+    "g": 60
+   },
+   {
+    "food": "06153",
+    "g": 60
+   },
+   {
+    "food": "06214",
+    "g": 30
+   },
+   {
+    "food": "17051",
+    "g": 20
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 581.0,
+   "protein": 21.1,
+   "fat": 14.2,
+   "carb": 94.0,
+   "fiber": 11.4,
+   "salt_g": 2.2,
+   "k_mg": 764.0,
+   "ca_mg": 46.2,
+   "fe_mg": 1.8
+  },
+  "allergens": [
+   "乳",
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d03",
+  "name": "ミートソースのスパゲッティ",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01064",
+    "g": 220
+   },
+   {
+    "food": "11163",
+    "g": 50
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "17036",
+    "g": 25
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 503.3,
+   "protein": 22.4,
+   "fat": 13.7,
+   "carb": 75.9,
+   "fiber": 7.6,
+   "salt_g": 3.5,
+   "k_mg": 330.8,
+   "ca_mg": 31.4,
+   "fe_mg": 2.3
+  },
+  "allergens": [
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m13",
+  "name": "鶏もも肉の照り焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11224",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 161.2,
+   "protein": 19.5,
+   "fat": 8.0,
+   "carb": 6.1,
+   "fiber": 0.0,
+   "salt_g": 1.1,
+   "k_mg": 343.7,
+   "ca_mg": 6.9,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m14",
+  "name": "鶏むね肉の南蛮風",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11220",
+    "g": 90
+   },
+   {
+    "food": "01015",
+    "g": 8
+   },
+   {
+    "food": "12004",
+    "g": 15
+   },
+   {
+    "food": "14006",
+    "g": 8
+   },
+   {
+    "food": "17015",
+    "g": 8
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 5
+   },
+   {
+    "food": "06153",
+    "g": 20
+   }
+  ],
+  "nutrition": {
+   "kcal": 247.3,
+   "protein": 24.1,
+   "fat": 11.4,
+   "carb": 16.8,
+   "fiber": 0.5,
+   "salt_g": 1.0,
+   "k_mg": 415.1,
+   "ca_mg": 17.5,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m15",
+  "name": "鶏ささみのフライ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11227",
+    "g": 80
+   },
+   {
+    "food": "01015",
+    "g": 6
+   },
+   {
+    "food": "12004",
+    "g": 10
+   },
+   {
+    "food": "01077",
+    "g": 10
+   },
+   {
+    "food": "14006",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 229.8,
+   "protein": 21.9,
+   "fat": 12.3,
+   "carb": 12.0,
+   "fiber": 0.4,
+   "salt_g": 0.2,
+   "k_mg": 358.6,
+   "ca_mg": 11.5,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "卵",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m16",
+  "name": "チキンのトマト煮",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11224",
+    "g": 90
+   },
+   {
+    "food": "06182",
+    "g": 100
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "14001",
+    "g": 5
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   },
+   {
+    "food": "03003",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 183.5,
+   "protein": 18.2,
+   "fat": 9.6,
+   "carb": 9.5,
+   "fiber": 1.6,
+   "salt_g": 0.8,
+   "k_mg": 558.6,
+   "ca_mg": 18.4,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "鶏肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m17",
+  "name": "豚肉のみそ炒め",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11126",
+    "g": 80
+   },
+   {
+    "food": "06061",
+    "g": 60
+   },
+   {
+    "food": "06245",
+    "g": 20
+   },
+   {
+    "food": "17045",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "14006",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 236.9,
+   "protein": 18.8,
+   "fat": 14.1,
+   "carb": 10.5,
+   "fiber": 1.9,
+   "salt_g": 1.1,
+   "k_mg": 454.7,
+   "ca_mg": 39.6,
+   "fe_mg": 0.8
+  },
+  "allergens": [
+   "大豆",
+   "豚肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m18",
+  "name": "豚バラと大根の煮物",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11129",
+    "g": 60
+   },
+   {
+    "food": "06134",
+    "g": 120
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "16001",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 267.9,
+   "protein": 9.8,
+   "fat": 21.4,
+   "carb": 10.0,
+   "fiber": 1.6,
+   "salt_g": 1.2,
+   "k_mg": 451.7,
+   "ca_mg": 32.0,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m19",
+  "name": "とんかつ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11126",
+    "g": 90
+   },
+   {
+    "food": "01015",
+    "g": 6
+   },
+   {
+    "food": "12004",
+    "g": 10
+   },
+   {
+    "food": "01077",
+    "g": 12
+   },
+   {
+    "food": "14006",
+    "g": 12
+   },
+   {
+    "food": "06061",
+    "g": 40
+   }
+  ],
+  "nutrition": {
+   "kcal": 354.9,
+   "protein": 22.5,
+   "fat": 24.5,
+   "carb": 15.5,
+   "fiber": 1.2,
+   "salt_g": 0.2,
+   "k_mg": 414.8,
+   "ca_mg": 30.1,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "卵",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m20",
+  "name": "豚肉のねぎ塩炒め",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11131",
+    "g": 80
+   },
+   {
+    "food": "06226",
+    "g": 30
+   },
+   {
+    "food": "14002",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   },
+   {
+    "food": "05018",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 153.7,
+   "protein": 17.8,
+   "fat": 8.4,
+   "carb": 5.5,
+   "fiber": 0.9,
+   "salt_g": 0.7,
+   "k_mg": 352.7,
+   "ca_mg": 26.2,
+   "fe_mg": 0.8
+  },
+  "allergens": [
+   "ごま",
+   "豚肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m21",
+  "name": "牛肉と玉ねぎの甘辛炒め",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11076",
+    "g": 70
+   },
+   {
+    "food": "06153",
+    "g": 60
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 5
+   },
+   {
+    "food": "16001",
+    "g": 8
+   },
+   {
+    "food": "14006",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 164.8,
+   "protein": 15.2,
+   "fat": 6.8,
+   "carb": 12.5,
+   "fiber": 0.9,
+   "salt_g": 1.2,
+   "k_mg": 345.7,
+   "ca_mg": 14.9,
+   "fe_mg": 2.1
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "牛肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m22",
+  "name": "ロールキャベツ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11163",
+    "g": 60
+   },
+   {
+    "food": "06061",
+    "g": 90
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "01077",
+    "g": 5
+   },
+   {
+    "food": "06182",
+    "g": 60
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 178.5,
+   "protein": 12.9,
+   "fat": 10.7,
+   "carb": 10.6,
+   "fiber": 2.7,
+   "salt_g": 0.6,
+   "k_mg": 507.0,
+   "ca_mg": 50.4,
+   "fe_mg": 1.1
+  },
+  "allergens": [
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m23",
+  "name": "たらのホイル焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10205",
+    "g": 80
+   },
+   {
+    "food": "08016",
+    "g": 30
+   },
+   {
+    "food": "06226",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 4
+   },
+   {
+    "food": "14017",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 99.9,
+   "protein": 15.4,
+   "fat": 3.6,
+   "carb": 4.8,
+   "fiber": 1.1,
+   "salt_g": 0.9,
+   "k_mg": 427.7,
+   "ca_mg": 31.3,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "乳",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "m24",
+  "name": "さんまの塩焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10173",
+    "g": 100
+   },
+   {
+    "food": "17012",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 287.0,
+   "protein": 18.1,
+   "fat": 25.6,
+   "carb": 4.4,
+   "fiber": 0.0,
+   "salt_g": 1.4,
+   "k_mg": 201.0,
+   "ca_mg": 28.2,
+   "fe_mg": 1.4
+  },
+  "allergens": [
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "m25",
+  "name": "いわしの蒲焼き風",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10047",
+    "g": 80
+   },
+   {
+    "food": "01015",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "14006",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 195.8,
+   "protein": 16.2,
+   "fat": 11.4,
+   "carb": 11.9,
+   "fiber": 0.1,
+   "salt_g": 1.0,
+   "k_mg": 244.1,
+   "ca_mg": 61.9,
+   "fe_mg": 1.8
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m26",
+  "name": "かれいの煮付け",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10100",
+    "g": 90
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 5
+   },
+   {
+    "food": "16001",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 114.3,
+   "protein": 18.3,
+   "fat": 1.2,
+   "carb": 8.0,
+   "fiber": 0.0,
+   "salt_g": 1.4,
+   "k_mg": 328.7,
+   "ca_mg": 41.3,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "m27",
+  "name": "鮭のムニエル",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10134",
+    "g": 80
+   },
+   {
+    "food": "01015",
+    "g": 6
+   },
+   {
+    "food": "14017",
+    "g": 6
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 162.1,
+   "protein": 18.4,
+   "fat": 8.2,
+   "carb": 8.0,
+   "fiber": 0.1,
+   "salt_g": 0.9,
+   "k_mg": 288.9,
+   "ca_mg": 13.4,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "さけ",
+   "乳",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m28",
+  "name": "えびのチリソース炒め",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10329",
+    "g": 70
+   },
+   {
+    "food": "06226",
+    "g": 15
+   },
+   {
+    "food": "17036",
+    "g": 15
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 122.1,
+   "protein": 13.6,
+   "fat": 4.3,
+   "carb": 9.8,
+   "fiber": 0.6,
+   "salt_g": 1.2,
+   "k_mg": 259.7,
+   "ca_mg": 55.6,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "えび",
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "m29",
+  "name": "いかと大根の煮物",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10345",
+    "g": 80
+   },
+   {
+    "food": "06134",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "16001",
+    "g": 6
+   }
+  ],
+  "nutrition": {
+   "kcal": 103.9,
+   "protein": 15.4,
+   "fat": 0.7,
+   "carb": 11.7,
+   "fiber": 1.3,
+   "salt_g": 1.6,
+   "k_mg": 501.6,
+   "ca_mg": 34.3,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "いか",
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "m30",
+  "name": "ツナ入りにら玉",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "10260",
+    "g": 40
+   },
+   {
+    "food": "12004",
+    "g": 60
+   },
+   {
+    "food": "06207",
+    "g": 20
+   },
+   {
+    "food": "14006",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 154.5,
+   "protein": 14.3,
+   "fat": 10.5,
+   "carb": 4.2,
+   "fiber": 0.5,
+   "salt_g": 0.9,
+   "k_mg": 283.7,
+   "ca_mg": 40.1,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m31",
+  "name": "あさりの酒蒸し",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10281",
+    "g": 80
+   },
+   {
+    "food": "06226",
+    "g": 10
+   },
+   {
+    "food": "16001",
+    "g": 15
+   },
+   {
+    "food": "17007",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 44.3,
+   "protein": 4.9,
+   "fat": 0.6,
+   "carb": 3.4,
+   "fiber": 0.2,
+   "salt_g": 1.9,
+   "k_mg": 140.6,
+   "ca_mg": 57.4,
+   "fe_mg": 1.8
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "m32",
+  "name": "ベーコンエッグ",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "12004",
+    "g": 60
+   },
+   {
+    "food": "11183",
+    "g": 20
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 160.0,
+   "protein": 10.4,
+   "fat": 13.0,
+   "carb": 3.3,
+   "fiber": 0.0,
+   "salt_g": 0.8,
+   "k_mg": 124.0,
+   "ca_mg": 28.4,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "卵",
+   "豚肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m33",
+  "name": "スクランブルエッグ",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "12004",
+    "g": 100
+   },
+   {
+    "food": "13003",
+    "g": 20
+   },
+   {
+    "food": "14017",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 182.2,
+   "protein": 12.9,
+   "fat": 14.2,
+   "carb": 4.7,
+   "fiber": 0.0,
+   "salt_g": 1.0,
+   "k_mg": 161.6,
+   "ca_mg": 68.7,
+   "fe_mg": 1.5
+  },
+  "allergens": [
+   "乳",
+   "卵"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m34",
+  "name": "厚揚げと豚肉の炒め物",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "04039",
+    "g": 120
+   },
+   {
+    "food": "11131",
+    "g": 40
+   },
+   {
+    "food": "06061",
+    "g": 40
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "14006",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 258.3,
+   "protein": 22.4,
+   "fat": 18.0,
+   "carb": 5.1,
+   "fiber": 1.7,
+   "salt_g": 0.9,
+   "k_mg": 387.4,
+   "ca_mg": 308.1,
+   "fe_mg": 3.6
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "m35",
+  "name": "豆腐ハンバーグ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "04032",
+    "g": 100
+   },
+   {
+    "food": "11230",
+    "g": 50
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "12004",
+    "g": 10
+   },
+   {
+    "food": "01077",
+    "g": 5
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 241.0,
+   "protein": 18.2,
+   "fat": 16.2,
+   "carb": 9.3,
+   "fiber": 1.6,
+   "salt_g": 1.0,
+   "k_mg": 306.9,
+   "ca_mg": 108.0,
+   "fe_mg": 2.3
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m36",
+  "name": "ウインナーと野菜のソテー",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "11186",
+    "g": 40
+   },
+   {
+    "food": "06061",
+    "g": 40
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "14006",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 168.2,
+   "protein": 5.2,
+   "fat": 15.3,
+   "carb": 4.6,
+   "fiber": 1.1,
+   "salt_g": 1.2,
+   "k_mg": 193.4,
+   "ca_mg": 22.9,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "豚肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m37",
+  "name": "チーズオムレツ",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "12004",
+    "g": 100
+   },
+   {
+    "food": "13040",
+    "g": 15
+   },
+   {
+    "food": "06153",
+    "g": 15
+   },
+   {
+    "food": "14017",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 221.9,
+   "protein": 15.8,
+   "fat": 17.4,
+   "carb": 5.1,
+   "fiber": 0.2,
+   "salt_g": 1.3,
+   "k_mg": 163.0,
+   "ca_mg": 143.7,
+   "fe_mg": 1.6
+  },
+  "allergens": [
+   "乳",
+   "卵"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "m38",
+  "name": "さばの塩焼き",
+  "role": "主菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "10154",
+    "g": 80
+   },
+   {
+    "food": "17012",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 168.8,
+   "protein": 16.5,
+   "fat": 13.4,
+   "carb": 5.0,
+   "fiber": 0.0,
+   "salt_g": 1.2,
+   "k_mg": 265.0,
+   "ca_mg": 5.0,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "さば"
+  ],
+  "special": false
+ },
+ {
+  "id": "m39",
+  "name": "ぶりと大根の煮物",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10241",
+    "g": 70
+   },
+   {
+    "food": "06134",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "16001",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 200.7,
+   "protein": 16.0,
+   "fat": 12.4,
+   "carb": 13.5,
+   "fiber": 1.3,
+   "salt_g": 1.2,
+   "k_mg": 527.7,
+   "ca_mg": 29.1,
+   "fe_mg": 1.2
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "m40",
+  "name": "鶏ひき肉と豆腐のそぼろ煮",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "04032",
+    "g": 120
+   },
+   {
+    "food": "11230",
+    "g": 50
+   },
+   {
+    "food": "06226",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "16001",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 203.7,
+   "protein": 17.9,
+   "fat": 11.9,
+   "carb": 8.3,
+   "fiber": 1.6,
+   "salt_g": 1.2,
+   "k_mg": 308.5,
+   "ca_mg": 121.7,
+   "fe_mg": 2.4
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s13",
+  "name": "ごぼうサラダ",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06084",
+    "g": 50
+   },
+   {
+    "food": "17042",
+    "g": 10
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "05018",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 112.7,
+   "protein": 1.6,
+   "fat": 8.8,
+   "carb": 7.0,
+   "fiber": 3.5,
+   "salt_g": 0.2,
+   "k_mg": 214.5,
+   "ca_mg": 51.4,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "ごま",
+   "卵"
+  ],
+  "special": false,
+  "sub": "salad",
+  "bento": true
+ },
+ {
+  "id": "s14",
+  "name": "白菜の浅漬け",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06233",
+    "g": 100
+   },
+   {
+    "food": "17012",
+    "g": 1
+   },
+   {
+    "food": "17015",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 13.8,
+   "protein": 0.8,
+   "fat": 0.1,
+   "carb": 2.2,
+   "fiber": 1.3,
+   "salt_g": 1.0,
+   "k_mg": 221.1,
+   "ca_mg": 43.3,
+   "fe_mg": 0.3
+  },
+  "allergens": [],
+  "special": false
+ },
+ {
+  "id": "s15",
+  "name": "なすの煮びたし",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06191",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 65.8,
+   "protein": 1.6,
+   "fat": 4.1,
+   "carb": 5.6,
+   "fiber": 2.2,
+   "salt_g": 0.9,
+   "k_mg": 243.4,
+   "ca_mg": 19.8,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s16",
+  "name": "ピーマンとしらすの炒め物",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06245",
+    "g": 60
+   },
+   {
+    "food": "10055",
+    "g": 8
+   },
+   {
+    "food": "14002",
+    "g": 3
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 50.0,
+   "protein": 2.7,
+   "fat": 3.3,
+   "carb": 2.6,
+   "fiber": 1.4,
+   "salt_g": 0.8,
+   "k_mg": 139.3,
+   "ca_mg": 29.9,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false
+ },
+ {
+  "id": "s17",
+  "name": "にんじんしりしり",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06214",
+    "g": 80
+   },
+   {
+    "food": "12004",
+    "g": 30
+   },
+   {
+    "food": "10260",
+    "g": 15
+   },
+   {
+    "food": "14006",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 116.4,
+   "protein": 6.9,
+   "fat": 7.3,
+   "carb": 6.7,
+   "fiber": 2.2,
+   "salt_g": 0.7,
+   "k_mg": 325.2,
+   "ca_mg": 34.6,
+   "fe_mg": 0.8
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s18",
+  "name": "こんにゃくの炒り煮",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02004",
+    "g": 80
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 54.1,
+   "protein": 0.6,
+   "fat": 3.1,
+   "carb": 4.7,
+   "fiber": 2.8,
+   "salt_g": 0.9,
+   "k_mg": 103.7,
+   "ca_mg": 59.8,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s19",
+  "name": "ポテトサラダ",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02017",
+    "g": 80
+   },
+   {
+    "food": "06065",
+    "g": 20
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "17042",
+    "g": 12
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 133.2,
+   "protein": 1.9,
+   "fat": 9.2,
+   "carb": 8.7,
+   "fiber": 7.6,
+   "salt_g": 0.6,
+   "k_mg": 400.0,
+   "ca_mg": 11.8,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "卵"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s20",
+  "name": "オクラのしょうゆ和え",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06032",
+    "g": 60
+   },
+   {
+    "food": "17007",
+    "g": 4
+   },
+   {
+    "food": "09004",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 20.1,
+   "protein": 1.8,
+   "fat": 0.1,
+   "carb": 1.8,
+   "fiber": 3.2,
+   "salt_g": 0.6,
+   "k_mg": 195.6,
+   "ca_mg": 57.8,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s21",
+  "name": "かぶの浅漬け",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06038",
+    "g": 80
+   },
+   {
+    "food": "17012",
+    "g": 0.8
+   },
+   {
+    "food": "17015",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 15.9,
+   "protein": 0.5,
+   "fat": 0.1,
+   "carb": 2.9,
+   "fiber": 1.1,
+   "salt_g": 0.8,
+   "k_mg": 200.9,
+   "ca_mg": 19.4,
+   "fe_mg": 0.2
+  },
+  "allergens": [],
+  "special": false
+ },
+ {
+  "id": "s22",
+  "name": "きのこのバターソテー",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "08039",
+    "g": 30
+   },
+   {
+    "food": "08016",
+    "g": 30
+   },
+   {
+    "food": "08001",
+    "g": 30
+   },
+   {
+    "food": "14017",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 55.8,
+   "protein": 2.8,
+   "fat": 3.5,
+   "carb": 3.1,
+   "fiber": 3.5,
+   "salt_g": 0.5,
+   "k_mg": 312.8,
+   "ca_mg": 2.1,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "乳",
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "s23",
+  "name": "アスパラのバター炒め",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06007",
+    "g": 70
+   },
+   {
+    "food": "14017",
+    "g": 5
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 49.7,
+   "protein": 1.9,
+   "fat": 4.2,
+   "carb": 2.2,
+   "fiber": 1.3,
+   "salt_g": 0.5,
+   "k_mg": 190.8,
+   "ca_mg": 14.1,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "乳"
+  ],
+  "special": false
+ },
+ {
+  "id": "s24",
+  "name": "さやいんげんのごま和え",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06010",
+    "g": 70
+   },
+   {
+    "food": "05018",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 4
+   },
+   {
+    "food": "03003",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 51.2,
+   "protein": 2.4,
+   "fat": 2.2,
+   "carb": 4.8,
+   "fiber": 2.2,
+   "salt_g": 0.6,
+   "k_mg": 214.0,
+   "ca_mg": 84.2,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s25",
+  "name": "コールスロー",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06061",
+    "g": 70
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "06175",
+    "g": 15
+   },
+   {
+    "food": "17042",
+    "g": 10
+   },
+   {
+    "food": "17015",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 100.2,
+   "protein": 1.6,
+   "fat": 7.9,
+   "carb": 6.2,
+   "fiber": 2.0,
+   "salt_g": 0.5,
+   "k_mg": 208.2,
+   "ca_mg": 33.2,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "卵"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s26",
+  "name": "れんこんのきんぴら",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06317",
+    "g": 70
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 5
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "14002",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 91.6,
+   "protein": 1.8,
+   "fat": 3.1,
+   "carb": 13.9,
+   "fiber": 1.7,
+   "salt_g": 0.8,
+   "k_mg": 357.6,
+   "ca_mg": 17.9,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s27",
+  "name": "チンゲンサイの炒め物",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06160",
+    "g": 80
+   },
+   {
+    "food": "14006",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   },
+   {
+    "food": "17007",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 35.3,
+   "protein": 0.6,
+   "fat": 3.1,
+   "carb": 0.8,
+   "fiber": 1.0,
+   "salt_g": 0.9,
+   "k_mg": 216.3,
+   "ca_mg": 80.7,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "s28",
+  "name": "レタスとわかめのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06312",
+    "g": 60
+   },
+   {
+    "food": "09040",
+    "g": 1
+   },
+   {
+    "food": "05018",
+    "g": 2
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "14002",
+    "g": 2
+   },
+   {
+    "food": "17015",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 41.0,
+   "protein": 1.1,
+   "fat": 3.2,
+   "carb": 1.8,
+   "fiber": 1.2,
+   "salt_g": 0.6,
+   "k_mg": 200.0,
+   "ca_mg": 44.6,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s29",
+  "name": "枝豆",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06015",
+    "g": 60
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 75.0,
+   "protein": 7.0,
+   "fat": 3.7,
+   "carb": 3.4,
+   "fiber": 3.0,
+   "salt_g": 0.5,
+   "k_mg": 354.5,
+   "ca_mg": 34.9,
+   "fe_mg": 1.6
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s30",
+  "name": "ブロッコリーとトマトのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06263",
+    "g": 60
+   },
+   {
+    "food": "06183",
+    "g": 40
+   },
+   {
+    "food": "17042",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 87.6,
+   "protein": 3.8,
+   "fat": 6.5,
+   "carb": 4.7,
+   "fiber": 3.6,
+   "salt_g": 0.2,
+   "k_mg": 393.0,
+   "ca_mg": 35.4,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "卵"
+  ],
+  "special": false,
+  "sub": "salad",
+  "bento": true
+ },
+ {
+  "id": "s31",
+  "name": "里芋の煮っころがし",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02010",
+    "g": 100
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 73.2,
+   "protein": 2.0,
+   "fat": 0.1,
+   "carb": 15.0,
+   "fiber": 2.3,
+   "salt_g": 0.9,
+   "k_mg": 663.5,
+   "ca_mg": 11.8,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "s32",
+  "name": "にらの卵とじ",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06207",
+    "g": 30
+   },
+   {
+    "food": "12004",
+    "g": 50
+   },
+   {
+    "food": "14006",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 103.0,
+   "protein": 6.6,
+   "fat": 8.2,
+   "carb": 2.4,
+   "fiber": 0.8,
+   "salt_g": 0.6,
+   "k_mg": 218.4,
+   "ca_mg": 37.5,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "卵"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s33",
+  "name": "フルーツヨーグルト",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "13025",
+    "g": 100
+   },
+   {
+    "food": "07107",
+    "g": 50
+   }
+  ],
+  "nutrition": {
+   "kcal": 102.5,
+   "protein": 4.2,
+   "fat": 3.1,
+   "carb": 15.2,
+   "fiber": 0.6,
+   "salt_g": 0.1,
+   "k_mg": 350.0,
+   "ca_mg": 123.0,
+   "fe_mg": 0.1
+  },
+  "allergens": [
+   "乳"
+  ],
+  "special": false
+ },
+ {
+  "id": "s34",
+  "name": "みかん",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "07027",
+    "g": 100
+   }
+  ],
+  "nutrition": {
+   "kcal": 49.0,
+   "protein": 0.7,
+   "fat": 0.1,
+   "carb": 11.3,
+   "fiber": 1.0,
+   "salt_g": 0.0,
+   "k_mg": 150.0,
+   "ca_mg": 21.0,
+   "fe_mg": 0.2
+  },
+  "allergens": [],
+  "special": false
+ },
+ {
+  "id": "s35",
+  "name": "さつまいもの甘煮",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02006",
+    "g": 100
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.2
+   }
+  ],
+  "nutrition": {
+   "kcal": 141.6,
+   "protein": 1.2,
+   "fat": 0.2,
+   "carb": 33.7,
+   "fiber": 2.2,
+   "salt_g": 0.2,
+   "k_mg": 480.3,
+   "ca_mg": 36.1,
+   "fe_mg": 0.6
+  },
+  "allergens": [],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "s36",
+  "name": "しらたきとにんじんの炒め煮",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02005",
+    "g": 80
+   },
+   {
+    "food": "06214",
+    "g": 20
+   },
+   {
+    "food": "17007",
+    "g": 5
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 2
+   }
+  ],
+  "nutrition": {
+   "kcal": 41.3,
+   "protein": 0.7,
+   "fat": 2.0,
+   "carb": 3.8,
+   "fiber": 2.9,
+   "salt_g": 0.7,
+   "k_mg": 89.1,
+   "ca_mg": 66.3,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "bento": true
+ },
+ {
+  "id": "j04",
+  "name": "わかめと卵のスープ",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "09040",
+    "g": 1
+   },
+   {
+    "food": "12004",
+    "g": 30
+   },
+   {
+    "food": "06226",
+    "g": 5
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 48.4,
+   "protein": 4.1,
+   "fat": 3.1,
+   "carb": 1.7,
+   "fiber": 0.4,
+   "salt_g": 1.2,
+   "k_mg": 121.2,
+   "ca_mg": 24.9,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "j05",
+  "name": "きのこのみそ汁",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "08001",
+    "g": 20
+   },
+   {
+    "food": "08016",
+    "g": 20
+   },
+   {
+    "food": "17045",
+    "g": 10
+   },
+   {
+    "food": "06226",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 31.9,
+   "protein": 2.4,
+   "fat": 0.7,
+   "carb": 3.6,
+   "fiber": 2.0,
+   "salt_g": 1.2,
+   "k_mg": 190.0,
+   "ca_mg": 12.0,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j06",
+  "name": "じゃがいもと玉ねぎのみそ汁",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "02017",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 30
+   },
+   {
+    "food": "17045",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 51.7,
+   "protein": 2.3,
+   "fat": 0.7,
+   "carb": 7.4,
+   "fiber": 4.5,
+   "salt_g": 1.2,
+   "k_mg": 247.0,
+   "ca_mg": 16.7,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j07",
+  "name": "なすと油揚げのみそ汁",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06191",
+    "g": 40
+   },
+   {
+    "food": "04040",
+    "g": 5
+   },
+   {
+    "food": "17045",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 44.2,
+   "protein": 2.9,
+   "fat": 2.4,
+   "carb": 3.2,
+   "fiber": 1.4,
+   "salt_g": 1.2,
+   "k_mg": 130.3,
+   "ca_mg": 32.7,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j08",
+  "name": "白菜と油揚げのみそ汁",
+  "role": "汁物",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06233",
+    "g": 40
+   },
+   {
+    "food": "04040",
+    "g": 6
+   },
+   {
+    "food": "17045",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 46.0,
+   "protein": 3.0,
+   "fat": 2.7,
+   "carb": 2.9,
+   "fiber": 1.1,
+   "salt_g": 1.2,
+   "k_mg": 131.2,
+   "ca_mg": 45.8,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j09",
+  "name": "あさりのみそ汁",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10281",
+    "g": 40
+   },
+   {
+    "food": "17045",
+    "g": 10
+   },
+   {
+    "food": "06226",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 31.5,
+   "protein": 3.6,
+   "fat": 0.9,
+   "carb": 3.1,
+   "fiber": 0.6,
+   "salt_g": 2.0,
+   "k_mg": 104.0,
+   "ca_mg": 38.2,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": false
+ },
+ {
+  "id": "j10",
+  "name": "野菜たっぷりスープ",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06061",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "17012",
+    "g": 0.8
+   },
+   {
+    "food": "11183",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 44.7,
+   "protein": 2.3,
+   "fat": 2.0,
+   "carb": 4.4,
+   "fiber": 1.4,
+   "salt_g": 1.1,
+   "k_mg": 174.8,
+   "ca_mg": 24.4,
+   "fe_mg": 0.2
+  },
+  "allergens": [
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "j11",
+  "name": "けんちん汁",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02010",
+    "g": 30
+   },
+   {
+    "food": "06134",
+    "g": 30
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "04033",
+    "g": 30
+   },
+   {
+    "food": "08039",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 45.9,
+   "protein": 2.8,
+   "fat": 1.2,
+   "carb": 5.5,
+   "fiber": 2.1,
+   "salt_g": 1.1,
+   "k_mg": 381.1,
+   "ca_mg": 36.2,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "s37",
+  "name": "大根とツナのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06134",
+    "g": 80
+   },
+   {
+    "food": "10260",
+    "g": 20
+   },
+   {
+    "food": "17042",
+    "g": 8
+   },
+   {
+    "food": "05018",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 85.5,
+   "protein": 3.8,
+   "fat": 6.8,
+   "carb": 3.7,
+   "fiber": 1.2,
+   "salt_g": 0.3,
+   "k_mg": 235.1,
+   "ca_mg": 32.0,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "ごま",
+   "卵",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s38",
+  "name": "豆腐とレタスのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "04032",
+    "g": 70
+   },
+   {
+    "food": "06312",
+    "g": 40
+   },
+   {
+    "food": "06182",
+    "g": 30
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "05018",
+    "g": 2
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 102.5,
+   "protein": 6.0,
+   "fat": 7.6,
+   "carb": 3.0,
+   "fiber": 1.8,
+   "salt_g": 0.4,
+   "k_mg": 239.9,
+   "ca_mg": 99.7,
+   "fe_mg": 1.5
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s39",
+  "name": "ハムときゅうりのサラダ",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "11176",
+    "g": 20
+   },
+   {
+    "food": "06065",
+    "g": 50
+   },
+   {
+    "food": "06312",
+    "g": 30
+   },
+   {
+    "food": "17042",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 105.4,
+   "protein": 4.5,
+   "fat": 9.1,
+   "carb": 3.3,
+   "fiber": 0.9,
+   "salt_g": 0.6,
+   "k_mg": 219.0,
+   "ca_mg": 20.1,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "卵",
+   "豚肉"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s40",
+  "name": "かぼちゃサラダ",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06048",
+    "g": 80
+   },
+   {
+    "food": "06065",
+    "g": 15
+   },
+   {
+    "food": "17042",
+    "g": 10
+   },
+   {
+    "food": "17012",
+    "g": 0.2
+   }
+  ],
+  "nutrition": {
+   "kcal": 131.1,
+   "protein": 1.8,
+   "fat": 7.9,
+   "carb": 15.1,
+   "fiber": 3.0,
+   "salt_g": 0.4,
+   "k_mg": 375.5,
+   "ca_mg": 22.3,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "卵"
+  ],
+  "special": false,
+  "sub": "salad"
+ },
+ {
+  "id": "s41",
+  "name": "にんじんとキャベツのラペ風",
+  "role": "副菜",
+  "breakfast": true,
+  "ingredients": [
+   {
+    "food": "06214",
+    "g": 40
+   },
+   {
+    "food": "06061",
+    "g": 50
+   },
+   {
+    "food": "17015",
+    "g": 4
+   },
+   {
+    "food": "14006",
+    "g": 3
+   },
+   {
+    "food": "03003",
+    "g": 1
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 55.8,
+   "protein": 0.9,
+   "fat": 3.1,
+   "carb": 5.4,
+   "fiber": 2.0,
+   "salt_g": 0.4,
+   "k_mg": 215.6,
+   "ca_mg": 30.8,
+   "fe_mg": 0.2
+  },
+  "allergens": [],
+  "special": false,
+  "sub": "salad",
+  "bento": true
+ },
+ {
+  "id": "d04",
+  "name": "チャーハン",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "12004",
+    "g": 40
+   },
+   {
+    "food": "11176",
+    "g": 20
+   },
+   {
+    "food": "06226",
+    "g": 10
+   },
+   {
+    "food": "14006",
+    "g": 5
+   },
+   {
+    "food": "17012",
+    "g": 1
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 461.1,
+   "protein": 14.0,
+   "fat": 12.6,
+   "carb": 75.8,
+   "fiber": 3.2,
+   "salt_g": 2.0,
+   "k_mg": 200.7,
+   "ca_mg": 29.9,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d05",
+  "name": "焼きそば",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01048",
+    "g": 170
+   },
+   {
+    "food": "11131",
+    "g": 40
+   },
+   {
+    "food": "06061",
+    "g": 60
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "14006",
+    "g": 6
+   },
+   {
+    "food": "17007",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 359.1,
+   "protein": 18.4,
+   "fat": 9.5,
+   "carb": 50.7,
+   "fiber": 6.3,
+   "salt_g": 1.6,
+   "k_mg": 436.2,
+   "ca_mg": 66.7,
+   "fe_mg": 1.1
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d06",
+  "name": "きつねうどん",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01039",
+    "g": 300
+   },
+   {
+    "food": "04040",
+    "g": 30
+   },
+   {
+    "food": "06226",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 415.5,
+   "protein": 15.6,
+   "fat": 11.5,
+   "carb": 66.3,
+   "fiber": 4.5,
+   "salt_g": 2.6,
+   "k_mg": 104.5,
+   "ca_mg": 117.0,
+   "fe_mg": 1.7
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "d07",
+  "name": "鶏そぼろ丼",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "11230",
+    "g": 60
+   },
+   {
+    "food": "12004",
+    "g": 50
+   },
+   {
+    "food": "17007",
+    "g": 10
+   },
+   {
+    "food": "03003",
+    "g": 5
+   },
+   {
+    "food": "16001",
+    "g": 8
+   },
+   {
+    "food": "06020",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 525.1,
+   "protein": 22.7,
+   "fat": 12.9,
+   "carb": 82.7,
+   "fiber": 3.3,
+   "salt_g": 1.7,
+   "k_mg": 332.5,
+   "ca_mg": 40.5,
+   "fe_mg": 1.7
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d08",
+  "name": "牛丼",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "11076",
+    "g": 70
+   },
+   {
+    "food": "06153",
+    "g": 60
+   },
+   {
+    "food": "17007",
+    "g": 10
+   },
+   {
+    "food": "03003",
+    "g": 6
+   },
+   {
+    "food": "16001",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 466.7,
+   "protein": 20.4,
+   "fat": 5.3,
+   "carb": 85.9,
+   "fiber": 3.9,
+   "salt_g": 1.5,
+   "k_mg": 411.6,
+   "ca_mg": 21.6,
+   "fe_mg": 2.3
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "牛肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d09",
+  "name": "チキンライス",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "11224",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 30
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "17036",
+    "g": 25
+   },
+   {
+    "food": "14006",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 434.7,
+   "protein": 13.4,
+   "fat": 6.7,
+   "carb": 82.4,
+   "fiber": 4.2,
+   "salt_g": 1.5,
+   "k_mg": 356.6,
+   "ca_mg": 19.6,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "鶏肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d10",
+  "name": "オムライス",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 200
+   },
+   {
+    "food": "11224",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 25
+   },
+   {
+    "food": "17036",
+    "g": 25
+   },
+   {
+    "food": "12004",
+    "g": 80
+   },
+   {
+    "food": "14017",
+    "g": 4
+   },
+   {
+    "food": "14006",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 562.6,
+   "protein": 23.0,
+   "fat": 17.1,
+   "carb": 84.4,
+   "fiber": 3.8,
+   "salt_g": 1.3,
+   "k_mg": 423.6,
+   "ca_mg": 53.6,
+   "fe_mg": 1.8
+  },
+  "allergens": [
+   "乳",
+   "卵",
+   "鶏肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d11",
+  "name": "ざるそば",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01128",
+    "g": 260
+   },
+   {
+    "food": "06226",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 359.3,
+   "protein": 13.2,
+   "fat": 2.6,
+   "carb": 67.0,
+   "fiber": 7.8,
+   "salt_g": 1.2,
+   "k_mg": 139.7,
+   "ca_mg": 29.4,
+   "fe_mg": 2.2
+  },
+  "allergens": [
+   "そば",
+   "大豆",
+   "小麦"
+  ],
+  "special": false
+ },
+ {
+  "id": "d12",
+  "name": "ナポリタン",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01064",
+    "g": 220
+   },
+   {
+    "food": "11186",
+    "g": 25
+   },
+   {
+    "food": "06153",
+    "g": 30
+   },
+   {
+    "food": "06245",
+    "g": 15
+   },
+   {
+    "food": "17036",
+    "g": 25
+   },
+   {
+    "food": "14006",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 487.1,
+   "protein": 16.5,
+   "fat": 13.7,
+   "carb": 75.9,
+   "fiber": 7.8,
+   "salt_g": 3.9,
+   "k_mg": 244.3,
+   "ca_mg": 29.9,
+   "fe_mg": 1.9
+  },
+  "allergens": [
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "d13",
+  "name": "肉うどん",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01039",
+    "g": 300
+   },
+   {
+    "food": "11131",
+    "g": 60
+   },
+   {
+    "food": "06226",
+    "g": 15
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 397.5,
+   "protein": 21.7,
+   "fat": 4.8,
+   "carb": 70.7,
+   "fiber": 4.6,
+   "salt_g": 2.1,
+   "k_mg": 334.3,
+   "ca_mg": 31.5,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": false
+ },
+ {
+  "id": "x01",
+  "name": "ちらし寿司",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 220
+   },
+   {
+    "food": "17015",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 6
+   },
+   {
+    "food": "12004",
+    "g": 40
+   },
+   {
+    "food": "10329",
+    "g": 20
+   },
+   {
+    "food": "08039",
+    "g": 10
+   },
+   {
+    "food": "06317",
+    "g": 15
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "06020",
+    "g": 8
+   },
+   {
+    "food": "09004",
+    "g": 0.5
+   },
+   {
+    "food": "17007",
+    "g": 3
+   },
+   {
+    "food": "03003",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 475.0,
+   "protein": 15.4,
+   "fat": 4.9,
+   "carb": 94.3,
+   "fiber": 4.8,
+   "salt_g": 0.7,
+   "k_mg": 327.0,
+   "ca_mg": 49.2,
+   "fe_mg": 1.2
+  },
+  "allergens": [
+   "えび",
+   "卵",
+   "大豆",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x02",
+  "name": "あさりのお吸い物",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10281",
+    "g": 40
+   },
+   {
+    "food": "06226",
+    "g": 5
+   },
+   {
+    "food": "16001",
+    "g": 3
+   },
+   {
+    "food": "17007",
+    "g": 2
+   },
+   {
+    "food": "17012",
+    "g": 0.4
+   }
+  ],
+  "nutrition": {
+   "kcal": 18.1,
+   "protein": 2.5,
+   "fat": 0.3,
+   "carb": 1.6,
+   "fiber": 0.1,
+   "salt_g": 1.5,
+   "k_mg": 74.4,
+   "ca_mg": 29.0,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "大豆",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x03",
+  "name": "恵方巻き",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 220
+   },
+   {
+    "food": "09004",
+    "g": 2
+   },
+   {
+    "food": "12004",
+    "g": 40
+   },
+   {
+    "food": "06065",
+    "g": 30
+   },
+   {
+    "food": "10376",
+    "g": 20
+   },
+   {
+    "food": "08039",
+    "g": 8
+   },
+   {
+    "food": "17015",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "17007",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 449.1,
+   "protein": 14.4,
+   "fat": 5.0,
+   "carb": 88.3,
+   "fiber": 4.7,
+   "salt_g": 1.1,
+   "k_mg": 274.2,
+   "ca_mg": 63.5,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x04",
+  "name": "いわしの塩焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10047",
+    "g": 100
+   },
+   {
+    "food": "17012",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 156.0,
+   "protein": 19.2,
+   "fat": 9.2,
+   "carb": 6.3,
+   "fiber": 0.0,
+   "salt_g": 1.2,
+   "k_mg": 271.0,
+   "ca_mg": 74.2,
+   "fe_mg": 2.1
+  },
+  "allergens": [
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x05",
+  "name": "年越しそば",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01128",
+    "g": 250
+   },
+   {
+    "food": "10379",
+    "g": 20
+   },
+   {
+    "food": "06226",
+    "g": 15
+   },
+   {
+    "food": "17007",
+    "g": 12
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.8
+   }
+  ],
+  "nutrition": {
+   "kcal": 369.7,
+   "protein": 15.5,
+   "fat": 2.7,
+   "carb": 67.4,
+   "fiber": 7.6,
+   "salt_g": 3.0,
+   "k_mg": 184.7,
+   "ca_mg": 36.6,
+   "fe_mg": 2.3
+  },
+  "allergens": [
+   "そば",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x06",
+  "name": "薬味そうめん",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01044",
+    "g": 300
+   },
+   {
+    "food": "06065",
+    "g": 30
+   },
+   {
+    "food": "06182",
+    "g": 40
+   },
+   {
+    "food": "12004",
+    "g": 25
+   },
+   {
+    "food": "17007",
+    "g": 12
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "14006",
+    "g": 1
+   }
+  ],
+  "nutrition": {
+   "kcal": 419.1,
+   "protein": 15.1,
+   "fat": 4.8,
+   "carb": 82.2,
+   "fiber": 3.4,
+   "salt_g": 2.4,
+   "k_mg": 238.4,
+   "ca_mg": 43.6,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x07",
+  "name": "お雑煮",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01117",
+    "g": 100
+   },
+   {
+    "food": "11224",
+    "g": 25
+   },
+   {
+    "food": "06134",
+    "g": 30
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "06086",
+    "g": 20
+   },
+   {
+    "food": "10379",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 277.0,
+   "protein": 10.9,
+   "fat": 2.0,
+   "carb": 55.0,
+   "fiber": 1.7,
+   "salt_g": 1.8,
+   "k_mg": 361.0,
+   "ca_mg": 53.1,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)",
+   "鶏肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x08",
+  "name": "お煮しめ",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02010",
+    "g": 60
+   },
+   {
+    "food": "06214",
+    "g": 30
+   },
+   {
+    "food": "06317",
+    "g": 30
+   },
+   {
+    "food": "08039",
+    "g": 10
+   },
+   {
+    "food": "02004",
+    "g": 30
+   },
+   {
+    "food": "11224",
+    "g": 20
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 5
+   }
+  ],
+  "nutrition": {
+   "kcal": 114.3,
+   "protein": 6.4,
+   "fat": 1.2,
+   "carb": 18.7,
+   "fiber": 4.2,
+   "salt_g": 1.3,
+   "k_mg": 743.5,
+   "ca_mg": 43.1,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x09",
+  "name": "黒豆",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "04106",
+    "g": 40
+   },
+   {
+    "food": "03003",
+    "g": 6
+   }
+  ],
+  "nutrition": {
+   "kcal": 85.5,
+   "protein": 5.9,
+   "fat": 3.4,
+   "carb": 7.0,
+   "fiber": 3.2,
+   "salt_g": 0.0,
+   "k_mg": 192.1,
+   "ca_mg": 22.1,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "大豆"
+  ],
+  "special": true
+ },
+ {
+  "id": "x10",
+  "name": "紅白なます",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06134",
+    "g": 60
+   },
+   {
+    "food": "06214",
+    "g": 10
+   },
+   {
+    "food": "17015",
+    "g": 6
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 29.3,
+   "protein": 0.3,
+   "fat": 0.1,
+   "carb": 6.5,
+   "fiber": 1.1,
+   "salt_g": 0.5,
+   "k_mg": 168.8,
+   "ca_mg": 16.5,
+   "fe_mg": 0.1
+  },
+  "allergens": [],
+  "special": true
+ },
+ {
+  "id": "x11",
+  "name": "ローストチキン(野菜添え)",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11221",
+    "g": 150
+   },
+   {
+    "food": "02017",
+    "g": 60
+   },
+   {
+    "food": "06214",
+    "g": 30
+   },
+   {
+    "food": "06223",
+    "g": 3
+   },
+   {
+    "food": "14001",
+    "g": 5
+   },
+   {
+    "food": "17012",
+    "g": 1.2
+   }
+  ],
+  "nutrition": {
+   "kcal": 378.6,
+   "protein": 26.4,
+   "fat": 26.4,
+   "carb": 7.8,
+   "fiber": 6.4,
+   "salt_g": 1.5,
+   "k_mg": 787.5,
+   "ca_mg": 17.8,
+   "fe_mg": 1.2
+  },
+  "allergens": [
+   "鶏肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x12",
+  "name": "いちごのショートケーキ",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "15170",
+    "g": 100
+   }
+  ],
+  "nutrition": {
+   "kcal": 314.0,
+   "protein": 6.9,
+   "fat": 14.7,
+   "carb": 43.5,
+   "fiber": 0.9,
+   "salt_g": 0.2,
+   "k_mg": 120.0,
+   "ca_mg": 34.0,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "乳",
+   "卵",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x13",
+  "name": "柏餅",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "15008",
+    "g": 80
+   }
+  ],
+  "nutrition": {
+   "kcal": 162.4,
+   "protein": 3.2,
+   "fat": 0.3,
+   "carb": 36.6,
+   "fiber": 1.4,
+   "salt_g": 0.1,
+   "k_mg": 32.0,
+   "ca_mg": 14.4,
+   "fe_mg": 0.7
+  },
+  "allergens": [],
+  "special": true
+ },
+ {
+  "id": "x14",
+  "name": "赤飯",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01118",
+    "g": 200
+   },
+   {
+    "food": "05018",
+    "g": 1
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 378.1,
+   "protein": 8.8,
+   "fat": 1.7,
+   "carb": 82.3,
+   "fiber": 3.3,
+   "salt_g": 0.3,
+   "k_mg": 146.4,
+   "ca_mg": 24.1,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "ごま"
+  ],
+  "special": true
+ },
+ {
+  "id": "x15",
+  "name": "ローストビーフ風(玉ねぎソース)",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11076",
+    "g": 110
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "14001",
+    "g": 4
+   },
+   {
+    "food": "06182",
+    "g": 30
+   }
+  ],
+  "nutrition": {
+   "kcal": 220.5,
+   "protein": 23.2,
+   "fat": 11.4,
+   "carb": 10.3,
+   "fiber": 0.9,
+   "salt_g": 1.3,
+   "k_mg": 506.5,
+   "ca_mg": 14.7,
+   "fe_mg": 3.1
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "牛肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x16",
+  "name": "牛ステーキ(じゃがいも・ブロッコリー添え)",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11076",
+    "g": 130
+   },
+   {
+    "food": "06223",
+    "g": 4
+   },
+   {
+    "food": "14001",
+    "g": 5
+   },
+   {
+    "food": "02017",
+    "g": 60
+   },
+   {
+    "food": "06263",
+    "g": 40
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 277.5,
+   "protein": 30.0,
+   "fat": 14.0,
+   "carb": 11.9,
+   "fiber": 7.6,
+   "salt_g": 1.5,
+   "k_mg": 890.3,
+   "ca_mg": 28.7,
+   "fe_mg": 4.1
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "牛肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x17",
+  "name": "チーズのせハンバーグ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11089",
+    "g": 50
+   },
+   {
+    "food": "11163",
+    "g": 50
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "01077",
+    "g": 8
+   },
+   {
+    "food": "12004",
+    "g": 10
+   },
+   {
+    "food": "17036",
+    "g": 15
+   },
+   {
+    "food": "13040",
+    "g": 15
+   },
+   {
+    "food": "14006",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 379.3,
+   "protein": 23.5,
+   "fat": 28.5,
+   "carb": 14.2,
+   "fiber": 1.1,
+   "salt_g": 1.7,
+   "k_mg": 423.4,
+   "ca_mg": 116.4,
+   "fe_mg": 2.2
+  },
+  "allergens": [
+   "乳",
+   "卵",
+   "小麦",
+   "牛肉",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x18",
+  "name": "手巻き寿司",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01088",
+    "g": 220
+   },
+   {
+    "food": "17015",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "10260",
+    "g": 30
+   },
+   {
+    "food": "10329",
+    "g": 30
+   },
+   {
+    "food": "06065",
+    "g": 20
+   },
+   {
+    "food": "10376",
+    "g": 20
+   },
+   {
+    "food": "12004",
+    "g": 30
+   },
+   {
+    "food": "09004",
+    "g": 2
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 470.0,
+   "protein": 22.9,
+   "fat": 4.2,
+   "carb": 88.6,
+   "fiber": 4.2,
+   "salt_g": 1.5,
+   "k_mg": 345.0,
+   "ca_mg": 77.1,
+   "fe_mg": 1.2
+  },
+  "allergens": [
+   "えび",
+   "卵",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x19",
+  "name": "天ぷら盛り合わせ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10329",
+    "g": 40
+   },
+   {
+    "food": "06048",
+    "g": 40
+   },
+   {
+    "food": "06191",
+    "g": 30
+   },
+   {
+    "food": "02006",
+    "g": 40
+   },
+   {
+    "food": "01015",
+    "g": 22
+   },
+   {
+    "food": "12004",
+    "g": 10
+   },
+   {
+    "food": "14006",
+    "g": 12
+   },
+   {
+    "food": "17007",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 318.1,
+   "protein": 12.3,
+   "fat": 13.7,
+   "carb": 38.6,
+   "fiber": 3.5,
+   "salt_g": 0.8,
+   "k_mg": 574.8,
+   "ca_mg": 65.6,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "えび",
+   "卵",
+   "大豆",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x20",
+  "name": "すき焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11076",
+    "g": 100
+   },
+   {
+    "food": "04032",
+    "g": 60
+   },
+   {
+    "food": "02005",
+    "g": 40
+   },
+   {
+    "food": "06226",
+    "g": 30
+   },
+   {
+    "food": "06233",
+    "g": 50
+   },
+   {
+    "food": "08039",
+    "g": 15
+   },
+   {
+    "food": "03003",
+    "g": 6
+   },
+   {
+    "food": "17007",
+    "g": 12
+   },
+   {
+    "food": "16001",
+    "g": 8
+   },
+   {
+    "food": "12004",
+    "g": 30
+   }
+  ],
+  "nutrition": {
+   "kcal": 284.1,
+   "protein": 30.2,
+   "fat": 12.8,
+   "carb": 15.3,
+   "fiber": 4.0,
+   "salt_g": 2.0,
+   "k_mg": 690.6,
+   "ca_mg": 138.8,
+   "fe_mg": 4.6
+  },
+  "allergens": [
+   "卵",
+   "大豆",
+   "小麦",
+   "牛肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x21",
+  "name": "鶏のから揚げ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11221",
+    "g": 140
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "01015",
+    "g": 14
+   },
+   {
+    "food": "14006",
+    "g": 12
+   },
+   {
+    "food": "06312",
+    "g": 20
+   },
+   {
+    "food": "06182",
+    "g": 30
+   }
+  ],
+  "nutrition": {
+   "kcal": 440.8,
+   "protein": 25.4,
+   "fat": 32.1,
+   "carb": 13.2,
+   "fiber": 0.9,
+   "salt_g": 1.4,
+   "k_mg": 555.8,
+   "ca_mg": 18.2,
+   "fe_mg": 1.2
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x22",
+  "name": "チーズグラタン",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01064",
+    "g": 100
+   },
+   {
+    "food": "11224",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "13003",
+    "g": 130
+   },
+   {
+    "food": "14017",
+    "g": 8
+   },
+   {
+    "food": "01015",
+    "g": 12
+   },
+   {
+    "food": "13040",
+    "g": 25
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 463.8,
+   "protein": 24.8,
+   "fat": 21.0,
+   "carb": 50.4,
+   "fiber": 3.9,
+   "salt_g": 2.9,
+   "k_mg": 428.0,
+   "ca_mg": 321.0,
+   "fe_mg": 1.2
+  },
+  "allergens": [
+   "乳",
+   "小麦",
+   "鶏肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x23",
+  "name": "ビーフシチュー",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11076",
+    "g": 100
+   },
+   {
+    "food": "02017",
+    "g": 70
+   },
+   {
+    "food": "06214",
+    "g": 30
+   },
+   {
+    "food": "06153",
+    "g": 50
+   },
+   {
+    "food": "17036",
+    "g": 15
+   },
+   {
+    "food": "01015",
+    "g": 8
+   },
+   {
+    "food": "14017",
+    "g": 6
+   },
+   {
+    "food": "17012",
+    "g": 0.8
+   }
+  ],
+  "nutrition": {
+   "kcal": 287.7,
+   "protein": 22.9,
+   "fat": 11.9,
+   "carb": 24.6,
+   "fiber": 8.3,
+   "salt_g": 1.5,
+   "k_mg": 840.3,
+   "ca_mg": 26.6,
+   "fe_mg": 3.1
+  },
+  "allergens": [
+   "乳",
+   "小麦",
+   "牛肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x24",
+  "name": "お刺身の盛り合わせ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10241",
+    "g": 50
+   },
+   {
+    "food": "10313",
+    "g": 40
+   },
+   {
+    "food": "10134",
+    "g": 40
+   },
+   {
+    "food": "06134",
+    "g": 50
+   },
+   {
+    "food": "17007",
+    "g": 6
+   },
+   {
+    "food": "06072",
+    "g": 10
+   }
+  ],
+  "nutrition": {
+   "kcal": 207.8,
+   "protein": 27.3,
+   "fat": 10.6,
+   "carb": 10.8,
+   "fiber": 0.9,
+   "salt_g": 1.1,
+   "k_mg": 668.4,
+   "ca_mg": 45.1,
+   "fe_mg": 1.3
+  },
+  "allergens": [
+   "さけ",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x25",
+  "name": "茶碗蒸し",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "12004",
+    "g": 40
+   },
+   {
+    "food": "10329",
+    "g": 10
+   },
+   {
+    "food": "08039",
+    "g": 8
+   },
+   {
+    "food": "10379",
+    "g": 10
+   },
+   {
+    "food": "17007",
+    "g": 2
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 77.3,
+   "protein": 8.3,
+   "fat": 4.2,
+   "carb": 3.1,
+   "fiber": 0.4,
+   "salt_g": 1.0,
+   "k_mg": 117.3,
+   "ca_mg": 28.3,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "えび",
+   "卵",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x26",
+  "name": "コーンポタージュ",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06175",
+    "g": 50
+   },
+   {
+    "food": "13003",
+    "g": 90
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "14017",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 127.0,
+   "protein": 5.0,
+   "fat": 6.7,
+   "carb": 13.8,
+   "fiber": 1.8,
+   "salt_g": 0.6,
+   "k_mg": 311.3,
+   "ca_mg": 104.5,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "乳"
+  ],
+  "special": true
+ },
+ {
+  "id": "x27",
+  "name": "手作りプリン",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "12004",
+    "g": 40
+   },
+   {
+    "food": "13003",
+    "g": 100
+   },
+   {
+    "food": "03003",
+    "g": 15
+   }
+  ],
+  "nutrition": {
+   "kcal": 176.4,
+   "protein": 8.2,
+   "fat": 7.9,
+   "carb": 21.6,
+   "fiber": 0.0,
+   "salt_g": 0.3,
+   "k_mg": 202.3,
+   "ca_mg": 128.6,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "乳",
+   "卵"
+  ],
+  "special": true
+ },
+ {
+  "id": "x28",
+  "name": "フルーツヨーグルト",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "07012",
+    "g": 40
+   },
+   {
+    "food": "07054",
+    "g": 40
+   },
+   {
+    "food": "07027",
+    "g": 40
+   },
+   {
+    "food": "13025",
+    "g": 60
+   },
+   {
+    "food": "03003",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 97.7,
+   "protein": 3.2,
+   "fat": 2.0,
+   "carb": 16.5,
+   "fiber": 2.0,
+   "salt_g": 0.1,
+   "k_mg": 350.1,
+   "ca_mg": 97.6,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "乳"
+  ],
+  "special": true
+ },
+ {
+  "id": "x29",
+  "name": "彩りサラダ(ブロッコリー・ミニトマト)",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06263",
+    "g": 40
+   },
+   {
+    "food": "06183",
+    "g": 30
+   },
+   {
+    "food": "06312",
+    "g": 30
+   },
+   {
+    "food": "14001",
+    "g": 4
+   },
+   {
+    "food": "17015",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 63.6,
+   "protein": 2.7,
+   "fat": 4.3,
+   "carb": 3.6,
+   "fiber": 2.8,
+   "salt_g": 0.3,
+   "k_mg": 331.4,
+   "ca_mg": 29.4,
+   "fe_mg": 0.7
+  },
+  "allergens": [],
+  "special": true
+ },
+ {
+  "id": "x30",
+  "name": "ポテトサラダ",
+  "role": "副菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02017",
+    "g": 70
+   },
+   {
+    "food": "06065",
+    "g": 15
+   },
+   {
+    "food": "11176",
+    "g": 10
+   },
+   {
+    "food": "06214",
+    "g": 8
+   },
+   {
+    "food": "17042",
+    "g": 10
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 133.7,
+   "protein": 3.5,
+   "fat": 9.2,
+   "carb": 8.1,
+   "fiber": 6.6,
+   "salt_g": 0.7,
+   "k_mg": 371.6,
+   "ca_mg": 9.9,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "卵",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x31",
+  "name": "えびフライ(キャベツ添え)",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10329",
+    "g": 70
+   },
+   {
+    "food": "01015",
+    "g": 8
+   },
+   {
+    "food": "12004",
+    "g": 12
+   },
+   {
+    "food": "01077",
+    "g": 10
+   },
+   {
+    "food": "14006",
+    "g": 12
+   },
+   {
+    "food": "06061",
+    "g": 30
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 239.8,
+   "protein": 16.5,
+   "fat": 14.1,
+   "carb": 15.1,
+   "fiber": 1.0,
+   "salt_g": 0.7,
+   "k_mg": 253.7,
+   "ca_mg": 69.2,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "えび",
+   "卵",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x32",
+  "name": "ミートソーススパゲッティ",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01064",
+    "g": 200
+   },
+   {
+    "food": "11089",
+    "g": 30
+   },
+   {
+    "food": "11163",
+    "g": 30
+   },
+   {
+    "food": "06153",
+    "g": 40
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "17036",
+    "g": 20
+   },
+   {
+    "food": "14001",
+    "g": 4
+   },
+   {
+    "food": "13040",
+    "g": 5
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 530.6,
+   "protein": 24.0,
+   "fat": 18.7,
+   "carb": 70.3,
+   "fiber": 7.4,
+   "salt_g": 3.9,
+   "k_mg": 377.6,
+   "ca_mg": 64.8,
+   "fe_mg": 2.7
+  },
+  "allergens": [
+   "乳",
+   "小麦",
+   "牛肉",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x33",
+  "name": "ピザ風トースト",
+  "role": "一品",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01026",
+    "g": 100
+   },
+   {
+    "food": "11186",
+    "g": 25
+   },
+   {
+    "food": "13040",
+    "g": 30
+   },
+   {
+    "food": "06245",
+    "g": 10
+   },
+   {
+    "food": "06153",
+    "g": 15
+   },
+   {
+    "food": "17036",
+    "g": 15
+   }
+  ],
+  "nutrition": {
+   "kcal": 446.0,
+   "protein": 19.1,
+   "fat": 19.6,
+   "carb": 51.4,
+   "fiber": 4.9,
+   "salt_g": 3.0,
+   "k_mg": 247.5,
+   "ca_mg": 218.6,
+   "fe_mg": 0.9
+  },
+  "allergens": [
+   "乳",
+   "小麦",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x34",
+  "name": "ぶりの照り焼き",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10241",
+    "g": 90
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 4
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "06134",
+    "g": 40
+   }
+  ],
+  "nutrition": {
+   "kcal": 232.9,
+   "protein": 20.1,
+   "fat": 15.9,
+   "carb": 13.0,
+   "fiber": 0.5,
+   "salt_g": 1.2,
+   "k_mg": 465.5,
+   "ca_mg": 16.2,
+   "fe_mg": 1.4
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x35",
+  "name": "海鮮カルパッチョ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10313",
+    "g": 40
+   },
+   {
+    "food": "10134",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 15
+   },
+   {
+    "food": "06183",
+    "g": 30
+   },
+   {
+    "food": "14001",
+    "g": 6
+   },
+   {
+    "food": "17015",
+    "g": 4
+   },
+   {
+    "food": "17012",
+    "g": 0.3
+   }
+  ],
+  "nutrition": {
+   "kcal": 151.0,
+   "protein": 16.2,
+   "fat": 7.8,
+   "carb": 7.6,
+   "fiber": 0.6,
+   "salt_g": 0.5,
+   "k_mg": 402.0,
+   "ca_mg": 14.7,
+   "fe_mg": 0.4
+  },
+  "allergens": [
+   "さけ"
+  ],
+  "special": true
+ },
+ {
+  "id": "x36",
+  "name": "ロールキャベツ",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06061",
+    "g": 90
+   },
+   {
+    "food": "11089",
+    "g": 30
+   },
+   {
+    "food": "11163",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "01077",
+    "g": 5
+   },
+   {
+    "food": "12004",
+    "g": 5
+   },
+   {
+    "food": "17036",
+    "g": 15
+   },
+   {
+    "food": "17012",
+    "g": 0.8
+   }
+  ],
+  "nutrition": {
+   "kcal": 224.5,
+   "protein": 14.9,
+   "fat": 14.1,
+   "carb": 13.2,
+   "fiber": 2.3,
+   "salt_g": 1.4,
+   "k_mg": 464.8,
+   "ca_mg": 51.5,
+   "fe_mg": 1.7
+  },
+  "allergens": [
+   "卵",
+   "小麦",
+   "牛肉",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x37",
+  "name": "ミネストローネ",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06182",
+    "g": 40
+   },
+   {
+    "food": "06153",
+    "g": 20
+   },
+   {
+    "food": "06214",
+    "g": 15
+   },
+   {
+    "food": "11183",
+    "g": 8
+   },
+   {
+    "food": "06061",
+    "g": 20
+   },
+   {
+    "food": "14001",
+    "g": 2
+   },
+   {
+    "food": "17012",
+    "g": 0.6
+   }
+  ],
+  "nutrition": {
+   "kcal": 61.2,
+   "protein": 2.1,
+   "fat": 3.7,
+   "carb": 5.0,
+   "fiber": 1.5,
+   "salt_g": 0.8,
+   "k_mg": 216.0,
+   "ca_mg": 18.7,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x38",
+  "name": "かぼちゃのポタージュ",
+  "role": "汁物",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "06048",
+    "g": 60
+   },
+   {
+    "food": "13003",
+    "g": 70
+   },
+   {
+    "food": "06153",
+    "g": 15
+   },
+   {
+    "food": "14017",
+    "g": 3
+   },
+   {
+    "food": "17012",
+    "g": 0.5
+   }
+  ],
+  "nutrition": {
+   "kcal": 115.5,
+   "protein": 3.6,
+   "fat": 5.3,
+   "carb": 15.5,
+   "fiber": 2.3,
+   "salt_g": 0.6,
+   "k_mg": 386.8,
+   "ca_mg": 93.3,
+   "fe_mg": 0.3
+  },
+  "allergens": [
+   "乳"
+  ],
+  "special": true
+ },
+ {
+  "id": "x39",
+  "name": "チーズフォンデュ風(野菜・ウインナー)",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "13040",
+    "g": 40
+   },
+   {
+    "food": "13003",
+    "g": 30
+   },
+   {
+    "food": "06263",
+    "g": 40
+   },
+   {
+    "food": "02017",
+    "g": 50
+   },
+   {
+    "food": "11186",
+    "g": 30
+   }
+  ],
+  "nutrition": {
+   "kcal": 283.5,
+   "protein": 16.6,
+   "fat": 21.0,
+   "carb": 9.7,
+   "fiber": 6.5,
+   "salt_g": 1.7,
+   "k_mg": 512.0,
+   "ca_mg": 308.8,
+   "fe_mg": 1.0
+  },
+  "allergens": [
+   "乳",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x40",
+  "name": "ローストポーク",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11126",
+    "g": 100
+   },
+   {
+    "food": "06223",
+    "g": 3
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "16001",
+    "g": 5
+   },
+   {
+    "food": "03003",
+    "g": 2
+   },
+   {
+    "food": "06214",
+    "g": 30
+   },
+   {
+    "food": "14001",
+    "g": 3
+   }
+  ],
+  "nutrition": {
+   "kcal": 249.5,
+   "protein": 22.1,
+   "fat": 15.0,
+   "carb": 9.1,
+   "fiber": 1.0,
+   "salt_g": 1.3,
+   "k_mg": 476.8,
+   "ca_mg": 15.1,
+   "fe_mg": 0.5
+  },
+  "allergens": [
+   "大豆",
+   "小麦",
+   "豚肉"
+  ],
+  "special": true
+ },
+ {
+  "id": "x41",
+  "name": "パンケーキ(いちご添え)",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "01015",
+    "g": 40
+   },
+   {
+    "food": "12004",
+    "g": 25
+   },
+   {
+    "food": "13003",
+    "g": 50
+   },
+   {
+    "food": "03003",
+    "g": 8
+   },
+   {
+    "food": "14017",
+    "g": 5
+   },
+   {
+    "food": "07012",
+    "g": 30
+   }
+  ],
+  "nutrition": {
+   "kcal": 281.2,
+   "protein": 8.3,
+   "fat": 9.1,
+   "carb": 43.4,
+   "fiber": 1.4,
+   "salt_g": 0.2,
+   "k_mg": 204.1,
+   "ca_mg": 80.4,
+   "fe_mg": 0.7
+  },
+  "allergens": [
+   "乳",
+   "卵",
+   "小麦"
+  ],
+  "special": true
+ },
+ {
+  "id": "x42",
+  "name": "スイートポテト",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "02006",
+    "g": 100
+   },
+   {
+    "food": "14017",
+    "g": 8
+   },
+   {
+    "food": "03003",
+    "g": 8
+   },
+   {
+    "food": "13003",
+    "g": 20
+   }
+  ],
+  "nutrition": {
+   "kcal": 225.5,
+   "protein": 1.9,
+   "fat": 7.4,
+   "carb": 39.2,
+   "fiber": 2.2,
+   "salt_g": 0.2,
+   "k_mg": 512.4,
+   "ca_mg": 59.3,
+   "fe_mg": 0.6
+  },
+  "allergens": [
+   "乳"
+  ],
+  "special": true
+ },
+ {
+  "id": "x43",
+  "name": "季節のフルーツ盛り合わせ",
+  "role": "デザート",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "07012",
+    "g": 40
+   },
+   {
+    "food": "07027",
+    "g": 60
+   },
+   {
+    "food": "07148",
+    "g": 50
+   },
+   {
+    "food": "07054",
+    "g": 40
+   }
+  ],
+  "nutrition": {
+   "kcal": 88.7,
+   "protein": 1.2,
+   "fat": 0.3,
+   "carb": 19.6,
+   "fiber": 2.9,
+   "salt_g": 0.0,
+   "k_mg": 338.0,
+   "ca_mg": 31.3,
+   "fe_mg": 0.4
+  },
+  "allergens": [],
+  "special": true
+ },
+ {
+  "id": "x44",
+  "name": "寄せ鍋",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "10205",
+    "g": 60
+   },
+   {
+    "food": "10329",
+    "g": 30
+   },
+   {
+    "food": "06233",
+    "g": 80
+   },
+   {
+    "food": "06226",
+    "g": 30
+   },
+   {
+    "food": "08039",
+    "g": 15
+   },
+   {
+    "food": "04032",
+    "g": 60
+   },
+   {
+    "food": "17007",
+    "g": 8
+   },
+   {
+    "food": "16001",
+    "g": 8
+   }
+  ],
+  "nutrition": {
+   "kcal": 149.4,
+   "protein": 22.5,
+   "fat": 3.3,
+   "carb": 8.6,
+   "fiber": 3.2,
+   "salt_g": 1.5,
+   "k_mg": 656.1,
+   "ca_mg": 143.0,
+   "fe_mg": 1.6
+  },
+  "allergens": [
+   "えび",
+   "大豆",
+   "小麦",
+   "魚(あじ・ぶり等)"
+  ],
+  "special": true
+ },
+ {
+  "id": "x45",
+  "name": "焼肉(豚ばら・野菜)",
+  "role": "主菜",
+  "breakfast": false,
+  "ingredients": [
+   {
+    "food": "11129",
+    "g": 80
+   },
+   {
+    "food": "11076",
+    "g": 50
+   },
+   {
+    "food": "06153",
+    "g": 30
+   },
+   {
+    "food": "06245",
+    "g": 20
+   },
+   {
+    "food": "06048",
+    "g": 30
+   },
+   {
+    "food": "08039",
+    "g": 15
+   },
+   {
+    "food": "17007",
+    "g": 10
+   },
+   {
+    "food": "03003",
+    "g": 3
+   },
+   {
+    "food": "14002",
+    "g": 4
+   }
+  ],
+  "nutrition": {
+   "kcal": 455.3,
+   "protein": 23.8,
+   "fat": 35.9,
+   "carb": 15.4,
+   "fiber": 2.7,
+   "salt_g": 1.6,
+   "k_mg": 646.6,
+   "ca_mg": 20.9,
+   "fe_mg": 2.3
+  },
+  "allergens": [
+   "ごま",
+   "大豆",
+   "小麦",
+   "牛肉",
+   "豚肉"
+  ],
+  "special": true
+ }
+]
