@@ -60,7 +60,9 @@ async function refresh(env) {
   // 新しい月から3か月分を候補にして、品目ごとに最新の値を採用する
   const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 3);
   const values = [];
-  const codes = [...new Set(meta.items.map((i) => i.code))];
+  // 使う品目だけを取る（872品目すべてを取ると、リクエストが増えて遅い）
+  const known = new Set(meta.items.map((i) => i.code));
+  const codes = [...new Set(MAPPING.flatMap((e) => e.codes))].filter((c) => known.has(c));
   const itemKey = "cd" + meta.itemDim.id[0].toUpperCase() + meta.itemDim.id.slice(1);   // cat02 → cdCat02
   // 品目が多いので、URLが長くなりすぎないよう分割して取得する
   for (let i = 0; i < codes.length; i += 60) {

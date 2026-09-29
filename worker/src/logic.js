@@ -39,19 +39,6 @@ export function parseQuantityGrams(text, unitGrams) {
   return null;
 }
 
-// 品目一覧（{code, name, unit}）から、対応表の条件に合う品目を探す。
-export function findItem(items, entry) {
-  for (const alt of entry.alts) {
-    const hit = items.find((it) => {
-      const n = normalize(it.name);
-      return alt.every((k) => n.includes(normalize(k))) &&
-        !(entry.exclude || []).some((k) => n.includes(normalize(k)));
-    });
-    if (hit) return hit;
-  }
-  return null;
-}
-
 // VALUE の文字列を数値にする。「-」「…」など欠測は null。
 export function parseValue(v) {
   if (v === undefined || v === null) return null;
@@ -59,39 +46,39 @@ export function parseValue(v) {
   return Number.isFinite(n) ? n : null;
 }
 
-// 品目一覧・価格データ・対応表から、食品番号ごとの100gあたり価格表を作る。
-//   items:  [{code, name, unit}]
-//   values: [{cat01, time, value}]  ← 新しい月が優先される
+// 品目コード・価格データ・対応表から、食品番号ごとの100gあたり価格表を作る。
+//   items:  [{code, name}]            統計表にある品目
+//   values: [{cat01, time, value}]    cat01 は品目コード。新しい月が優先される
+//   mapping: 対応表（mapping.js）。codes の順に探し、最初に価格があるものを使う
 //   返り値: { prices, unmatched, unresolved }
 export function buildPrices(items, values, mapping, derived) {
-  const latest = new Map(); // cat01 -> {time, value}
+  const latest = new Map(); // 品目コード -> {time, value}
   for (const v of values) {
     const val = parseValue(v.value);
     if (val === null) continue;
     const cur = latest.get(v.cat01);
     if (!cur || String(v.time) > String(cur.time)) latest.set(v.cat01, { time: v.time, value: val });
   }
+  const known = new Map(items.map((i) => [i.code, i.name]));
   const prices = {};
   const unmatched = [];
   const unresolved = [];
   for (const entry of mapping) {
-    const item = findItem(items, entry);
-    if (!item) { unmatched.push(entry.foods.join(",") + " " + JSON.stringify(entry.alts)); continue; }
-    const got = latest.get(item.code);
-    if (!got) { unresolved.push({ item: item.name, reason: "価格データなし" }); continue; }
-    // 価格は「単位」欄の量に対する値段なので、単位に重さが書いてあればそれを最優先で使う。
-    // （品目名に「5kg」などの袋の大きさが混ざっていると、そちらを拾って単価が狂うため）
-    const fromUnit = item.unit ? parseQuantityGrams(item.unit, null) : null;
-    const grams = fromUnit !== null ? fromUnit : parseQuantityGrams(item.name + " " + (item.unit || ""), entry.unitGrams);
-    if (!grams) { unresolved.push({ item: item.name, unit: item.unit || "", reason: "重さに換算できない単位。unitGramsを指定" }); continue; }
-    const yen100g = Math.round((got.value / grams) * 100 * 10) / 10;
+    const exist = entry.codes.filter((c) => known.has(c));
+    if (!exist.length) { unmatched.push(entry.foods.join(",") + " " + entry.codes.join("/")); continue; }
+    const code = exist.find((c) => latest.has(c));
+    if (!code) { unresolved.push({ item: known.get(exist[0]), reason: "価格データなし" }); continue; }
+    const got = latest.get(code);
+    const yen100g = Math.round((got.value / entry.grams) * 100 * (entry.ratio ?? 1) * 10) / 10;
+    // 単位の取りちがいなどで極端な値になったときは、使わずに知らせる
+    if (!(yen100g >= 0.5 && yen100g <= 3000)) { unresolved.push({ item: known.get(code), reason: `100gあたり${yen100g}円は不自然。gramsを確認` }); continue; }
     for (const f of entry.foods) {
-      prices[f] = { yen100g, item: item.name, unit: item.unit || "", price: got.value, grams, time: got.time };
+      prices[f] = { yen100g, item: known.get(code), code, price: got.value, grams: entry.grams, time: got.time, ...(entry.note ? { note: entry.note } : {}) };
     }
   }
   for (const d of derived) {
     const src = prices[d.from];
-    if (src) prices[d.food] = { yen100g: Math.round(src.yen100g * d.ratio * 10) / 10, derivedFrom: d.from, note: d.note, time: src.time };
+    if (src && !prices[d.food]) prices[d.food] = { yen100g: Math.round(src.yen100g * d.ratio * 10) / 10, derivedFrom: d.from, note: d.note, time: src.time };
   }
   return { prices, unmatched, unresolved };
 }

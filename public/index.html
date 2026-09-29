@@ -241,7 +241,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
   </details>
-  <p class="small" id="verLine">献立ノート バージョン 1.5.1(2026.09.29版)</p>
+  <p class="small" id="verLine">献立ノート バージョン 1.6.0(2026.09.29版)</p>
   <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
 </section>
 
@@ -1152,7 +1152,7 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     }
     if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
     if (t.id === "bkSave") {
-      var bk = { app: "kondate-note", version: "1.5.1", savedAt: new Date().toISOString(), data: S };
+      var bk = { app: "kondate-note", version: "1.6.0", savedAt: new Date().toISOString(), data: S };
       var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
       var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
