@@ -242,7 +242,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
   </details>
-  <p class="small" id="verLine">献立ノート バージョン 1.8.1(2026.09.30版)</p>
+  <p class="small" id="verLine">献立ノート バージョン 1.8.2(2026.09.30版)</p>
   <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
 </section>
 
@@ -398,7 +398,8 @@ function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, t
 }
 
 // bentoDays: 日ごとに、お弁当を作る人がいるか。いる日の昼は、お弁当向きの料理で組む
-function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], lean = false) {
+function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], level = 0) {
+  const lean = level >= 1, eco = level >= 2;
   const rand = rng(seed); const used = {}; const foodUse = {};
   const recent = { main: [], side: [], soup: [] };
   const RECENT_N = { main: 3, side: 6, soup: 4 };
@@ -419,14 +420,14 @@ function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], lean = fals
     const meals = [];
     today = new Set(); groups = { today: [], recent: groups.recent };
     // 朝: ご飯 + 朝向きの主菜 + 副菜 + 汁物
-    meals.push({ slot: "朝食", dishes: [take(pools.bMain), take(pools.bSide), take(pools.bSoup)].filter(Boolean) });
+    meals.push({ slot: "朝食", dishes: [take(pools.bMain), eco ? null : take(pools.bSide), take(pools.bSoup)].filter(Boolean) });
     // 昼: お弁当の日は、お弁当向きの主菜 + 副菜2品（汁物なし）。ふだんは主菜 + 副菜 + 汁物、または一品もの + 副菜
     if (bentoDays[d]) {
-      const dishes = [take(pools.bentoMain), take(pools.bentoSide), take(pools.bentoSide)].filter(Boolean);
+      const dishes = [take(pools.bentoMain), take(pools.bentoSide), eco ? null : take(pools.bentoSide)].filter(Boolean);
       meals.push({ slot: "昼食", dishes, bento: true });
     } else {
       const oneDish = pools.dish.length && rand() < 0.3;
-      meals.push({ slot: "昼食", dishes: (oneDish ? [take(pools.dish, 1), take(pools.side)] : [take(pools.main), take(pools.side), take(pools.soup)]).filter(Boolean) });
+      meals.push({ slot: "昼食", dishes: (oneDish ? [take(pools.dish, 1), take(pools.side)] : [take(pools.main), take(pools.side), eco ? null : take(pools.soup)]).filter(Boolean) });
     }
     // 夜: 主菜 + サラダ + 小鉢 + 汁物の4品。丼・麺などの一品ものの日は、一品 + サラダ + 小鉢（ご飯ものには汁物も）
     const oneDish = pools.dish.length && rand() < 0.3;
@@ -500,32 +501,34 @@ function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed, member
   const bentoDays = [0, 1, 2, 3, 4, 5, 6].map((d) => members.some((mb) => mb.lunch && mb.lunch[d] === "bento"));
   // 予算内に収まるまで、価格の重みを上げながら組み直す。
   // 各段階で乱数の種を変えて5通り作り、いちばん安い組み合わせを採る。
-  const search = (lean) => {
+  // 節約の段階: 0=ふつう / 1=夜の小鉢を減らす / 2=さらに朝の副菜・昼の汁物・お弁当の副菜を減らし、ご飯を大盛り(200g)にする
+  const search = (level) => {
     let lambda = 0.02, result = null;
-    for (let attempt = 0; attempt < 7; attempt++) {
+    const riceG = level >= 2 ? 200 : RICE_G;
+    for (let attempt = 0; attempt < 8; attempt++) {
       const tries = budgetWeek ? 5 : 1;
       for (let k = 0; k < tries; k++) {
-        const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays, lean), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
+        const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays, level), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry, riceG, level >= 2), dayExtras);
         if (!result || (budgetWeek && cand.cost < result.cost)) result = cand;
       }
       if (!budgetWeek || result.cost <= budgetWeek) break;
       lambda *= 3;
     }
-    return { ...result, lambda, lean };
+    return { ...result, lambda, level };
   };
-  let result = search(false);
-  // それでも予算を超えるときは、夜の小鉢を1品減らして組み直す（夜は おかず・サラダ・汁物 の3品）
-  if (budgetWeek && result.cost > budgetWeek) {
-    const alt = search(true);
+  let result = search(0);
+  for (let lv = 1; budgetWeek && lv <= 2 && result.cost > budgetWeek; lv++) {
+    const alt = search(lv);
     if (alt.cost < result.cost) result = alt;
   }
   const lambda = result.lambda;
   const over = budgetWeek && result.cost > budgetWeek;
   const suggest = Math.ceil(result.cost / 500) * 500;
-  if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。この家族なら、週${suggest.toLocaleString("ja-JP")}円くらいあると組めます。予算を上げるか、好みの条件をゆるめてください。`);
-  else if (result.lean) warnings.push("予算に合わせて、夜の小鉢を1品減らしました。");
+  if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。これ以上は下げられない最安の組み合わせです（品数を減らし、ご飯を多めにしています）。この家族の下限は週${suggest.toLocaleString("ja-JP")}円くらいです。予算を上げてください。`);
+  else if (result.level === 1) warnings.push("予算に合わせて、夜の小鉢を1品減らしました。");
+  else if (result.level === 2) warnings.push("予算に合わせて、品数を減らし、ご飯を多めにしています（朝の副菜・昼の汁物・夜の小鉢を省略）。");
   if (priceMissing.size) warnings.push(`価格が未設定の食材が${priceMissing.size}種あり、食費に含まれていません。`);
-  return { ...result, warnings, budgetWeek, overBudget: !!over, lambda, suggestBudget: suggest };
+  return { ...result, warnings, budgetWeek, overBudget: !!over, lambda, suggestBudget: suggest, floor: over ? suggest : null };
 }
 
 // 誕生日などのごちそう予算を、その日の食費に足す（食材や栄養には含めない）
@@ -536,7 +539,7 @@ function addExtras(res, dayExtras) {
 }
 
 // 各人の分量を決め、間食で補い、栄養・費用・買い物リストを集計する
-function finalize(plan, members, fm, prices, costMap, riceUnit, excludeAllergens, pantry = {}) {
+function finalize(plan, members, fm, prices, costMap, riceUnit, excludeAllergens, pantry = {}, riceG = RICE_G, eco = false) {
   const noDairy = excludeAllergens.includes("乳");
   const snacks = SNACKS.filter((s) => !(noDairy && s[2]));
   let totalCost = 0;
@@ -550,15 +553,22 @@ function finalize(plan, members, fm, prices, costMap, riceUnit, excludeAllergens
       const baseIng = [];
       meals.forEach((m, j) => {
         if (skipped(mb, j)) return;
-        if (!m.dishes.some((x) => x.role === "一品")) baseIng.push({ food: RICE, g: RICE_G });   // 丼・麺などの一品にはご飯を足さない
+        if (!m.dishes.some((x) => x.role === "一品")) baseIng.push({ food: RICE, g: riceG });   // 丼・麺などの一品にはご飯を足さない
         for (const d of m.dishes) baseIng.push(...d.ingredients);
       });
       const base = nutritionOf(baseIng, fm);
       let target = mb.kcal;                                                   // 食べない・外で食べる食事の分は目標から引く
       meals.forEach((m, j) => { if (skipped(mb, j)) target -= mb.kcal * (m.off ? MEAL_SHARE[j] : LUNCH_SHARE); });
       if (!baseIng.length) return { scale: 1, snacks: [], nutrition: round(nutritionOf([], fm)), targetKcal: 0, lunch: (mb.lunch && mb.lunch[di]) || "home", ingredients: [] };
-      const scale = Math.max(0.6, Math.min(1.6, target / base.kcal));
-      const main = nutritionOf(baseIng, fm, scale);
+      // 節約の段階では、おかずは標準の量のまま、足りない分を安いエネルギー源のご飯で補う
+      let scale = Math.max(0.6, Math.min(1.6, target / base.kcal)), riceScale = scale;
+      if (eco) {
+        const rc = baseIng.filter((x) => x.food === RICE), nr = baseIng.filter((x) => x.food !== RICE);
+        const rk = nutritionOf(rc, fm).kcal, nk = nutritionOf(nr, fm).kcal;
+        if (rk > 0) { scale = 1; riceScale = Math.max(0.6, Math.min(3, (target - nk) / rk)); }
+      }
+      const gOf = (x) => x.g * (eco && x.food === RICE ? riceScale : scale);
+      const main = nutritionOf(baseIng.map((x) => ({ food: x.food, g: gOf(x) })), fm);
       let extra = target - main.kcal, snackItems = [];
       // 足りない分を間食で補う（日ごとに候補を回す）
       for (let i = 0; extra >= 60 && i < snacks.length && snackItems.length < 3; i++) {
@@ -568,9 +578,9 @@ function finalize(plan, members, fm, prices, costMap, riceUnit, excludeAllergens
         snackItems.push({ food: id, g: Math.round(g * times) });
         extra -= kcal * times;
       }
-      const all = baseIng.map((x) => ({ food: x.food, g: x.g * scale })).concat(snackItems);
+      const all = baseIng.map((x) => ({ food: x.food, g: gOf(x) })).concat(snackItems);
       const nut = nutritionOf(all, fm);
-      return { scale: Math.round(scale * 100) / 100, snacks: snackItems, nutrition: round(nut), targetKcal: Math.round(target), lunch: (mb.lunch && mb.lunch[di]) || "home", ingredients: all };
+      return { scale: Math.round((eco ? main.kcal / base.kcal : scale) * 100) / 100, snacks: snackItems, nutrition: round(nut), targetKcal: Math.round(target), lunch: (mb.lunch && mb.lunch[di]) || "home", ingredients: all };
     });
     let dayCost = 0;
     for (const p of persons) for (const i of p.ingredients) {
@@ -808,6 +818,8 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
     if (!ms.length) { LAST = null; }
     else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
+    var bh = $("budgetHint");
+    if (bh) bh.textContent = LAST && LAST.plan.overBudget ? "いまの家族(" + LAST.ms.length + "人)では、いちばん切りつめても週" + yen(LAST.plan.suggestBudget) + "円ほどかかります。これより低い予算にはできません。" : "予算は「これに収まるように組む目標」です。収まらないときは、品数を減らし、ご飯を多めにして安くします。金額を入れないと、人数から自動で決めます。";
     renderAll();
   }
   function renderAll() { renderToday(); renderWeek(); renderShop(); renderSpend(); renderCal(); renderNames(); renderTasteList(); refreshPriceTable(); }
@@ -1218,7 +1230,7 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     }
     if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
     if (t.id === "bkSave") {
-      var bk = { app: "kondate-note", version: "1.8.1", savedAt: new Date().toISOString(), data: S };
+      var bk = { app: "kondate-note", version: "1.8.2", savedAt: new Date().toISOString(), data: S };
       var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
       var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);

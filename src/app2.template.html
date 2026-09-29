@@ -506,6 +506,8 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
     if (!ms.length) { LAST = null; }
     else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
+    var bh = $("budgetHint");
+    if (bh) bh.textContent = LAST && LAST.plan.overBudget ? "いまの家族(" + LAST.ms.length + "人)では、いちばん切りつめても週" + yen(LAST.plan.suggestBudget) + "円ほどかかります。これより低い予算にはできません。" : "予算は「これに収まるように組む目標」です。収まらないときは、品数を減らし、ご飯を多めにして安くします。金額を入れないと、人数から自動で決めます。";
     renderAll();
   }
   function renderAll() { renderToday(); renderWeek(); renderShop(); renderSpend(); renderCal(); renderNames(); renderTasteList(); refreshPriceTable(); }
