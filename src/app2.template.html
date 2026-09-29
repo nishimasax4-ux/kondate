@@ -23,8 +23,8 @@ body{background:var(--paper) repeating-linear-gradient(to bottom,transparent 0,t
 #app{max-width:520px;margin:0 auto;position:relative;min-height:100vh;padding:18px 16px 190px 44px}
 #app::before{content:"";position:absolute;left:30px;top:0;bottom:0;width:2px;background:var(--margin)}
 button,input,select{font-family:inherit;font-size:inherit;color:inherit}
-h1{font-family:var(--hand);font-weight:400;font-size:32px;line-height:1.25;margin:0}
-h2{font-family:var(--hand);font-weight:400;font-size:24px;margin:22px 0 6px}
+h1{font-family:var(--font);font-weight:900;font-size:28px;line-height:1.3;letter-spacing:.02em;margin:0}
+h2{font-family:var(--font);font-weight:900;font-size:22px;margin:22px 0 6px}
 .date{color:var(--sub);font-size:15px;margin:0 0 12px}
 .pane{display:none;flex-direction:column;gap:12px}
 .pane.on{display:flex}
@@ -142,7 +142,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
 .veil{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:none;align-items:flex-end;justify-content:center}
 .veil.on{display:flex}
 .sheet{background:var(--paper);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
-.sheet h3{font-family:var(--hand);font-weight:400;font-size:28px;margin:0}
+.sheet h3{font-family:var(--font);font-weight:900;font-size:24px;margin:0}
 .two{display:flex;gap:10px}.two .field{flex:1;min-width:0}.two input{width:100%}
 .res{background:var(--card);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline}
 .res b{font-size:24px;color:var(--red);font-variant-numeric:tabular-nums}
@@ -175,6 +175,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
 <section class="pane" id="p-shop">
   <h1>買い物リスト</h1>
   <p class="date" id="sSub"></p>
+  <p class="small" id="priceDate"></p>
   <div id="sBody"></div>
   <div id="spBody" style="display:flex;flex-direction:column;gap:12px;margin-top:14px"></div>
 </section>
@@ -214,10 +215,17 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   <details><summary>家族の好み(感想の記録)</summary><div id="tasteList" style="margin-top:8px"></div></details>
   <details><summary>苦手な料理をはずす</summary><div class="chips" id="dislikes" style="margin-top:8px"></div></details>
   <details><summary>食材ごとの値段を見る・直す</summary>
+    <p class="small" id="priceDate2" style="margin:8px 0 0"></p>
     <div class="field" style="margin:8px 0"><input type="search" id="priceFilter" placeholder="食材名でさがす(例: たまご)" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>
     <div id="priceTable"></div>
     <button type="button" class="btn link" id="resetPrices">入力した値段をぜんぶ仮の値にもどす</button>
   </details>
+  <details><summary>データの控えをとる・もどす</summary>
+    <div class="small" style="margin-top:8px">この記録はこの端末の中だけに保存されています。機種変更や、ブラウザのデータを消したときに備えて、ときどき控えを取っておくと安心です。</div>
+    <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
+    <input type="file" id="bkFile" accept="application/json,.json" hidden>
+  </details>
+  <p class="small" id="verLine">献立ノート バージョン @@VERSION@@(@@BUILD@@版)</p>
   <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
 </section>
 
@@ -296,7 +304,17 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   var LOADED = null;
 
   var S = { counts: { a: { m: 1, f: 1 }, s: { m: 0, f: 0 }, c: { m: 0, f: 1 } }, child: "e", budgetWeek: 20000, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } } };
-  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!S.lunch) S.lunch = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } }; } } catch (e) {}
+  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!S.lunch) S.lunch = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } }; } } catch (e) {}
+  // 保存された内容が古かったり壊れていても動くように、形をそろえる
+  ["a", "s", "c"].forEach(function (k) {
+    var c = S.counts && S.counts[k]; if (!c || typeof c !== "object") c = { m: 0, f: 0 };
+    S.counts[k] = { m: Math.max(0, Math.min(20, Math.round(+c.m || 0))), f: Math.max(0, Math.min(20, Math.round(+c.f || 0))) };
+    if (!S.lunch[k] || typeof S.lunch[k] !== "object") S.lunch[k] = { wd: "home", we: "home" };
+  });
+  if (!CHILD[S.child]) S.child = "e";
+  ["allergens", "dislikes", "spend", "events"].forEach(function (k) { if (!Array.isArray(S[k])) S[k] = []; });
+  if (!S.counts.a.m && !S.counts.a.f && !S.counts.s.m && !S.counts.s.f && !S.counts.c.m && !S.counts.c.f) S.counts.a.f = 1;
+
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
   function yen(n) { return Math.round(n).toLocaleString("ja-JP"); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -361,8 +379,6 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   ];
   function builtinEvents(y) {
     var out = SEASON.map(function (s) { return { key: "b:" + s[2], name: s[2], hint: s[3], m: s[0], d: s[1], type: "season" }; });
-    out.push({ key: "b:母の日", name: "母の日", hint: "いつもと違うごちそうを", m: 5, d: nthSun(y, 5, 2), type: "season" });
-    out.push({ key: "b:父の日", name: "父の日", hint: "いつもと違うごちそうを", m: 6, d: nthSun(y, 6, 3), type: "season" });
     out.push({ key: "b:冬至", name: "冬至", hint: "かぼちゃの煮物", m: 12, d: Math.floor(22.2747 + 0.242194 * (y - 1980) - Math.floor((y - 1980) / 4)), type: "season" });
     return out;
   }
@@ -371,14 +387,76 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     S.events.forEach(function (e) { if (e.m === m && e.d === d) out.push({ key: "c:" + e.id, name: e.name, hint: "", m: m, d: d, type: e.type, custom: true, id: e.id }); });
     return out;
   }
-  var EV_RECIPES = { "お正月": ["x07", "x08", "x09", "x10"], "節分": ["x03", "x04"], "ひなまつり": ["x01", "x02"], "こどもの日": ["x13", "m07"], "七夕": ["x06"], "クリスマスイブ": ["x11", "x12", "s02"], "クリスマス": ["x11", "x12", "s02"], "大晦日": ["x05"], "冬至": ["s07", "m12"], "母の日": ["x12"], "父の日": ["x12"] };
-  function evRecipes(e) {
-    var ids = e.custom ? ["x11", "x12", "s02"] : (EV_RECIPES[e.name] || []);
-    return ids.filter(function (id) { return RM[id] && !RM[id].allergens.some(function (a) { return S.allergens.indexOf(a) >= 0; }); });
+  var EV_RECIPES = { "お正月": ["x07", "x08", "x09", "x10"], "節分": ["x03", "x04"], "ひなまつり": ["x01", "x02"], "こどもの日": ["x13", "m07"], "七夕": ["x06"], "クリスマスイブ": ["x11", "x12", "s02"], "クリスマス": ["x11", "x12", "s02"], "大晦日": ["x05"], "冬至": ["s07", "m12"] };
+  // お祝いの献立の案。k: b=誕生日 a=記念日 x=クリスマス。
+  // 誕生日の案には、かならずケーキかプリンを入れる。案は年ごと・予定ごとに自動で変わり、「別のお祝い料理にする」でも選べる。
+  var EV_SETS = [
+    { n: "ローストチキンの洋風ごちそう", ids: ["x11", "x29", "x26", "x12"], k: "bax" },
+    { n: "ステーキのごちそう", ids: ["x16", "x29", "x26", "x12"], k: "ba" },
+    { n: "ローストビーフのごちそう", ids: ["x15", "x29", "x26", "x12"], k: "bax" },
+    { n: "ローストポークのごちそう", ids: ["x40", "x30", "x38", "x12"], k: "bax" },
+    { n: "手巻き寿司パーティー", ids: ["x18", "x25", "x12"], k: "ba" },
+    { n: "ちらし寿司のお祝い", ids: ["x01", "x02", "x25", "x12"], k: "ba" },
+    { n: "すき焼き", ids: ["x20", "x29", "x12"], k: "ba" },
+    { n: "ハンバーグ(子どもが喜ぶ)", ids: ["x17", "x29", "x26", "x27"], k: "b" },
+    { n: "ミートソースとピザトースト(子ども向け)", ids: ["x32", "x33", "x29", "x41"], k: "b" },
+    { n: "焼肉パーティー", ids: ["x45", "x29", "x42"], k: "b" },
+    { n: "から揚げとグラタン", ids: ["x21", "x22", "x29", "x12"], k: "bx" },
+    { n: "えびフライのごちそう", ids: ["x31", "x30", "x37", "x12"], k: "ba" },
+    { n: "ロールキャベツ", ids: ["x36", "x30", "x38", "x12"], k: "bax" },
+    { n: "チーズフォンデュ", ids: ["x39", "x29", "x37", "x12"], k: "bax" },
+    { n: "チキンとグラタンのクリスマス", ids: ["x11", "x22", "x29", "x12"], k: "x" },
+    { n: "ビーフシチュー", ids: ["x23", "x29", "x12"], k: "bax" },
+    { n: "天ぷらと茶碗蒸し", ids: ["x19", "x25", "x28"], k: "a" },
+    { n: "お刺身と天ぷらの和のごちそう", ids: ["x24", "x19", "x25", "x28"], k: "a" },
+    { n: "ぶりの照り焼きの和膳", ids: ["x34", "x25", "x02", "x42"], k: "a" },
+    { n: "寄せ鍋", ids: ["x44", "x25", "x43"], k: "a" },
+    { n: "カルパッチョとパスタの洋風ディナー", ids: ["x35", "x32", "x29", "x12"], k: "a" }
+  ];
+  function evKind(e) {
+    if (e.type === "birthday") return "b";
+    if (e.type === "anniv") return "a";
+    if (e.name === "クリスマスイブ" || e.name === "クリスマス") return "x";
+    return "";
   }
+  function okDish(id) { return RM[id] && !RM[id].allergens.some(function (a) { return S.allergens.indexOf(a) >= 0; }); }
+  function hashStr(s) { var h = 7; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+  function setDishes(ids, kind) {   // アレルギーで外れた料理を除く。主役の料理が残らなければ null
+    var use = ids.filter(okDish);
+    if (!use.some(function (id) { return RM[id].role === "主菜" || RM[id].role === "一品"; })) return null;
+    if (!use.some(function (id) { return RM[id].role === "デザート"; })) {   // ケーキやプリンが使えないときは、フルーツのデザートで補う
+      if (kind === "b" || ids.some(function (id) { return RM[id].role === "デザート"; })) { if (okDish("x28")) use.push("x28"); else if (okDish("x43")) use.push("x43"); }
+    }
+    return use;
+  }
+  function evMenus(e) {          // その予定で選べるお祝い料理の案(アレルギーに合うものだけ)
+    var kind = evKind(e), out = [];
+    if (kind) EV_SETS.forEach(function (s) { if (s.k.indexOf(kind) >= 0) { var u = setDishes(s.ids, kind); if (u) out.push({ n: s.n, ids: u }); } });
+    return out;
+  }
+  function evMenu(e) {
+    var list = evMenus(e);
+    if (!list.length) {           // お正月・節分など、決まった行事料理
+      var ids = (EV_RECIPES[e.name] || []).filter(okDish);
+      return { n: "", ids: ids, count: ids.length ? 1 : 0, idx: 0 };
+    }
+    var yr = dayYear(e), pick = (S.evPick && S.evPick[e.key + "|" + yr]) || 0;
+    var idx = (hashStr(e.key + "|" + yr) + pick) % list.length;
+    return { n: list[idx].n, ids: list[idx].ids, count: list.length, idx: idx };
+  }
+  function dayYear(e) { for (var i = 0; i < 7; i++) { var di = dayInfo(i); if (di.m === e.m && di.d === e.d) return di.y; } return TODAY.getFullYear(); }
+  function evRecipes(e) { return evMenu(e).ids; }
   function putRow(e, idx) {
-    var ids = evRecipes(e); if (!ids.length || idx !== 0) return "";
-    return '<button type="button" class="btn" data-evput="' + esc(e.key) + '" style="text-align:left;line-height:1.4">晩ごはんにする<br><span class="small">' + ids.map(function (id) { return esc(RM[id].name); }).join("・") + "</span></button>";
+    var mn = evMenu(e), ids = mn.ids; if (!ids.length || idx !== 0) return "";
+    var yen1 = 0; ids.forEach(function (id) { yen1 += costOf(RM[id].ingredients, FM, PRICES).yen; });
+    var people = Math.max(1, members().length), cost = Math.round(yen1 * people / 10) * 10;
+    var names = ids.map(function (id) { return esc(RM[id].name); }).join("・");
+    if (S.evAuto !== false && mn.n) {
+      return '<div class="small"><b>お祝いの献立: ' + esc(mn.n) + '</b>(約' + yen(cost) + '円)<br>' + names + '</div>' +
+        (mn.count > 1 ? '<button type="button" class="btn" data-evnext="' + esc(e.key) + '">別のお祝い料理にする</button>' : "");
+    }
+    return '<button type="button" class="btn" data-evput="' + esc(e.key) + '" style="text-align:left;line-height:1.4">晩ごはんにする' + (mn.n ? "(" + esc(mn.n) + ")" : "") + '<br><span class="small">' + names + "</span></button>" +
+      (mn.count > 1 ? '<button type="button" class="btn" data-evnext="' + esc(e.key) + '">別のお祝い料理にする</button>' : "");
   }
   function evLabel(e) { return e.type === "birthday" ? esc(e.name) + "の誕生日" : esc(e.name); }
   function evTagHtml(e) { var c = e.type === "birthday" ? "b" : e.type === "anniv" ? "a" : ""; return '<span class="evtag ' + c + '">' + (e.type === "birthday" ? "誕生日" : e.type === "anniv" ? "記念日" : "行事") + "</span>"; }
@@ -387,9 +465,21 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   }
 
   function dkey(i) { var d = dayInfo(i); return TODAY.getFullYear() + "-" + (d.m < 10 ? "0" : "") + d.m + "-" + (d.d < 10 ? "0" : "") + d.d; }
+  // その日に、お祝い料理を自動で入れる行事(誕生日・記念日・クリスマスなど)。自分で決めた晩ごはんがある日は対象外。
+  function autoEvent(i) {
+    if (S.evAuto === false) return null;
+    var di = dayInfo(i), mm = S.manual[dkey(i)];
+    if (mm && mm[2]) return null;
+    var evs = eventsOn(di.y, di.m, di.d).filter(function (x) { return evRecipes(x).length; });
+    if (!evs.length) return null;
+    return evs.filter(function (x) { return x.custom; })[0] || evs[0];   // 自分で入れた誕生日・記念日を優先
+  }
   function fixedPlan() {
     var f = {};
-    for (var i = 0; i < 7; i++) { var m = S.manual[dkey(i)]; if (m) f[i] = m; }
+    for (var i = 0; i < 7; i++) {
+      var m = S.manual[dkey(i)], ae = autoEvent(i);
+      if (m || ae) { f[i] = Object.assign({}, m || {}); if (ae) f[i][2] = { ids: evRecipes(ae) }; }
+    }
     return f;
   }
   function tastePenalty() {
@@ -444,7 +534,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
         ["home", "bento", "none"].forEach(function (k) { if (groups[k]) parts.push(nm[k] + ": " + Object.keys(groups[k]).join("・")); });
         if (Object.keys(groups).length > 1 || groups.bento) lm = '<div class="small">' + parts.join(" ／ ") + "</div>";
       }
-      h += '<div class="note"><div class="slot">' + slots[m.slot] + (m.manual ? '<span class="tag">自分で決めた</span>' : "") + chg + "</div>" + lm + '<ul>' + (m.rice ? '<li class="rice"><em style="font-style:normal">ご飯</em></li>' : "") + '';
+      h += '<div class="note"><div class="slot">' + slots[m.slot] + (m.manual ? (m.slot === "夕食" && autoEvent(SEL) ? '<span class="tag">お祝い</span>' : '<span class="tag">自分で決めた</span>') : "") + chg + "</div>" + lm + '<ul>' + (m.rice ? '<li class="rice"><em style="font-style:normal">ご飯</em></li>' : "") + '';
       m.dishes.forEach(function (x) {
         var c = costOf(RM[x.id].ingredients, FM, PRICES).yen;
         var tg = tasteTag(x.id);
@@ -700,6 +790,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     for (var b = 1; b <= 31; b++) dyo += '<option value="' + b + '">' + b + "日</option>";
     h += '<div class="card"><div class="lab">予定をふやす(毎年くりかえします)</div><div class="two"><div class="field"><label for="evType">種類</label><select id="evType"><option value="birthday">誕生日</option><option value="anniv">記念日</option></select></div><div class="field"><label for="evName">名前・内容</label><input type="text" id="evName" placeholder="例: パパ、結婚記念日" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div></div>' +
       '<div class="two"><div class="field"><label for="evM">月</label><select id="evM">' + mo + '</select></div><div class="field"><label for="evD">日</label><select id="evD">' + dyo + '</select></div></div>' +
+      '<label class="chip" style="margin:8px 0"><input type="checkbox" id="evAuto"' + (S.evAuto === false ? "" : " checked") + '>お祝いの日は、晩ごはんを自動でお祝い料理にする</label>' +
       '<div class="field"><label for="evB">ごちそうの予算(円・あとで変えられます)</label><input type="number" id="evB" inputmode="numeric" min="0" step="500" placeholder="0"></div><button type="button" class="btn solid" id="evAdd">予定を入れる</button>' +
       (S.events.length ? '<div class="lab" style="margin-top:6px">入れた予定</div>' + S.events.map(function (e) { return '<div class="evrow"><span class="dt">' + e.m + "/" + e.d + '</span><span class="tx">' + evTagHtml(e) + evLabel(e) + '</span><button type="button" class="btn link" data-evdel="' + e.id + '">消す</button></div>'; }).join("") : "") + "</div>";
     $("cBody").innerHTML = h;
@@ -813,18 +904,26 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     if (t.hasAttribute("data-day")) { var pp = t.getAttribute("data-day").split("-"); openDay(+pp[0], +pp[1], +pp[2]); return; }
     if (t.hasAttribute("data-closeday")) closeDay();
     if (t.id === "evAdd") {
-      var nm = $("evName").value.trim(); if (!nm) { $("evName").focus(); return; }
+      var nm = $("evName").value.trim().slice(0, 40); if (!nm) { $("evName").focus(); return; }
       var ev = { id: String(Date.now()), type: $("evType").value, name: nm, m: +$("evM").value, d: +$("evD").value };
       S.events.push(ev); if (+$("evB").value > 0) S.evBudget["c:" + ev.id] = +$("evB").value;
       save(); replan(); return;
     }
     if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
+    if (t.id === "bkSave") {
+      var bk = { app: "kondate-note", version: "@@VERSION@@", savedAt: new Date().toISOString(), data: S };
+      var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
+      var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      return;
+    }
+    if (t.id === "bkLoad") { $("bkFile").click(); return; }
     if (t.hasAttribute("data-pantry")) { openPantry(); return; }
     if (t.hasAttribute("data-pnrm")) { delete S.pantry[t.getAttribute("data-pnrm")]; save(); renderPantry(); renderPantryFound(); return; }
     if (t.hasAttribute("data-pnadd")) { var pid = t.getAttribute("data-pnadd"), u0 = unitOf(pid); S.pantry[pid] = (u0[1] === 1 ? 300 : u0[1]) / fac(pid); save(); $("pnSearch").value = ""; renderPantry(); renderPantryFound(); return; }
     if (t.id === "spAdd") {
       var yv = +$("spYen").value; if (!(yv > 0)) { $("spYen").focus(); return; }
-      S.spend.push({ id: String(Date.now()), date: $("spDate").value || ymd(TODAY), yen: Math.round(yv), memo: $("spMemo").value.trim(), est: $("spEst").checked ? Math.round(shopTotal()) : 0 });
+      S.spend.push({ id: String(Date.now()), date: $("spDate").value || ymd(TODAY), yen: Math.round(yv), memo: $("spMemo").value.trim().slice(0, 60), est: $("spEst").checked ? Math.round(shopTotal()) : 0 });
       $("spYen").value = ""; $("spMemo").value = ""; save(); renderSpend(); renderWeek(); return;
     }
     if (t.hasAttribute("data-spdel")) { var sid = t.getAttribute("data-spdel"); S.spend = S.spend.filter(function (x) { return x.id !== sid; }); save(); renderSpend(); renderWeek(); return; }
@@ -832,6 +931,11 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     if (t.hasAttribute("data-taste")) { TS = t.getAttribute("data-taste"); renderTaste(); $("veil5").classList.add("on"); return; }
     if (t.hasAttribute("data-tk")) { var tk = t.getAttribute("data-tk"), tv = +t.getAttribute("data-tv"); S.taste[TS] = S.taste[TS] || {}; if (tv === 0) delete S.taste[TS][tk]; else S.taste[TS][tk] = tv; if (!Object.keys(S.taste[TS]).length) delete S.taste[TS]; save(); renderTaste(); return; }
     if (t.hasAttribute("data-tkclear")) { delete S.taste[t.getAttribute("data-tkclear")]; save(); renderTasteList(); return; }
+    if (t.hasAttribute("data-evnext")) {
+      var nk = t.getAttribute("data-evnext"), di4 = dayInfo(SEL), ev4 = eventsOn(di4.y, di4.m, di4.d).filter(function (x) { return x.key === nk; })[0];
+      if (ev4) { S.evPick = S.evPick || {}; var pk = nk + "|" + dayYear(ev4); S.evPick[pk] = (S.evPick[pk] || 0) + 1; save(); replan(); }
+      return;
+    }
     if (t.hasAttribute("data-evput")) {
       var di3 = dayInfo(SEL), ek2 = t.getAttribute("data-evput"), evx = eventsOn(di3.y, di3.m, di3.d).filter(function (x) { return x.key === ek2; })[0];
       if (evx) { var kk = dkey(SEL); S.manual[kk] = S.manual[kk] || {}; S.manual[kk][2] = { ids: evRecipes(evx) }; save(); replan(); }
@@ -874,23 +978,63 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     } else if (t.hasAttribute("data-pnq")) {
       var qid = t.getAttribute("data-pnq"), qv = +t.value; if (qv > 0) S.pantry[qid] = qv * unitOf(qid)[1] / fac(qid); else delete S.pantry[qid]; save(); renderPantry();
     } else if (t.hasAttribute("data-nm")) {
-      S.names[t.getAttribute("data-nm")] = t.value.trim(); save(); renderToday(); renderTasteList();
+      S.names[t.getAttribute("data-nm")] = t.value.trim().slice(0, 20); save(); renderToday(); renderTasteList();
     } else if (t.hasAttribute("data-eb")) {
       var ek = t.getAttribute("data-eb"); if (+t.value > 0) S.evBudget[ek] = +t.value; else delete S.evBudget[ek]; save(); replan();
     } else if (t.hasAttribute("data-lu")) {
       S.lunch[t.getAttribute("data-lu")][t.getAttribute("data-k")] = t.value; save(); replan();
+    } else if (t.id === "evAuto") { S.evAuto = !!t.checked; save(); replan();
     } else if (t.id === "adj") { S.adj = +t.value || 0; save(); replan(); }
   });
+
+  var UPDATED = "";
+  function setPriceDate() {
+    var d = UPDATED ? UPDATED.slice(0, 10).split("-") : null;
+    var s = d ? "値段の更新日: " + d[0] + "年" + (+d[1]) + "月" + (+d[2]) + "日(公式統計)" : "値段の更新日: まだありません(仮の値を使っています)";
+    ["priceDate", "priceDate2"].forEach(function (id) { var el = $(id); if (el) el.textContent = s; });
+  }
 
   function loadRemotePrices() {
     if (!PRICES_URL) return;
     try {
       fetch(PRICES_URL).then(function (r) { return r.json(); }).then(function (j) {
-        if (j && j.prices) { LOADED = j.prices; $("priceNote").textContent = "値段は公式統計(小売物価統計調査・" + (j.area || "") + ")の最新値です。更新: " + (j.updatedAt || "").slice(0, 10) + "。" + (j.credit || ""); replan(); }
+        if (j && j.prices) { LOADED = j.prices; UPDATED = j.updatedAt || ""; setPriceDate(); $("priceNote").textContent = "値段は公式統計(小売物価統計調査・" + (j.area || "") + ")の最新値です。更新: " + (j.updatedAt || "").slice(0, 10) + "。" + (j.credit || ""); replan(); }
       }).catch(function () {});
     } catch (e) {}
   }
 
-  buildHousehold(); buildLunch(); buildConditions(); buildPriceTable(); refreshHousehold(); replan(); loadRemotePrices();
+  $("bkFile").addEventListener("change", function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var j = JSON.parse(String(fr.result));
+        var d = (j && j.data) ? j.data : j;
+        if (!d || typeof d !== "object" || !d.counts) throw new Error("形式ちがい");
+        delete d.__proto__; delete d.constructor; delete d.prototype;
+        if (!window.confirm("いまの記録を、控えの内容で置きかえます。よろしいですか。")) return;
+        localStorage.setItem(KEY, JSON.stringify(d));
+        location.reload();
+      } catch (e) { window.alert("この控えは読み込めませんでした。書き出したファイルをそのまま選んでください。"); }
+    };
+    fr.readAsText(f);
+    this.value = "";
+  });
+
+  try {
+    buildHousehold(); buildLunch(); buildConditions(); buildPriceTable(); refreshHousehold(); setPriceDate(); replan(); loadRemotePrices();
+  } catch (err) {
+    // 何かの理由で画面が作れなかったときも、何もできない状態にはしない
+    document.getElementById("app").insertAdjacentHTML("afterbegin",
+      '<div class="card" style="border:2px solid var(--red)"><b>画面をうまく作れませんでした。</b>' +
+      '<div class="small">保存された記録がこのアプリの形と合っていないようです。控えがあれば戻せます。なければ、はじめから設定し直してください。</div>' +
+      '<div class="btns"><button type="button" class="btn" id="bkSave2">控えを書き出す</button>' +
+      '<button type="button" class="btn solid" id="bkReset">記録を消してやり直す</button></div></div>');
+    document.getElementById("bkSave2").addEventListener("click", function () { document.getElementById("bkSave").click(); });
+    document.getElementById("bkReset").addEventListener("click", function () {
+      if (window.confirm("この端末に保存された記録をすべて消します。よろしいですか。")) { try { localStorage.removeItem(KEY); } catch (e2) {} location.reload(); }
+    });
+    throw err;
+  }
 })();
 </script>

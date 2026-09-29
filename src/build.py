@@ -2,7 +2,7 @@
 使い方:  python3 src/build.py
   料理や食材を増やしたときは、先に  python3 src/build_recipes.py  を実行して recipes.json を作り直す。
 """
-import json, re, pathlib
+import json, re, pathlib, datetime
 
 SRC = pathlib.Path(__file__).parent
 OUT = SRC.parent / "public" / "index.html"
@@ -16,6 +16,12 @@ dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
 data = f"window.__FOODS={dump(slim)};\nwindow.__RECIPES={dump(recipes)};\nwindow.__PRICES={dump(prices)};"
 planner = (SRC / "planner.js").read_text(encoding="utf-8").replace("export function", "function").replace("export const", "const")
 body = (SRC / "app2.template.html").read_text(encoding="utf-8").replace("//@@DATA@@", data).replace("//@@PLANNER@@", planner)
+
+VER = (SRC / "version.txt").read_text(encoding="utf-8").strip()
+BUILD = datetime.date.today().strftime("%Y.%m.%d")
+body = body.replace("@@VERSION@@", VER).replace("@@BUILD@@", BUILD)
+swp = SRC.parent / "public" / "sw.js"
+swp.write_text(re.sub(r'const VERSION = "[^"]*";', 'const VERSION = "v' + VER + '";', swp.read_text(encoding="utf-8")), encoding="utf-8")
 
 title = re.search(r"<title>.*?</title>", body, re.S).group(0)
 link = re.search(r'<link rel="stylesheet"[^>]*>', body).group(0)

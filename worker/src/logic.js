@@ -79,7 +79,10 @@ export function buildPrices(items, values, mapping, derived) {
     if (!item) { unmatched.push(entry.foods.join(",") + " " + JSON.stringify(entry.alts)); continue; }
     const got = latest.get(item.code);
     if (!got) { unresolved.push({ item: item.name, reason: "価格データなし" }); continue; }
-    const grams = parseQuantityGrams(item.name + " " + (item.unit || ""), entry.unitGrams);
+    // 価格は「単位」欄の量に対する値段なので、単位に重さが書いてあればそれを最優先で使う。
+    // （品目名に「5kg」などの袋の大きさが混ざっていると、そちらを拾って単価が狂うため）
+    const fromUnit = item.unit ? parseQuantityGrams(item.unit, null) : null;
+    const grams = fromUnit !== null ? fromUnit : parseQuantityGrams(item.name + " " + (item.unit || ""), entry.unitGrams);
     if (!grams) { unresolved.push({ item: item.name, unit: item.unit || "", reason: "重さに換算できない単位。unitGramsを指定" }); continue; }
     const yen100g = Math.round((got.value / grams) * 100 * 10) / 10;
     for (const f of entry.foods) {

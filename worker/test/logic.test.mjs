@@ -36,4 +36,9 @@ assert.equal(r.prices["01088"].yen100g, Math.round(54 * (156 / 342) * 10) / 10);
 assert.equal(r.prices["11126"].yen100g, 180);          // 180円/100g
 assert.ok(!r.prices["12004"]);                          // 卵は欠測なので出さない
 assert.ok(r.unmatched.length > 0);                      // 未対応の食材は一覧に残る
+
+// 品目名に袋の大きさ、単位欄に価格の基準が書かれている場合は、単位欄を優先する
+const items2 = [{ code: "E", name: "うるち米(コシヒカリ以外)5kg袋入り", unit: "1kg" }];
+const r2 = buildPrices(items2, [{ cat01: "E", time: "2025001010", value: "540" }], MAPPING, DERIVED);
+assert.equal(r2.prices["01083"].yen100g, 54);          // 5kgではなく1kgで割る
 console.log("OK", Object.keys(r.prices).length, "件の価格を作成");

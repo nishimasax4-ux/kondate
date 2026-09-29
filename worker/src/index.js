@@ -13,23 +13,42 @@ const API = "https://api.e-stat.go.jp/rest/3.0/app/json";
 const CREDIT = "このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。";
 
 async function estat(path, params, env) {
+  if (!env.ESTAT_APP_ID) throw new Error("ESTAT_APP_ID が設定されていません（wrangler secret put ESTAT_APP_ID）");
   const url = new URL(`${API}/${path}`);
   url.searchParams.set("appId", env.ESTAT_APP_ID);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  const res = await fetch(url.toString());
+  const res = await fetch(url.toString(), { signal: AbortSignal.timeout(20000) });   // 応答がないまま止まらないように打ち切る
   if (!res.ok) throw new Error(`e-Stat ${path} HTTP ${res.status}`);
   return res.json();
 }
 
-// 統計表の分類（品目・地域・時間）を読み、使いやすい形にする
+// 統計表の分類（品目・地域・時間）を読み、使いやすい形にする。
+// 品目が入っている軸（cat01〜cat15 のどれか）は統計表ごとに違うので、名前に「品目」を含む軸を探して使う。
 async function loadMeta(env) {
   const json = await estat("getMetaInfo", { statsDataId: env.STATS_DATA_ID }, env);
   const root = json.GET_META_INFO;
   if (!root || root.RESULT.STATUS !== 0) throw new Error("getMetaInfo失敗: " + JSON.stringify(root?.RESULT));
   const objs = asArray(root.METADATA_INF.CLASS_INF.CLASS_OBJ);
-  const byId = Object.fromEntries(objs.map((o) => [o["@id"], asArray(o.CLASS)]));
   const toItems = (arr) => arr.map((c) => ({ code: c["@code"], name: c["@name"], unit: c["@unit"] || "" }));
-  return { items: toItems(byId.cat01 || []), areas: toItems(byId.area || []), times: toItems(byId.time || []) };
+  const dims = objs.map((o) => ({ id: o["@id"], name: o["@name"], classes: toItems(asArray(o.CLASS)) }));
+  const byId = Object.fromEntries(dims.map((d) => [d.id, d]));
+  const itemDim = dims.find((d) => /品目/.test(d.name) && d.id.startsWith("cat"))
+    || dims.filter((d) => d.id.startsWith("cat")).sort((a, b) => b.classes.length - a.classes.length)[0];
+  if (!itemDim) throw new Error("品目の軸が見つかりません");
+  // 品目以外の cat 軸は、1つしか選択肢がなければそれを固定して使う。複数あるときは調整が必要。
+  const fixed = {};
+  const others = [];
+  for (const d of dims.filter((x) => x.id.startsWith("cat") && x.id !== itemDim.id)) {
+    if (d.classes.length === 1) fixed[d.id] = d.classes[0].code; else others.push(d.id);
+  }
+  return {
+    itemDim: { id: itemDim.id, name: itemDim.name },
+    fixed, others,
+    items: itemDim.classes,
+    areas: (byId.area || { classes: [] }).classes,
+    times: (byId.time || { classes: [] }).classes,
+    dims: dims.map((d) => ({ id: d.id, name: d.name, count: d.classes.length, sample: d.classes.slice(0, 5) }))
+  };
 }
 
 async function refresh(env) {
@@ -37,38 +56,37 @@ async function refresh(env) {
   const area = meta.areas.find((a) => a.name.includes(env.AREA_NAME));
   if (!area) throw new Error(`地域「${env.AREA_NAME}」が統計表にありません`);
 
+  if (meta.others.length) throw new Error("品目以外の軸に複数の選択肢があります: " + meta.others.join(",") + "（/admin/meta で確認してください）");
   // 新しい月から3か月分を候補にして、品目ごとに最新の値を採用する
   const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 3);
   const values = [];
   const codes = [...new Set(meta.items.map((i) => i.code))];
+  const itemKey = "cd" + meta.itemDim.id[0].toUpperCase() + meta.itemDim.id.slice(1);   // cat02 → cdCat02
   // 品目が多いので、URLが長くなりすぎないよう分割して取得する
   for (let i = 0; i < codes.length; i += 60) {
-    const json = await estat("getStatsData", {
-      statsDataId: env.STATS_DATA_ID,
-      cdArea: area.code,
-      cdTime: times.join(","),
-      cdCat01: codes.slice(i, i + 60).join(","),
-      metaGetFlg: "N"
-    }, env);
+    const params = { statsDataId: env.STATS_DATA_ID, cdArea: area.code, cdTime: times.join(","), metaGetFlg: "N", [itemKey]: codes.slice(i, i + 60).join(",") };
+    for (const [id, code] of Object.entries(meta.fixed)) params["cd" + id[0].toUpperCase() + id.slice(1)] = code;
+    const json = await estat("getStatsData", params, env);
     const root = json.GET_STATS_DATA;
     if (!root || root.RESULT.STATUS !== 0) throw new Error("getStatsData失敗: " + JSON.stringify(root?.RESULT));
     for (const v of asArray(root.STATISTICAL_DATA?.DATA_INF?.VALUE)) {
-      values.push({ cat01: v["@cat01"], time: v["@time"], value: v["$"] });
+      values.push({ cat01: v["@" + meta.itemDim.id], time: v["@time"], value: v["$"] });
     }
   }
 
   const { prices, unmatched, unresolved } = buildPrices(meta.items, values, MAPPING, DERIVED);
+  // アプリに配る本体。調整用の診断（未対応の品目など）は別に保存し、公開側には出さない。
   const out = {
     updatedAt: new Date().toISOString(),
     source: "総務省統計局 小売物価統計調査（動向編）主要品目の都市別小売価格",
     area: area.name,
     statsDataId: env.STATS_DATA_ID,
     credit: CREDIT,
-    prices,
-    unmatched,
-    unresolved
+    count: Object.keys(prices).length,
+    prices
   };
   await env.PRICES.put("prices", JSON.stringify(out));
+  await env.PRICES.put("diag", JSON.stringify({ updatedAt: out.updatedAt, unmatched, unresolved }));
   return { count: Object.keys(prices).length, unmatched: unmatched.length, unresolved: unresolved.length, area: area.name, times };
 }
 
@@ -80,10 +98,18 @@ function cors(env) {
   };
 }
 
-function authorized(url, env) {
-  const t = url.searchParams.get("token");
-  return env.ADMIN_TOKEN && t && t === env.ADMIN_TOKEN;
+// 合言葉は ?token= でも、ヘッダー x-admin-token でも受ける。
+// URLに書くと履歴やアクセス記録に残るので、できればヘッダーを使う。
+function authorized(request, url, env) {
+  const t = request.headers.get("x-admin-token") || url.searchParams.get("token") || "";
+  const want = env.ADMIN_TOKEN || "";
+  if (!want || want.length < 16 || t.length !== want.length) return false;
+  let diff = 0;                                     // 長さが同じときは全部を比べる（応答時間から推測されないように）
+  for (let i = 0; i < want.length; i++) diff |= t.charCodeAt(i) ^ want.charCodeAt(i);
+  return diff === 0;
 }
+
+const ADMIN_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 
 export default {
   async fetch(request, env) {
@@ -97,21 +123,26 @@ export default {
     }
 
     if (url.pathname === "/admin/meta") {
-      if (!authorized(url, env)) return new Response("unauthorized", { status: 401 });
+      if (!authorized(request, url, env)) return new Response("unauthorized", { status: 401, headers: { "cache-control": "no-store" } });
       try {
         const meta = await loadMeta(env);
-        return new Response(JSON.stringify(meta, null, 1), { headers: cors(env) });
+        const diag = await env.PRICES.get("diag", "json");
+        // 品目は数百件あるので、1行ずつの短い形にする。?q=キャベツ のように指定すると、その語を含む品目だけを返す。
+        const q = url.searchParams.get("q");
+        const items = meta.items.filter((i) => !q || i.name.includes(q)).map((i) => `${i.code}|${i.name}|${i.unit}`);
+        const areas = meta.areas.map((a) => `${a.code}|${a.name}`).filter((s) => !q || s.includes(q) || /名古屋/.test(s));
+        return new Response(JSON.stringify({ itemDim: meta.itemDim, fixed: meta.fixed, others: meta.others, dims: meta.dims, itemCount: meta.items.length, items, areas, latestTimes: meta.times.map((x) => x.code).sort().reverse().slice(0, 3), diag }, null, 1), { headers: ADMIN_HEADERS });
       } catch (e) {
-        return new Response(JSON.stringify({ error: String(e.message || e) }), { status: 502, headers: cors(env) });
+        return new Response(JSON.stringify({ error: String(e.message || e) }), { status: 502, headers: ADMIN_HEADERS });
       }
     }
 
     if (url.pathname === "/admin/refresh" && (request.method === "POST" || request.method === "GET")) {   // ブラウザで開くだけでも更新できるよう GET も受ける
-      if (!authorized(url, env)) return new Response("unauthorized", { status: 401 });
+      if (!authorized(request, url, env)) return new Response("unauthorized", { status: 401, headers: { "cache-control": "no-store" } });
       try {
-        return new Response(JSON.stringify(await refresh(env)), { headers: cors(env) });
+        return new Response(JSON.stringify(await refresh(env)), { headers: ADMIN_HEADERS });
       } catch (e) {
-        return new Response(JSON.stringify({ error: String(e.message || e) }), { status: 502, headers: cors(env) });
+        return new Response(JSON.stringify({ error: String(e.message || e) }), { status: 502, headers: ADMIN_HEADERS });
       }
     }
 
