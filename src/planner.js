@@ -90,7 +90,7 @@ function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, t
 }
 
 // bentoDays: 日ごとに、お弁当を作る人がいるか。いる日の昼は、お弁当向きの料理で組む
-function planWeek(pools, lambda, costMap, seed, adj, bentoDays = []) {
+function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], lean = false) {
   const rand = rng(seed); const used = {}; const foodUse = {};
   const recent = { main: [], side: [], soup: [] };
   const RECENT_N = { main: 3, side: 6, soup: 4 };
@@ -125,9 +125,9 @@ function planWeek(pools, lambda, costMap, seed, adj, bentoDays = []) {
     let dishes;
     if (oneDish) {
       const dish = take(pools.dish, 1);
-      dishes = [dish, take(pools.salad), take(pools.kobachi)];
+      dishes = [dish, take(pools.salad), lean ? null : take(pools.kobachi)];
       if (dish && dish.ingredients.some((i) => i.food === RICE)) dishes.push(take(pools.soup));
-    } else dishes = [take(pools.main), take(pools.salad), take(pools.kobachi), take(pools.soup)];
+    } else dishes = [take(pools.main), take(pools.salad), lean ? null : take(pools.kobachi), take(pools.soup)];
     meals.push({ slot: "夕食", dishes: dishes.filter(Boolean) });
     days.push(meals);
   }
@@ -190,20 +190,34 @@ export function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed,
   // 予算内に収まるまで、価格の重みを上げながら組み直す。
   // 各段階で乱数の種を変えて5通り作り、いちばん安い組み合わせを採る。
   const bentoDays = [0, 1, 2, 3, 4, 5, 6].map((d) => members.some((mb) => mb.lunch && mb.lunch[d] === "bento"));
-  let lambda = 0.02, result = null;
-  for (let attempt = 0; attempt < 7; attempt++) {
-    const tries = budgetWeek ? 5 : 1;
-    for (let k = 0; k < tries; k++) {
-      const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
-      if (!result || (budgetWeek && cand.cost < result.cost)) result = cand;
+  // 予算内に収まるまで、価格の重みを上げながら組み直す。
+  // 各段階で乱数の種を変えて5通り作り、いちばん安い組み合わせを採る。
+  const search = (lean) => {
+    let lambda = 0.02, result = null;
+    for (let attempt = 0; attempt < 7; attempt++) {
+      const tries = budgetWeek ? 5 : 1;
+      for (let k = 0; k < tries; k++) {
+        const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays, lean), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
+        if (!result || (budgetWeek && cand.cost < result.cost)) result = cand;
+      }
+      if (!budgetWeek || result.cost <= budgetWeek) break;
+      lambda *= 3;
     }
-    if (!budgetWeek || result.cost <= budgetWeek) break;
-    lambda *= 3;
+    return { ...result, lambda, lean };
+  };
+  let result = search(false);
+  // それでも予算を超えるときは、夜の小鉢を1品減らして組み直す（夜は おかず・サラダ・汁物 の3品）
+  if (budgetWeek && result.cost > budgetWeek) {
+    const alt = search(true);
+    if (alt.cost < result.cost) result = alt;
   }
+  const lambda = result.lambda;
   const over = budgetWeek && result.cost > budgetWeek;
-  if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。予算を上げるか、好みの条件をゆるめてください。`);
+  const suggest = Math.ceil(result.cost / 500) * 500;
+  if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。この家族なら、週${suggest.toLocaleString("ja-JP")}円くらいあると組めます。予算を上げるか、好みの条件をゆるめてください。`);
+  else if (result.lean) warnings.push("予算に合わせて、夜の小鉢を1品減らしました。");
   if (priceMissing.size) warnings.push(`価格が未設定の食材が${priceMissing.size}種あり、食費に含まれていません。`);
-  return { ...result, warnings, budgetWeek, overBudget: !!over, lambda };
+  return { ...result, warnings, budgetWeek, overBudget: !!over, lambda, suggestBudget: suggest };
 }
 
 // 誕生日などのごちそう予算を、その日の食費に足す（食材や栄養には含めない）

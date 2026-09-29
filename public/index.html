@@ -220,6 +220,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       <div class="field"><label for="budgetWeek">1週間(円)</label><input type="number" id="budgetWeek" inputmode="numeric" min="0" step="500"></div>
       <div class="field"><label for="budgetMonth">1か月(円)</label><input type="number" id="budgetMonth" inputmode="numeric" min="0" step="1000"></div>
     </div>
+    <div class="small" id="budgetHint" style="margin-bottom:6px">金額を入れないでおくと、家族の人数から自動で決めます。自分で入れると、その金額になります。</div>
     <div class="field"><label for="adj">いつも行くお店の値段</label>
       <select id="adj"><option value="-30">とても安い</option><option value="-20">かなり安い</option><option value="-10">やや安い</option><option value="0">ふつう</option><option value="10">やや高い</option><option value="20">かなり高い</option><option value="30">とても高い</option></select>
       <span class="small" id="priceNote">値段は仮の値です。買い物リストで実際の値段を入れると置き換わります。</span></div>
@@ -241,7 +242,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
   </details>
-  <p class="small" id="verLine">献立ノート バージョン 1.8.0(2026.09.30版)</p>
+  <p class="small" id="verLine">献立ノート バージョン 1.8.1(2026.09.30版)</p>
   <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
 </section>
 
@@ -397,7 +398,7 @@ function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, t
 }
 
 // bentoDays: 日ごとに、お弁当を作る人がいるか。いる日の昼は、お弁当向きの料理で組む
-function planWeek(pools, lambda, costMap, seed, adj, bentoDays = []) {
+function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], lean = false) {
   const rand = rng(seed); const used = {}; const foodUse = {};
   const recent = { main: [], side: [], soup: [] };
   const RECENT_N = { main: 3, side: 6, soup: 4 };
@@ -432,9 +433,9 @@ function planWeek(pools, lambda, costMap, seed, adj, bentoDays = []) {
     let dishes;
     if (oneDish) {
       const dish = take(pools.dish, 1);
-      dishes = [dish, take(pools.salad), take(pools.kobachi)];
+      dishes = [dish, take(pools.salad), lean ? null : take(pools.kobachi)];
       if (dish && dish.ingredients.some((i) => i.food === RICE)) dishes.push(take(pools.soup));
-    } else dishes = [take(pools.main), take(pools.salad), take(pools.kobachi), take(pools.soup)];
+    } else dishes = [take(pools.main), take(pools.salad), lean ? null : take(pools.kobachi), take(pools.soup)];
     meals.push({ slot: "夕食", dishes: dishes.filter(Boolean) });
     days.push(meals);
   }
@@ -497,20 +498,34 @@ function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed, member
   // 予算内に収まるまで、価格の重みを上げながら組み直す。
   // 各段階で乱数の種を変えて5通り作り、いちばん安い組み合わせを採る。
   const bentoDays = [0, 1, 2, 3, 4, 5, 6].map((d) => members.some((mb) => mb.lunch && mb.lunch[d] === "bento"));
-  let lambda = 0.02, result = null;
-  for (let attempt = 0; attempt < 7; attempt++) {
-    const tries = budgetWeek ? 5 : 1;
-    for (let k = 0; k < tries; k++) {
-      const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
-      if (!result || (budgetWeek && cand.cost < result.cost)) result = cand;
+  // 予算内に収まるまで、価格の重みを上げながら組み直す。
+  // 各段階で乱数の種を変えて5通り作り、いちばん安い組み合わせを採る。
+  const search = (lean) => {
+    let lambda = 0.02, result = null;
+    for (let attempt = 0; attempt < 7; attempt++) {
+      const tries = budgetWeek ? 5 : 1;
+      for (let k = 0; k < tries; k++) {
+        const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays, lean), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
+        if (!result || (budgetWeek && cand.cost < result.cost)) result = cand;
+      }
+      if (!budgetWeek || result.cost <= budgetWeek) break;
+      lambda *= 3;
     }
-    if (!budgetWeek || result.cost <= budgetWeek) break;
-    lambda *= 3;
+    return { ...result, lambda, lean };
+  };
+  let result = search(false);
+  // それでも予算を超えるときは、夜の小鉢を1品減らして組み直す（夜は おかず・サラダ・汁物 の3品）
+  if (budgetWeek && result.cost > budgetWeek) {
+    const alt = search(true);
+    if (alt.cost < result.cost) result = alt;
   }
+  const lambda = result.lambda;
   const over = budgetWeek && result.cost > budgetWeek;
-  if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。予算を上げるか、好みの条件をゆるめてください。`);
+  const suggest = Math.ceil(result.cost / 500) * 500;
+  if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。この家族なら、週${suggest.toLocaleString("ja-JP")}円くらいあると組めます。予算を上げるか、好みの条件をゆるめてください。`);
+  else if (result.lean) warnings.push("予算に合わせて、夜の小鉢を1品減らしました。");
   if (priceMissing.size) warnings.push(`価格が未設定の食材が${priceMissing.size}種あり、食費に含まれていません。`);
-  return { ...result, warnings, budgetWeek, overBudget: !!over, lambda };
+  return { ...result, warnings, budgetWeek, overBudget: !!over, lambda, suggestBudget: suggest };
 }
 
 // 誕生日などのごちそう予算を、その日の食費に足す（食材や栄養には含めない）
@@ -785,9 +800,12 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     for (var i = 0; i < 7; i++) { var di = dayInfo(i), sum = 0; eventsOn(di.y, di.m, di.d).forEach(function (e) { sum += +S.evBudget[e.key] || 0; }); if (sum) x[i] = sum; }
     return x;
   }
+  // 予算を自分で決めていないときは、家族の人数（必要エネルギーの合計）から決める。自分で入れたら、その金額を使う。
+  function autoBudget(ms) { var kc = 0; ms.forEach(function (m) { kc += m.kcal; }); return Math.max(3000, Math.round(kc / 2000 * 6500 / 500) * 500); }
   function replan() {
     var ms = members();
     PRICES = effPrices();
+    if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
     if (!ms.length) { LAST = null; }
     else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
     renderAll();
@@ -1200,7 +1218,7 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     }
     if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
     if (t.id === "bkSave") {
-      var bk = { app: "kondate-note", version: "1.8.0", savedAt: new Date().toISOString(), data: S };
+      var bk = { app: "kondate-note", version: "1.8.1", savedAt: new Date().toISOString(), data: S };
       var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
       var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
@@ -1261,9 +1279,9 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
       if (t.value === "") delete S.overrides[id]; else S.overrides[id] = +t.value * fac(id);
       save(); replan();
     } else if (t.id === "budgetWeek") {
-      S.budgetWeek = Math.max(0, +t.value || 0); $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); save(); replan();
+      S.budgetAuto = false; S.budgetWeek = Math.max(0, +t.value || 0); $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); save(); replan();
     } else if (t.id === "budgetMonth") {
-      S.budgetWeek = Math.round(Math.max(0, +t.value || 0) / 4.3); $("budgetWeek").value = S.budgetWeek; save(); replan();
+      S.budgetAuto = false; S.budgetWeek = Math.round(Math.max(0, +t.value || 0) / 4.3); $("budgetWeek").value = S.budgetWeek; save(); replan();
     } else if (t.hasAttribute("data-pnq")) {
       var qid = t.getAttribute("data-pnq"), qv = +t.value; if (qv > 0) S.pantry[qid] = qv * unitOf(qid)[1] / fac(qid); else delete S.pantry[qid]; save(); renderPantry();
     } else if (t.hasAttribute("data-nm")) {

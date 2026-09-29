@@ -204,6 +204,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       <div class="field"><label for="budgetWeek">1週間(円)</label><input type="number" id="budgetWeek" inputmode="numeric" min="0" step="500"></div>
       <div class="field"><label for="budgetMonth">1か月(円)</label><input type="number" id="budgetMonth" inputmode="numeric" min="0" step="1000"></div>
     </div>
+    <div class="small" id="budgetHint" style="margin-bottom:6px">金額を入れないでおくと、家族の人数から自動で決めます。自分で入れると、その金額になります。</div>
     <div class="field"><label for="adj">いつも行くお店の値段</label>
       <select id="adj"><option value="-30">とても安い</option><option value="-20">かなり安い</option><option value="-10">やや安い</option><option value="0">ふつう</option><option value="10">やや高い</option><option value="20">かなり高い</option><option value="30">とても高い</option></select>
       <span class="small" id="priceNote">値段は仮の値です。買い物リストで実際の値段を入れると置き換わります。</span></div>
@@ -497,9 +498,12 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     for (var i = 0; i < 7; i++) { var di = dayInfo(i), sum = 0; eventsOn(di.y, di.m, di.d).forEach(function (e) { sum += +S.evBudget[e.key] || 0; }); if (sum) x[i] = sum; }
     return x;
   }
+  // 予算を自分で決めていないときは、家族の人数（必要エネルギーの合計）から決める。自分で入れたら、その金額を使う。
+  function autoBudget(ms) { var kc = 0; ms.forEach(function (m) { kc += m.kcal; }); return Math.max(3000, Math.round(kc / 2000 * 6500 / 500) * 500); }
   function replan() {
     var ms = members();
     PRICES = effPrices();
+    if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
     if (!ms.length) { LAST = null; }
     else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
     renderAll();
@@ -973,9 +977,9 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       if (t.value === "") delete S.overrides[id]; else S.overrides[id] = +t.value * fac(id);
       save(); replan();
     } else if (t.id === "budgetWeek") {
-      S.budgetWeek = Math.max(0, +t.value || 0); $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); save(); replan();
+      S.budgetAuto = false; S.budgetWeek = Math.max(0, +t.value || 0); $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); save(); replan();
     } else if (t.id === "budgetMonth") {
-      S.budgetWeek = Math.round(Math.max(0, +t.value || 0) / 4.3); $("budgetWeek").value = S.budgetWeek; save(); replan();
+      S.budgetAuto = false; S.budgetWeek = Math.round(Math.max(0, +t.value || 0) / 4.3); $("budgetWeek").value = S.budgetWeek; save(); replan();
     } else if (t.hasAttribute("data-pnq")) {
       var qid = t.getAttribute("data-pnq"), qv = +t.value; if (qv > 0) S.pantry[qid] = qv * unitOf(qid)[1] / fac(qid); else delete S.pantry[qid]; save(); renderPantry();
     } else if (t.hasAttribute("data-nm")) {
