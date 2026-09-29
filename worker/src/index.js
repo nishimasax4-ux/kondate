@@ -81,8 +81,9 @@ async function refresh(env, opts = {}) {
   const meta = await loadMeta(env);
   if (meta.others.length) throw new Error("品目以外の軸に複数の選択肢があります: " + meta.others.join(",") + "（/admin/meta で確認してください）");
   const names = String(opts.area || env.AREA_NAME).split(/[,、]/).map((s) => s.trim()).filter(Boolean);
-  // 新しい月から3か月分を候補にして、品目ごとに最新の値を採用する
-  const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 3);
+  // 新しい月から12か月分を候補にして、品目ごとに最新の値を採用する
+  // （みかん・いちごなど、時期外れで調査のない品目は、最後に載っていた月の価格になる）
+  const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 12);
   const results = [];
   for (const n of names) results.push(await pricesFor(meta, n, times, env));
   const prices = mergeAreas(results.map((r) => ({ label: r.label, prices: r.prices })));
@@ -90,6 +91,7 @@ async function refresh(env, opts = {}) {
   const unresolved = results[results.length - 1].unresolved.filter((u) => results.every((r) => r.unresolved.some((x) => x.item === u.item)));
   const unmatched = results[0].unmatched;
   const filled = Object.values(prices).filter((p) => p.fromArea).length;
+  const stale = Object.values(prices).filter((p) => p.asOf).length;
   const areaLabel = results.length === 1 ? results[0].label : `${results[0].label}(ない品目は${results.slice(1).map((r) => r.label).join("・")})`;
   // アプリに配る本体。調整用の診断（未対応の品目など）は別に保存し、公開側には出さない。
   const out = {
@@ -105,11 +107,11 @@ async function refresh(env, opts = {}) {
     // 保存せず、主な食材の値段(100gあたり円)と、取れなかった品目を返す
     const key = { 精米: "01083", 食パン: "01026", 卵: "12004", 牛乳: "13003", 豆腐: "04032", 鶏もも: "11221", 豚バラ: "11129", キャベツ: "06061", たまねぎ: "06153", じゃがいも: "02017", トマト: "06182", バナナ: "07107" };
     const sample = Object.fromEntries(Object.entries(key).map(([k, id]) => [k, prices[id] ? `${prices[id].yen100g}${prices[id].fromArea ? "(" + prices[id].fromArea + ")" : ""}` : null]));
-    return { dry: true, area: areaLabel, count: out.count, filledFromOtherArea: filled, unmatched, unresolved, sample, times };
+    return { dry: true, area: areaLabel, count: out.count, filledFromOtherArea: filled, staleMonths: stale, unmatched, unresolved, sample, times };
   }
   await env.PRICES.put("prices", JSON.stringify(out));
   await env.PRICES.put("diag", JSON.stringify({ updatedAt: out.updatedAt, unmatched, unresolved }));
-  return { count: out.count, filledFromOtherArea: filled, unmatched: unmatched.length, unresolved: unresolved.length, area: areaLabel, times };
+  return { count: out.count, filledFromOtherArea: filled, staleMonths: stale, unmatched: unmatched.length, unresolved: unresolved.length, area: areaLabel, times };
 }
 
 function cors(env) {

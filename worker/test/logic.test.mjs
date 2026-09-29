@@ -51,4 +51,17 @@ assert.equal(m["12004"].yen100g, 50);
 assert.ok(!m["12004"].fromArea);
 assert.equal(m["06061"].yen100g, 26);
 assert.equal(m["06061"].fromArea, "名古屋市");
+// 時期外れ: 古い月しかない品目はさかのぼった月を印にする。新しい月のある品目には付けない
+const old = buildPrices(items, [
+  { cat01: "01401", time: "2026000808", value: "260" },
+  { cat01: "01341", time: "2025001111", value: "330" }
+], MAPPING, DERIVED);
+assert.equal(old.prices["12004"].asOf, "2025年11月");
+assert.ok(!old.prices["06061"].asOf);
+// 先の地域の価格が古いときは、新しい月のある次の地域を使う
+const m2 = mergeAreas([
+  { label: "豊橋市", prices: { "12004": { yen100g: 50, time: "2025001111" } } },
+  { label: "名古屋市", prices: { "12004": { yen100g: 60, time: "2026000808" } } }
+]);
+assert.equal(m2["12004"].yen100g, 60);
 console.log("OK", Object.keys(r.prices).length, "件の価格を作成 / 対応表", MAPPING.length, "行");

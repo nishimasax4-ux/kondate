@@ -53,45 +53,82 @@ export function filterRecipes(recipes, { excludeAllergens = [], dislikeFoods = [
     !dislikeDishes.includes(r.id));
 }
 
-// 1回分の献立を作る。used: これまでに使った料理の回数、recent: 直近に使った主菜
+// 1回分の献立を作る。
+//   used: これまでに使った料理の回数、recent: 直近に使った同じ役の料理、today: その日にもう使った料理
+//   groups: 主菜のたんぱく源(鶏・豚・牛・魚・卵…)。同じ日・続く日に同じたんぱく源が並びすぎないようにする
 const WEEK_CAP = { "12004": 8 };   // 1週間に同じ食材の料理が続きすぎないように上限を決める（卵は8料理まで）
-function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse) {
-  const cand = pool.filter((r) => (used[r.id] || 0) < maxUse);
+const CHICKEN = new Set(["11213", "11220", "11221", "11224", "11227", "11230"]);
+const PORK = new Set(["11126", "11129", "11131", "11163", "11183", "11186", "11176"]);
+const BEEF = new Set(["11076", "11089"]);
+export function proteinGroup(r) {
+  const f = r.ingredients[0] && r.ingredients[0].food;
+  if (!f) return "other";
+  if (CHICKEN.has(f)) return "chicken";
+  if (PORK.has(f)) return "pork";
+  if (BEEF.has(f)) return "beef";
+  if (f.startsWith("10")) return "fish";
+  if (f === "12004") return "egg";
+  if (f.startsWith("04")) return "tofu";
+  return "other";
+}
+function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, today, groups) {
+  let cand = pool.filter((r) => (used[r.id] || 0) < maxUse && !today.has(r.id));   // その日にもう出した料理は選ばない
+  if (!cand.length) cand = pool.filter((r) => !today.has(r.id));
   const list = cand.length ? cand : pool;
   if (!list.length) return null;
   let best = null, bestScore = Infinity;
+  const isMain = (r) => r.role === "主菜" || r.role === "一品";
   for (const r of list) {
     const repeat = recent.includes(r.id) ? 50 : 0;
     const over = r.ingredients.some((i) => WEEK_CAP[i.food] && (foodUse[i.food] || 0) >= WEEK_CAP[i.food]) ? 25 : 0;
-    const score = repeat + over + (used[r.id] || 0) * 8 + lambda * costMap[r.id] + (adj[r.id] || 0) + rand() * 6;
+    let grp = 0;
+    if (isMain(r)) { const g = proteinGroup(r); if (g !== "other") grp = (groups.today.includes(g) ? 30 : 0) + (groups.recent.includes(g) ? 12 : 0); }
+    const score = repeat + over + grp + (used[r.id] || 0) * 8 + lambda * costMap[r.id] + (adj[r.id] || 0) + rand() * 6;
     if (score < bestScore) { best = r; bestScore = score; }
   }
   return best;
 }
 
-function planWeek(pools, lambda, costMap, seed, adj) {
-  const rand = rng(seed); const used = {}; const recentMain = []; const foodUse = {};
+// bentoDays: 日ごとに、お弁当を作る人がいるか。いる日の昼は、お弁当向きの料理で組む
+function planWeek(pools, lambda, costMap, seed, adj, bentoDays = []) {
+  const rand = rng(seed); const used = {}; const foodUse = {};
+  const recent = { main: [], side: [], soup: [] };
+  const RECENT_N = { main: 3, side: 6, soup: 4 };
   const days = [];
-  const take = (pool, maxUse = 2) => {
-    const r = pick(pool, used, recentMain, lambda, costMap, rand, maxUse, adj, foodUse);
-    if (r) { used[r.id] = (used[r.id] || 0) + 1; for (const i of r.ingredients) if (WEEK_CAP[i.food]) foodUse[i.food] = (foodUse[i.food] || 0) + 1; }
+  let today = new Set(), groups = { today: [], recent: [] };
+  const kindOf = (r) => (r.role === "副菜" ? "side" : r.role === "汁物" ? "soup" : "main");
+  const take = (pool, maxUse = 2, kind) => {
+    const k = kind || (pool[0] ? kindOf(pool[0]) : "main");
+    const r = pick(pool, used, recent[k] || [], lambda, costMap, rand, maxUse, adj, foodUse, today, groups);
+    if (!r) return r;
+    used[r.id] = (used[r.id] || 0) + 1; today.add(r.id);
+    for (const i of r.ingredients) if (WEEK_CAP[i.food]) foodUse[i.food] = (foodUse[i.food] || 0) + 1;
+    const kk = kindOf(r); recent[kk].push(r.id); if (recent[kk].length > RECENT_N[kk]) recent[kk].shift();
+    if (kk === "main") { const g = proteinGroup(r); groups.today.push(g); groups.recent.push(g); if (groups.recent.length > 4) groups.recent.shift(); }
     return r;
   };
   for (let d = 0; d < 7; d++) {
     const meals = [];
+    today = new Set(); groups = { today: [], recent: groups.recent };
     // 朝: ご飯 + 朝向きの主菜 + 副菜 + 汁物
-    const b = [take(pools.bMain), take(pools.bSide), take(pools.bSoup)].filter(Boolean);
-    for (const x of b) if (x.role === "主菜") { recentMain.push(x.id); if (recentMain.length > 3) recentMain.shift(); }
-    meals.push({ slot: "朝食", dishes: b });
-    // 昼・夜: 主菜 + 副菜 + 汁物、または一品もの + 副菜
-    for (const slot of ["昼食", "夕食"]) {
+    meals.push({ slot: "朝食", dishes: [take(pools.bMain), take(pools.bSide), take(pools.bSoup)].filter(Boolean) });
+    // 昼: お弁当の日は、お弁当向きの主菜 + 副菜2品（汁物なし）。ふだんは主菜 + 副菜 + 汁物、または一品もの + 副菜
+    if (bentoDays[d]) {
+      const dishes = [take(pools.bentoMain), take(pools.bentoSide), take(pools.bentoSide)].filter(Boolean);
+      meals.push({ slot: "昼食", dishes, bento: true });
+    } else {
       const oneDish = pools.dish.length && rand() < 0.3;
-      let dishes;
-      if (oneDish) dishes = [take(pools.dish, 1), take(pools.side)].filter(Boolean);
-      else dishes = [take(pools.main), take(pools.side), take(pools.soup)].filter(Boolean);
-      for (const x of dishes) if (x.role === "主菜" || x.role === "一品") { recentMain.push(x.id); if (recentMain.length > 3) recentMain.shift(); }
-      meals.push({ slot, dishes });
+      meals.push({ slot: "昼食", dishes: (oneDish ? [take(pools.dish, 1), take(pools.side)] : [take(pools.main), take(pools.side), take(pools.soup)]).filter(Boolean) });
     }
+    // 夜: 主菜 + サラダ + 小鉢 + 汁物の4品。丼・麺などの一品ものの日は、一品 + サラダ + 小鉢（ご飯ものには汁物も）
+    const oneDish = pools.dish.length && rand() < 0.3;
+    let dishes;
+    if (oneDish) {
+      const dish = take(pools.dish, 1);
+      dishes = [dish, take(pools.salad), take(pools.kobachi)];
+      if (dish && dish.ingredients.some((i) => i.food === RICE)) dishes.push(take(pools.soup));
+    } else dishes = [take(pools.main), take(pools.salad), take(pools.kobachi), take(pools.soup)];
+    meals.push({ slot: "夕食", dishes: dishes.filter(Boolean) });
     days.push(meals);
   }
   return days;
@@ -121,6 +158,15 @@ export function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed,
     bMain: role("主菜", true), bSide: role("副菜", true), bSoup: role("汁物", true),
     main: role("主菜", false).concat(role("主菜", true)), side: role("副菜"), soup: role("汁物"), dish: role("一品")
   };
+  // 夜のサラダと小鉢、お弁当向きの料理。なければふつうの副菜・主菜で代用する
+  pools.salad = usable.filter((x) => x.role === "副菜" && x.sub === "salad");
+  pools.kobachi = usable.filter((x) => x.role === "副菜" && x.sub !== "salad");
+  pools.bentoMain = usable.filter((x) => x.role === "主菜" && x.bento);
+  pools.bentoSide = usable.filter((x) => x.role === "副菜" && x.bento);
+  if (!pools.salad.length) pools.salad = pools.side;
+  if (!pools.kobachi.length) pools.kobachi = pools.side;
+  if (!pools.bentoMain.length) pools.bentoMain = pools.main;
+  if (!pools.bentoSide.length) pools.bentoSide = pools.side;
   for (const [k, v] of Object.entries(pools)) if (!v.length && k !== "dish") warnings.push(`「${k}」に使える料理がありません。除外条件をゆるめてください。`);
   if (!pools.bMain.length) pools.bMain = pools.main;
   if (!pools.bSide.length) pools.bSide = pools.side;
@@ -143,11 +189,12 @@ export function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed,
 
   // 予算内に収まるまで、価格の重みを上げながら組み直す。
   // 各段階で乱数の種を変えて5通り作り、いちばん安い組み合わせを採る。
+  const bentoDays = [0, 1, 2, 3, 4, 5, 6].map((d) => members.some((mb) => mb.lunch && mb.lunch[d] === "bento"));
   let lambda = 0.02, result = null;
   for (let attempt = 0; attempt < 7; attempt++) {
     const tries = budgetWeek ? 5 : 1;
     for (let k = 0; k < tries; k++) {
-      const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
+      const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry), dayExtras);
       if (!result || (budgetWeek && cand.cost < result.cost)) result = cand;
     }
     if (!budgetWeek || result.cost <= budgetWeek) break;
@@ -211,7 +258,7 @@ function finalize(plan, members, fm, prices, costMap, riceUnit, excludeAllergens
       const toBuy = buy - use; paid[i.food] = (paid[i.food] || 0) + toBuy;
       if (prices[i.food]) { const y = (toBuy / 100) * prices[i.food].yen100g; totalCost += y; dayCost += y; }
     }
-    return { cost: Math.round(dayCost), meals: meals.map((m, j) => ({ slot: m.slot, rice: !m.off && !m.dishes.some((x) => x.role === "一品"), skip: !!m.off || (j === 1 && persons.every((x) => x.lunch === "none")), manual: !!m.manual, off: !!m.off, lunchModes: j === 1 ? persons.map((x) => x.lunch) : undefined, dishes: m.dishes.map((d) => ({ id: d.id, name: d.name, role: d.role })) })), persons: persons.map(({ ingredients, ...rest }) => rest) };
+    return { cost: Math.round(dayCost), meals: meals.map((m, j) => ({ slot: m.slot, rice: !m.off && !m.dishes.some((x) => x.role === "一品"), skip: !!m.off || (j === 1 && persons.every((x) => x.lunch === "none")), manual: !!m.manual, off: !!m.off, bento: !!m.bento && !m.manual, lunchModes: j === 1 ? persons.map((x) => x.lunch) : undefined, dishes: m.dishes.map((d) => ({ id: d.id, name: d.name, role: d.role, sub: d.sub || undefined })) })), persons: persons.map(({ ingredients, ...rest }) => rest) };
   });
   const shopping = Object.entries(shop).map(([id, g]) => ({
     food: id, name: fm[id].name, cat: fm[id].cat, grams: Math.round(paid[id]), need: Math.round(g), have: Math.round(g - paid[id]),

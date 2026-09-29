@@ -45,4 +45,33 @@ const hi = generatePlan({ ...base, budgetWeek: 0, seed: 3 }).cost;
 const lo = generatePlan({ ...base, budgetWeek: Math.round(hi * 0.85), seed: 3 }).cost;
 console.log("予算なし", hi, "円 → 予算を絞った結果", lo, "円");
 assert.ok(lo <= hi, "予算を絞っても食費が下がらない");
+// 7) 同じ日に同じ料理が並ばない・近い食事で同じ汁物や副菜が続かない・夜は4品(一品ものは3〜4品)
+for (const seed of [1, 2, 3, 4, 5, 6, 7, 8]) {
+  const rr = generatePlan({ ...base, budgetWeek: 30000, seed });
+  const flat = [];
+  for (const d of rr.days) {
+    const ids = d.meals.flatMap((m) => m.dishes.map((x) => x.id));
+    assert.equal(new Set(ids).size, ids.length, `seed ${seed}: 同じ日に同じ料理`);
+    const dinner = d.meals[2].dishes;
+    assert.ok(dinner.length >= 3 && dinner.length <= 4, `夕食の品数 ${dinner.length}`);
+    if (dinner.length === 4) {
+      assert.ok(dinner.some((x) => x.role === "汁物") && dinner.some((x) => x.sub === "salad") && dinner.some((x) => x.role === "副菜" && x.sub !== "salad") && dinner.some((x) => x.role === "主菜" || x.role === "一品"), "夕食が おかず・サラダ・小鉢・汁物 になっていない");
+    }
+    flat.push(...d.meals.flatMap((m) => m.dishes.filter((x) => x.role === "汁物" || x.role === "副菜").map((x) => x.id)));
+  }
+  // 汁物・副菜は、直近3品のなかに同じものが出ない
+  for (let i = 3; i < flat.length; i++) assert.ok(!flat.slice(i - 3, i).includes(flat[i]), `seed ${seed}: 近くで重複 ${flat[i]}`);
+}
+console.log("重複・夕食4品: OK");
+
+// 8) お弁当: お弁当を作る人がいる日の昼は、お弁当向きの料理で汁物なし
+const lunchMembers = [{ kcal: 2000, lunch: ["bento", "bento", "bento", "bento", "bento", "home", "home"] }, { kcal: 1750, lunch: ["home", "home", "home", "home", "home", "home", "home"] }];
+r = generatePlan({ members: lunchMembers, prices, foods, recipes, budgetWeek: 30000, seed: 2 });
+const rm = Object.fromEntries(recipes.map((x) => [x.id, x]));
+r.days.forEach((d, i) => {
+  const l = d.meals[1];
+  if (i < 5) { assert.ok(l.bento, `${i}日目の昼はお弁当`); assert.ok(l.dishes.every((x) => x.role !== "汁物" && rm[x.id].bento), "お弁当向きでない料理"); }
+  else assert.ok(!l.bento);
+});
+console.log("お弁当: OK");
 console.log("ALL OK");

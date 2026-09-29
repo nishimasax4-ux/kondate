@@ -534,11 +534,12 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
         ["home", "bento", "none"].forEach(function (k) { if (groups[k]) parts.push(nm[k] + ": " + Object.keys(groups[k]).join("・")); });
         if (Object.keys(groups).length > 1 || groups.bento) lm = '<div class="small">' + parts.join(" ／ ") + "</div>";
       }
-      h += '<div class="note"><div class="slot">' + slots[m.slot] + (m.manual ? (m.slot === "夕食" && autoEvent(SEL) ? '<span class="tag">お祝い</span>' : '<span class="tag">自分で決めた</span>') : "") + chg + "</div>" + lm + '<ul>' + (m.rice ? '<li class="rice"><em style="font-style:normal">ご飯</em></li>' : "") + '';
+      h += '<div class="note"><div class="slot">' + (m.bento ? "お昼ごはん(お弁当)" : slots[m.slot]) + (m.manual ? (m.slot === "夕食" && autoEvent(SEL) ? '<span class="tag">お祝い</span>' : '<span class="tag">自分で決めた</span>') : "") + chg + "</div>" + lm + '<ul>' + (m.rice ? '<li class="rice"><em style="font-style:normal">ご飯</em></li>' : "") + '';
       m.dishes.forEach(function (x) {
         var c = costOf(RM[x.id].ingredients, FM, PRICES).yen;
         var tg = tasteTag(x.id);
-        h += "<li><em style=\"font-style:normal\">" + esc(x.name) + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span></li>';
+        var rt = (m.slot === "夕食" || m.bento) ? (x.role === "主菜" ? "おかず" : x.role === "副菜" ? (x.sub === "salad" ? "サラダ" : "小鉢") : x.role === "汁物" ? "汁物" : "") : "";
+        h += "<li><em style=\"font-style:normal\">" + (rt ? '<span class="tag" style="margin:0 6px 0 0">' + rt + "</span>" : "") + esc(x.name) + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span></li>';
       });
       h += "</ul></div>";
     });
@@ -569,7 +570,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     var h = warnHtml(plan);
     plan.days.forEach(function (d, i) {
       var di = dayInfo(i);
-      var names = d.meals.map(function (m) { return m.off ? "なし" : m.skip ? "昼はなし" : esc((m.dishes.filter(function (x) { return x.role !== "副菜" && x.role !== "汁物"; })[0] || m.dishes[0] || { name: "-" }).name); }).join(" ／ ");
+      var names = d.meals.map(function (m) { return m.off ? "なし" : m.skip ? "昼はなし" : (m.bento ? "弁当:" : "") + esc((m.dishes.filter(function (x) { return x.role !== "副菜" && x.role !== "汁物"; })[0] || m.dishes[0] || { name: "-" }).name); }).join(" ／ ");
       h += '<button type="button" class="dayrow' + (i === 0 ? " today" : "") + (di.w === 6 ? " sat" : "") + (di.w === 0 ? " sun" : "") + '" data-sel="' + i + '" data-open="today"><span class="wd">' + WD[di.w] + '</span><span class="t"><b>' + di.m + "/" + di.d + (i === 0 ? " きょう" : "") + (holName(di.y, di.m, di.d) ? " " + holName(di.y, di.m, di.d) : "") + eventsOn(di.y, di.m, di.d).map(function (e) { return " ・" + evLabel(e); }).join("") + "</b>" + names + '</span><span class="y">' + yen(d.cost) + "円</span></button>";
     });
     h += '<div class="cost" style="margin-top:4px"><div class="row"><span>1週間の食費(めやす)</span><span class="big">' + yen(plan.cost) + '円</span></div><div class="small">予算 ' + yen(plan.budgetWeek || 0) + "円 / 1か月にすると約" + yen(plan.cost * 4.3) + "円</div></div>";
@@ -875,7 +876,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     for (var i = 0; i < rows.length; i++) {
       var tr = rows[i], id = tr.getAttribute("data-food"), input = tr.querySelector("input");
       if (document.activeElement !== input) input.value = Math.round(PRICES[id].yen100g / fac(id) * 10) / 10;
-      tr.querySelector(".st").textContent = priceHas(id) ? "入力済み" : (LOADED && LOADED[id] ? (LOADED[id].fromArea ? "公式統計(" + esc(LOADED[id].fromArea) + ")" : "公式統計") : "仮");
+      tr.querySelector(".st").textContent = priceHas(id) ? "入力済み" : (LOADED && LOADED[id] ? (LOADED[id].fromArea || LOADED[id].asOf ? "公式統計(" + esc([LOADED[id].fromArea, LOADED[id].asOf ? LOADED[id].asOf + "分" : ""].filter(Boolean).join("・")) + ")" : "公式統計") : "仮");
     }
   }
   function filterPrices() {
