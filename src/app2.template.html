@@ -309,8 +309,16 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   var RM = {}; RECIPES.forEach(function (r) { RM[r.id] = r; });
   var PRICES_URL = (window.KONDATE_CONFIG && window.KONDATE_CONFIG.pricesUrl) || "";   // public/config.js に価格取得Workerの /prices.json を入れると、公式統計の価格になる
   var KEY = "kondate-note-v1";
-  var CAT = { a: { label: "大人", hint: "18〜64歳", m: 2650, f: 2000 }, s: { label: "高齢者", hint: "65歳以上", m: 2300, f: 1800 }, c: { label: "子ども", hint: "", m: 0, f: 0 } };
-  var CHILD = { y: { label: "幼児(3〜5歳)", m: 1300, f: 1250 }, e: { label: "小学生(6〜11歳)", m: 1900, f: 1750 }, j: { label: "中高生(12〜17歳)", m: 2750, f: 2350 } };
+  // 食事摂取基準(2025年版)をもとにした、1日の推定エネルギー必要量のめやす(身体活動レベルふつう)。子どもは年齢層ごとに人数を入れる。
+  var CAT = {
+    a: { label: "大人", hint: "18〜64歳", m: 2650, f: 2000 }, s: { label: "高齢者", hint: "65歳以上", m: 2300, f: 1800 },
+    k1: { label: "幼児", hint: "1〜2歳", m: 950, f: 900 }, k2: { label: "幼児", hint: "3〜5歳", m: 1300, f: 1250 },
+    k3: { label: "小学生", hint: "6〜8歳", m: 1650, f: 1550 }, k4: { label: "小学生", hint: "9〜11歳", m: 2100, f: 1950 },
+    k5: { label: "中学生", hint: "12〜14歳", m: 2600, f: 2400 }, k6: { label: "高校生", hint: "15〜17歳", m: 2800, f: 2300 }
+  };
+  var ALL = Object.keys(CAT);
+  var LUNCH_DEFAULT = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, k1: { wd: "home", we: "home" }, k2: { wd: "none", we: "home" }, k3: { wd: "none", we: "home" }, k4: { wd: "none", we: "home" }, k5: { wd: "none", we: "home" }, k6: { wd: "bento", we: "home" } };
+  function catName(c) { return CAT[c].label + (CAT[c].hint && c !== "a" && c !== "s" ? "(" + CAT[c].hint + ")" : ""); }
   var ALLERGENS = ["卵", "乳", "小麦", "そば", "大豆", "ごま", "えび", "いか", "さけ", "さば", "鶏肉", "豚肉", "牛肉", "魚(あじ・ぶり等)"];
   var GROUPS = [["主食", ["主食"]], ["野菜・きのこ・いも", ["野菜", "きのこ海藻", "いも"]], ["肉", ["肉"]], ["魚", ["魚介"]], ["卵・乳・大豆", ["卵乳", "大豆"]], ["果物", ["果物"]], ["調味料・油", ["調味料", "油脂"]], ["菓子", ["菓子"]]];
   var CAT_ORDER = ["主食", "いも", "大豆", "肉", "魚介", "卵乳", "野菜", "きのこ海藻", "果物", "調味料", "油脂", "菓子"];
@@ -318,17 +326,24 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   var RICE_K = FM[RICE].kcal / 342;             // 炊いたご飯の重さ→精米の重さ
   var LOADED = null;
 
-  var S = { counts: { a: { m: 1, f: 1 }, s: { m: 0, f: 0 }, c: { m: 0, f: 1 } }, child: "e", budgetWeek: 20000, budgetSplit: [25, 30, 45], leftover: true, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } } };
-  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!Array.isArray(S.budgetSplit) || S.budgetSplit.length !== 3) S.budgetSplit = [25, 30, 45]; if (!S.lunch) S.lunch = { a: { wd: "bento", we: "home" }, s: { wd: "home", we: "home" }, c: { wd: "none", we: "home" } }; } } catch (e) {}
+  var S = { counts: { a: { m: 1, f: 1 } }, budgetWeek: 20000, budgetSplit: [25, 30, 45], leftover: true, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: {} };
+  try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!Array.isArray(S.budgetSplit) || S.budgetSplit.length !== 3) S.budgetSplit = [25, 30, 45]; if (!S.lunch) S.lunch = {}; } } catch (e) {}
   // 保存された内容が古かったり壊れていても動くように、形をそろえる
-  ["a", "s", "c"].forEach(function (k) {
+  // 古い形（子どもを1つの年齢層でまとめていた）から引き継ぐ: 幼児→3〜5歳、小学生→6〜8歳、中高生→12〜14歳
+  if (S.counts.c) {
+    var OLDK = { y: "k2", e: "k3", j: "k5" }, nk = OLDK[S.child] || "k3", oc = S.counts.c;
+    S.counts[nk] = { m: (+oc.m || 0) + ((S.counts[nk] && +S.counts[nk].m) || 0), f: (+oc.f || 0) + ((S.counts[nk] && +S.counts[nk].f) || 0) };
+    if (S.lunch.c) S.lunch[nk] = S.lunch.c;
+    if (S.names && typeof S.names === "object") { ["m", "f"].forEach(function (x) { if (S.names["c" + x]) { S.names[nk + x] = S.names["c" + x]; delete S.names["c" + x]; } }); }
+    delete S.counts.c; delete S.lunch.c; delete S.child;
+  }
+  ALL.forEach(function (k) {
     var c = S.counts && S.counts[k]; if (!c || typeof c !== "object") c = { m: 0, f: 0 };
     S.counts[k] = { m: Math.max(0, Math.min(20, Math.round(+c.m || 0))), f: Math.max(0, Math.min(20, Math.round(+c.f || 0))) };
-    if (!S.lunch[k] || typeof S.lunch[k] !== "object") S.lunch[k] = { wd: "home", we: "home" };
+    if (!S.lunch[k] || typeof S.lunch[k] !== "object") S.lunch[k] = { wd: LUNCH_DEFAULT[k].wd, we: LUNCH_DEFAULT[k].we };
   });
-  if (!CHILD[S.child]) S.child = "e";
   ["allergens", "dislikes", "spend", "events"].forEach(function (k) { if (!Array.isArray(S[k])) S[k] = []; });
-  if (!S.counts.a.m && !S.counts.a.f && !S.counts.s.m && !S.counts.s.f && !S.counts.c.m && !S.counts.c.f) S.counts.a.f = 1;
+  if (!ALL.some(function (k) { return S.counts[k].m || S.counts[k].f; })) S.counts.a.f = 1;
 
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
   function yen(n) { return Math.round(n).toLocaleString("ja-JP"); }
@@ -339,10 +354,10 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
 
   function members() {
     var out = [];
-    ["a", "s", "c"].forEach(function (c) {
+    ALL.forEach(function (c) {
       ["m", "f"].forEach(function (sx) {
-        var kcal = c === "c" ? CHILD[S.child][sx] : CAT[c][sx];
-        var label = (c === "c" ? "子ども" : CAT[c].label) + (sx === "m" ? "・男" : "・女");
+        var kcal = CAT[c][sx];
+        var label = catName(c) + (sx === "m" ? "・男" : "・女");
         var lu = [];
         for (var d = 0; d < 7; d++) { var di = dayInfo(d); lu.push(S.lunch[c][isRest(di.y, di.m, di.d) ? "we" : "wd"]); }
         for (var i = 0; i < S.counts[c][sx]; i++) out.push({ kcal: kcal, label: label, key: c + sx, lunch: lu });
@@ -853,28 +868,22 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   var rowEls = {};
   function buildHousehold() {
     var g = $("groups");
-    ["a", "s", "c"].forEach(function (c) {
+    ALL.forEach(function (c) {
       var row = document.createElement("div"); row.className = "fam";
-      var head;
-      if (c === "c") {
-        var opts = Object.keys(CHILD).map(function (k) { return '<option value="' + k + '"' + (k === S.child ? " selected" : "") + ">" + CHILD[k].label + "</option>"; }).join("");
-        head = '<span class="age">子ども<select id="childLevel" aria-label="子どもの年齢層">' + opts + "</select></span>";
-      } else head = '<span class="age">' + CAT[c].label + "<small>" + CAT[c].hint + "</small></span>";
-      row.innerHTML = head;
+      row.innerHTML = '<span class="age">' + CAT[c].label + "<small>" + CAT[c].hint + "</small></span>";
       [["m", "男"], ["f", "女"]].forEach(function (sx) {
         var ctl = document.createElement("div"); ctl.className = "ctl";
-        ctl.innerHTML = '<span class="sx">' + sx[1] + '</span><span class="mid"><button type="button" class="step" data-c="' + c + '" data-sx="' + sx[0] + '" data-d="-1" aria-label="' + CAT[c].label + sx[1] + 'を1人減らす">−</button><output id="o-' + c + sx[0] + '">0</output><button type="button" class="step" data-c="' + c + '" data-sx="' + sx[0] + '" data-d="1" aria-label="' + CAT[c].label + sx[1] + 'を1人増やす">＋</button></span>';
+        ctl.innerHTML = '<span class="sx">' + sx[1] + '</span><span class="mid"><button type="button" class="step" data-c="' + c + '" data-sx="' + sx[0] + '" data-d="-1" aria-label="' + catName(c) + sx[1] + 'を1人減らす">−</button><output id="o-' + c + sx[0] + '">0</output><button type="button" class="step" data-c="' + c + '" data-sx="' + sx[0] + '" data-d="1" aria-label="' + catName(c) + sx[1] + 'を1人増やす">＋</button></span>';
         row.appendChild(ctl);
       });
       g.appendChild(row); rowEls[c] = row;
     });
-    $("childLevel").addEventListener("change", function (e) { S.child = e.target.value; save(); refreshHousehold(); replan(); });
   }
   var LMODE = [["home", "家で食べる"], ["bento", "お弁当を作る"], ["none", "作らない(給食・外食)"]];
   function buildLunch() {
     var h = "";
-    ["a", "s", "c"].forEach(function (c) {
-      h += '<div class="fam" data-lunch-group="' + c + '"><span class="age">' + CAT[c].label + "</span>";
+    ALL.forEach(function (c) {
+      h += '<div class="fam" data-lunch-group="' + c + '"><span class="age">' + catName(c) + "</span>";
       [["wd", "平日"], ["we", "休日"]].forEach(function (k) {
         h += '<label class="fld"><span>' + k[1] + '</span><select data-lu="' + c + '" data-k="' + k[0] + '">' + LMODE.map(function (o) { return '<option value="' + o[0] + '"' + (S.lunch[c][k[0]] === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select></label>";
       });
@@ -883,8 +892,8 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     $("lunchRows").innerHTML = h;
   }
   function refreshHousehold() {
-    ["a", "s", "c"].forEach(function (c) { var g = document.querySelector('[data-lunch-group="' + c + '"]'); if (g) g.style.display = (S.counts[c].m + S.counts[c].f) > 0 ? "" : "none"; });
-    ["a", "s", "c"].forEach(function (c) { ["m", "f"].forEach(function (sx) { $("o-" + c + sx).textContent = S.counts[c][sx]; }); });
+    ALL.forEach(function (c) { var g = document.querySelector('[data-lunch-group="' + c + '"]'); if (g) g.style.display = (S.counts[c].m + S.counts[c].f) > 0 ? "" : "none"; });
+    ALL.forEach(function (c) { ["m", "f"].forEach(function (sx) { $("o-" + c + sx).textContent = S.counts[c][sx]; }); });
     var ms = members(), kc = 0; ms.forEach(function (m) { kc += m.kcal; });
     $("kcalLine").textContent = ms.length ? ms.length + "人 ／ 1日に必要なエネルギーの合計 " + yen(kc) + " kcal" : "人数を選んでください。";
   }
