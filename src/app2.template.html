@@ -35,6 +35,11 @@ h2{font-family:var(--font);font-weight:900;font-size:22px;margin:22px 0 6px}
 .note li{display:block;font-size:17px;font-weight:700;padding:3px 0;line-height:1.4}
 .note li>span{display:block;font-weight:500;font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
 .note li .tag{display:inline-block}
+.how{margin-top:2px;font-weight:500}
+.how summary{font-size:13px;color:var(--green);font-weight:700;cursor:pointer;padding:2px 0}
+.note .how ol li{display:list-item}
+.how .mat{font-size:13px;color:var(--sub);margin:4px 0}
+.how ol{list-style:decimal;margin:4px 0 6px;padding-left:22px;font-size:14px;line-height:1.55;font-weight:500;color:var(--ink)}
 .note li.rice{font-weight:500;font-size:15px;color:var(--sub)}
 .cost{background:var(--card);border:2px dashed var(--red);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
 .cost .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -511,6 +516,11 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   function fillSplit() {
     var ids = ["bsB", "bsL", "bsD"], sum = S.budgetSplit[0] + S.budgetSplit[1] + S.budgetSplit[2] || 1;
     ids.forEach(function (id, i) { if (document.activeElement !== $(id)) $(id).value = S.budgetSplit[i]; });
+    var eff = LAST && LAST.plan.slotBudget;
+    if (eff && Math.abs(eff[0] + eff[1] + eff[2] - S.budgetWeek) < 5 && [0, 1, 2].some(function (i) { return Math.abs(eff[i] - S.budgetWeek * S.budgetSplit[i] / sum) > 60; })) {
+      $("bsYen").textContent = "割り振りが下限を下回る食事があるため、自動で直しました → 朝 " + yen(eff[0]) + "円 / 昼 " + yen(eff[1]) + "円 / 夜 " + yen(eff[2]) + "円(下限は朝 " + yen(Math.round(LAST.plan.slotFloor[0])) + "円・昼 " + yen(Math.round(LAST.plan.slotFloor[1])) + "円・夜 " + yen(Math.round(LAST.plan.slotFloor[2])) + "円)";
+      return;
+    }
     $("bsYen").textContent = "1週間 " + yen(S.budgetWeek) + "円 → 朝 " + yen(Math.round(S.budgetWeek * S.budgetSplit[0] / sum)) + "円 / 昼 " + yen(Math.round(S.budgetWeek * S.budgetSplit[1] / sum)) + "円 / 夜 " + yen(Math.round(S.budgetWeek * S.budgetSplit[2] / sum)) + "円(合計が100%にならなくても、割合で分けます)";
   }
   function autoBudget(ms) { var kc = 0; ms.forEach(function (m) { kc += m.kcal; }); return Math.max(3000, Math.round(kc / 2000 * 6500 / 500) * 500); }
@@ -519,7 +529,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     PRICES = effPrices();
     if (S.budgetAuto !== false && (S.budgetAuto === true || S.budgetWeek === 20000) && ms.length) { S.budgetAuto = true; S.budgetWeek = autoBudget(ms); if ($("budgetWeek")) { $("budgetWeek").value = S.budgetWeek; $("budgetMonth").value = Math.round(S.budgetWeek * 4.3); } }
     if (!ms.length) { LAST = null; }
-    else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, budgetSplit: S.budgetSplit, leftover: S.leftover !== false, prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
+    else LAST = { ms: ms, plan: generatePlan({ members: ms, budgetWeek: S.budgetWeek, budgetSplit: S.budgetSplit, leftover: S.leftover !== false, months: [0, 1, 2, 3, 4, 5, 6].map(function (i) { return dayInfo(i).m; }), prices: PRICES, foods: FOODS, recipes: RECIPES, excludeAllergens: S.allergens, dislikeDishes: S.dislikes, seed: S.seed, fixed: fixedPlan(), dayExtras: dayExtras(), pantry: S.pantry, tastePenalty: tastePenalty() }) };
     if ($("bsYen")) fillSplit();
     var bh = $("budgetHint");
     if (bh) bh.textContent = LAST && LAST.plan.overBudget ? "いまの家族(" + LAST.ms.length + "人)では、いちばん切りつめても週" + yen(LAST.plan.suggestBudget) + "円ほどかかります。これより低い予算にはできません。" : "予算は「これに収まるように組む目標」です。収まらないときは、品数を減らし、ご飯を多めにして安くします。金額を入れないと、人数から自動で決めます。";
@@ -529,6 +539,13 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
 
   function emptyMsg() { return '<div class="card"><div>家族の人数がまだ入っていません。</div><button type="button" class="btn solid" data-go="family">家族を入れる</button></div>'; }
   function warnHtml(plan) { return plan.warnings.map(function (w) { return '<div class="warn">' + esc(w) + "</div>"; }).join(""); }
+
+  // 作り方と材料（1人分の目安）
+  function howHtml(id) {
+    var r = RM[id]; if (!r || !r.steps) return "";
+    var mat = r.ingredients.map(function (i) { var f = FM[i.food]; return f ? esc(f.name.replace(/（.*?）/g, "")) + " " + (Math.round(i.g * 10) / 10) + "g" : ""; }).filter(Boolean).join("、");
+    return '<details class="how"><summary>作り方' + (r.time ? "(約" + r.time + "分)" : "") + '</summary><div class="mat">材料(1人分の目安): ' + mat + "</div><ol>" + r.steps.map(function (t) { return "<li style=\"font-size:14px;font-weight:500;padding:1px 0\">" + esc(t) + "</li>"; }).join("") + "</ol></details>";
+  }
 
   // ---- きょう
   function renderToday() {
@@ -560,7 +577,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
         var c = costOf(RM[x.id].ingredients, FM, PRICES).yen;
         var tg = tasteTag(x.id);
         var rt = (m.slot === "夕食" || m.bento) ? (x.role === "主菜" ? "おかず" : x.role === "副菜" ? (x.sub === "salad" ? "サラダ" : "小鉢") : x.role === "汁物" ? "汁物" : "") : "";
-        h += "<li><em style=\"font-style:normal\">" + (rt ? '<span class="tag" style="margin:0 6px 0 0">' + rt + "</span>" : "") + esc(x.name) + (x.leftover ? '<span class="tag">昨夜の残り</span>' : "") + (x.carryTo ? '<span class="tag">' + x.carryTo + "にも</span>" : "") + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span></li>';
+        h += "<li><em style=\"font-style:normal\">" + (rt ? '<span class="tag" style="margin:0 6px 0 0">' + rt + "</span>" : "") + esc(x.name) + (RM[x.id] && RM[x.id].season && RM[x.id].season.indexOf(di.m) >= 0 ? '<span class="tag">旬</span>' : "") + (x.leftover ? '<span class="tag">昨夜の残り</span>' : "") + (x.carryTo ? '<span class="tag">' + x.carryTo + "にも</span>" : "") + (tg ? '<span class="tag">' + tg + "</span>" : "") + '</em><span>1人 ' + yen(c) + '円 <button type="button" class="edit" data-taste="' + x.id + '">感想</button></span>' + howHtml(x.id) + '</li>';
       });
       h += "</ul></div>";
     });

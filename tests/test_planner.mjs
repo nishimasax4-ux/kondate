@@ -85,7 +85,13 @@ console.log("メイン重複なし: OK");
 // 10) 朝・昼・夜の予算配分: 夜を多め・朝を少なめにすると、夜の食費が朝より多くなり、配分に近づく
 const split = generatePlan({ ...base, budgetWeek: 24000, budgetSplit: [15, 25, 60], seed: 4 });
 console.log("配分 15/25/60 →", split.slotCost, "配分額", split.slotBudget, "合計", split.cost);
-assert.ok(split.slotCost[2] > split.slotCost[0] * 1.5, "夜が朝より十分多い");
+assert.ok(split.slotCost[2] > split.slotCost[0] * 1.3, "夜が朝より十分多い");
+// 下限を下回る割り振りは、下限まで引き上げられ、合計は予算のまま
+assert.ok(split.slotBudget[0] >= split.slotFloor[0] - 1, "朝の割り振りが下限以上になる");
+assert.ok(Math.abs(split.slotBudget.reduce((a, b) => a + b, 0) - 24000) <= 2, "割り振りの合計が予算と同じ");
+assert.ok(split.warnings.some((w) => w.includes("を下回っていたので")), "調整したことを知らせる");
+const okSplit = generatePlan({ ...base, budgetWeek: 24000, budgetSplit: [25, 30, 45], seed: 4 });
+assert.ok(!okSplit.warnings.some((w) => w.includes("を下回っていたので")), "下限を下回らなければ調整しない");
 const flat = generatePlan({ ...base, budgetWeek: 24000, budgetSplit: [45, 25, 30], seed: 4 });
 console.log("配分 45/25/30 →", flat.slotCost, "配分額", flat.slotBudget, "合計", flat.cost);
 assert.ok(flat.slotCost[0] > split.slotCost[0], "朝の配分を増やすと朝の食費が増える");
@@ -113,4 +119,21 @@ const fx = generatePlan({ ...base, budgetWeek: 30000, seed: 2, leftover: true, f
 assert.ok(!fx.days[1].meals[0].dishes.some((x) => x.leftover) && !fx.days[1].meals[1].dishes.some((x) => x.leftover));
 assert.ok(!fx.days[0].meals[2].dishes.some((x) => x.carryTo), "翌日の朝・昼を自分で決めた日は、前夜に残りを作らない");
 console.log("夜の残り: OK 出現", seen);
+// 12) 季節: 冬(1月)に夏の料理は出ず、夏(7月)に冬の料理は出ない。旬の料理が出る
+const rmap = Object.fromEntries(recipes.map((x) => [x.id, x]));
+for (const [m, bad] of [[1, [6, 7, 8, 9]], [7, [12, 1, 2]]]) {
+  let inSeason = 0, all = 0;
+  for (const seed of [1, 2, 3, 4]) {
+    const rr = generatePlan({ ...base, budgetWeek: 30000, seed, months: Array(7).fill(m) });
+    for (const d of rr.days) for (const ml of d.meals) for (const x of ml.dishes) {
+      const se = rmap[x.id].season; all++;
+      if (se) { assert.ok(se.includes(m), `${m}月に季節外れの料理: ${x.name}`); inSeason++; }
+    }
+  }
+  assert.ok(inSeason > 0, `${m}月に旬の料理が1つも出ない`);
+  console.log(m + "月: 旬の料理", inSeason, "/", all);
+}
+// 全料理に作り方(手順)と調理時間がある
+for (const r of recipes) assert.ok(r.steps && r.steps.length >= 2 && r.time > 0, `作り方なし: ${r.id}`);
+console.log("作り方: OK", recipes.length, "品");
 console.log("ALL OK");

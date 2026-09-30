@@ -71,11 +71,16 @@ export function proteinGroup(r) {
   if (f.startsWith("04")) return "tofu";
   return "other";
 }
-function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, today, groups) {
+function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, today, groups, month) {
   let cand = pool.filter((r) => (used[r.id] || 0) < maxUse && !today.has(r.id));   // その日にもう出した料理は選ばない
   if (!cand.length) cand = pool.filter((r) => !today.has(r.id));
-  const list = cand.length ? cand : pool;
+  let list = cand.length ? cand : pool;
   if (!list.length) return null;
+  // 旬の料理が使い回しの上限に達して、季節外れの料理しか残らないときは、季節外れを出すより旬の料理をもう一度出す
+  if (month && list.every((r) => r.season && !r.season.includes(month))) {
+    const inSeason = pool.filter((r) => !today.has(r.id) && (!r.season || r.season.includes(month)));
+    if (inSeason.length) list = inSeason;
+  }
   let best = null, bestScore = Infinity;
   const isMain = (r) => r.role === "主菜" || r.role === "一品";
   for (const r of list) {
@@ -83,7 +88,9 @@ function pick(pool, used, recent, lambda, costMap, rand, maxUse, adj, foodUse, t
     const over = r.ingredients.some((i) => WEEK_CAP[i.food] && (foodUse[i.food] || 0) >= WEEK_CAP[i.food]) ? 25 : 0;
     let grp = 0;
     if (isMain(r)) { const g = proteinGroup(r); if (g !== "other") grp = (groups.today.includes(g) ? 30 : 0) + (groups.recent.includes(g) ? 12 : 0); }
-    const score = repeat + over + grp + (used[r.id] || 0) * 8 + lambda * costMap[r.id] + (adj[r.id] || 0) + rand() * 6;
+    // 季節: 旬の月以外は選ばれにくく、旬の月は選ばれやすい
+    const seas = r.season && month ? (r.season.includes(month) ? -7 : 200) : 0;
+    const score = repeat + over + grp + seas + (used[r.id] || 0) * 8 + lambda * costMap[r.id] + (adj[r.id] || 0) + rand() * 6;
     if (score < bestScore) { best = r; bestScore = score; }
   }
   return best;
@@ -97,12 +104,12 @@ function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], level = 0, 
   const RECENT_N = { main: 3, side: 6, soup: 4 };
   const days = [];
   let today = new Set(), groups = { today: [], recent: [] };
-  let slot = 0;                                  // いま組んでいる食事（0朝・1昼・2夜）。食事ごとに価格の重みを変えられる
+  let slot = 0, curDay = 0;                                  // いま組んでいる食事（0朝・1昼・2夜）。食事ごとに価格の重みを変えられる
   const kindOf = (r) => (r.role === "副菜" ? "side" : r.role === "汁物" ? "soup" : "main");
   const take = (pool, maxUse, kind) => {
     const k = kind || (pool[0] ? kindOf(pool[0]) : "main");
     if (maxUse === undefined) maxUse = k === "main" ? 1 : 2;   // 主菜・一品(メイン)は、1週間で同じものを2回出さない。副菜・汁物は2回まで
-    const r = pick(pool, used, recent[k] || [], lambda * slotW[slot], costMap, rand, maxUse, adj, foodUse, today, groups);
+    const r = pick(pool, used, recent[k] || [], lambda * slotW[slot], costMap, rand, maxUse, adj, foodUse, today, groups, (ex.months || [])[curDay]);
     if (!r) return r;
     used[r.id] = (used[r.id] || 0) + 1; today.add(r.id);
     for (const i of r.ingredients) if (WEEK_CAP[i.food]) foodUse[i.food] = (foodUse[i.food] || 0) + 1;
@@ -114,6 +121,7 @@ function planWeek(pools, lambda, costMap, seed, adj, bentoDays = [], level = 0, 
   let carry = null, carryMain = 0, carrySoup = 0;
   const useLeft = (r) => { today.add(r.id); const kk = kindOf(r); recent[kk].push(r.id); if (recent[kk].length > RECENT_N[kk]) recent[kk].shift(); if (kk === "main") groups.today.push(proteinGroup(r)); return { ...r, leftover: true }; };
   for (let d = 0; d < 7; d++) {
+    curDay = d;
     const meals = [];
     today = new Set(); groups = { today: [], recent: groups.recent };
     const co = carry; carry = null;
@@ -172,7 +180,7 @@ function applyFixed(days, fixed, recipes) {
   return days;
 }
 
-export function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed, members, budgetWeek, prices, foods, recipes, excludeAllergens = [], dislikeFoods = [], dislikeDishes = [], seed = 1, budgetSplit, leftover = false }) {
+export function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed, members, budgetWeek, prices, foods, recipes, excludeAllergens = [], dislikeFoods = [], dislikeDishes = [], seed = 1, budgetSplit, leftover = false, months }) {
   const fm = foodMap(foods);
   const warnings = [];
   const usable = filterRecipes(recipes, { excludeAllergens, dislikeFoods, dislikeDishes }).filter((r) => !r.special);   // 行事の料理は自動では選ばない
@@ -220,44 +228,63 @@ export function generatePlan({ pantry = {}, tastePenalty = {}, dayExtras, fixed,
   // 朝・昼・夜への予算の割り振り（割合）。budgetSplit: [朝, 昼, 夜]。合計が1になるよう直す
   const splitSum = budgetSplit ? budgetSplit.reduce((a, b) => a + (+b || 0), 0) : 0;
   const shares = splitSum > 0 ? budgetSplit.map((x) => (+x || 0) / splitSum) : null;
-  const slotBudget = shares && budgetWeek ? shares.map((x) => x * budgetWeek) : null;
-  const slotOver = (r) => (slotBudget ? [0, 1, 2].map((j) => r.slotCost[j] > slotBudget[j] * 1.03) : [false, false, false]);
-  const search = (level) => {
+  const key = (c, budget) => [c.cost > budget ? 1 : 0, c.cost > budget ? c.cost : c.slotOverYen, c.cost];   // 予算内 → 配分の超過が小さい順 → 安い順
+  const better = (x, y, budget) => { const kx = key(x, budget), ky = key(y, budget); for (let q = 0; q < 3; q++) if (kx[q] !== ky[q]) return kx[q] < ky[q]; return false; };
+  const search = (level, budget, slotB) => {
     let lambda = 0.02, result = null;
     const riceG = level >= 2 ? 200 : RICE_G;
     let slotW = [1, 1, 1];
+    const slotOver = (r) => (slotB ? [0, 1, 2].map((j) => r.slotCost[j] > slotB[j] * 1.03) : [false, false, false]);
     for (let attempt = 0; attempt < 12; attempt++) {
-      const tries = budgetWeek ? 5 : 1;
+      const tries = budget ? 5 : 1;
       let round = null;
       for (let k = 0; k < tries; k++) {
-        const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays, level, slotW, { leftover, fixed, lunchDays }), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry, riceG, level >= 2), dayExtras);
-        // 予算内で、配分を守れている度合いがいちばん高い(超過が小さい)組み合わせを採る
-        const ov = slotBudget ? [0, 1, 2].reduce((a, j) => a + Math.max(0, cand.slotCost[j] - slotBudget[j]), 0) : 0;
-        cand.slotOverYen = ov;
-        const key = (c) => [c.cost > budgetWeek ? 1 : 0, c.cost > budgetWeek ? c.cost : c.slotOverYen, c.cost];   // 予算内 → 配分の超過が小さい順 → 安い順
-        const better = (x, y) => { const kx = key(x), ky = key(y); for (let q = 0; q < 3; q++) if (kx[q] !== ky[q]) return kx[q] < ky[q]; return false; };
-        if (!round || (budgetWeek ? better(cand, round) : false)) round = cand;
+        const cand = addExtras(finalize(applyFixed(planWeek(pools, lambda, costMap, seed + k * 101, adjMap, bentoDays, level, slotW, { leftover, fixed, lunchDays, months }), fixed, recipes), members, fm, prices, costMap, riceUnit, excludeAllergens, pantry, riceG, level >= 2), dayExtras);
+        cand.slotOverYen = slotB ? [0, 1, 2].reduce((a, j) => a + Math.max(0, cand.slotCost[j] - slotB[j]), 0) : 0;
+        if (!round || (budget ? better(cand, round, budget) : false)) round = cand;
       }
       result = round;
-      if (!budgetWeek) break;
+      if (!budget) break;
       const over = slotOver(result);
-      if (result.cost <= budgetWeek && !over.some(Boolean)) break;
-      if (result.cost > budgetWeek) lambda *= 3;
+      if (result.cost <= budget && !over.some(Boolean)) break;
+      if (result.cost > budget) lambda *= 3;
       // 全体は予算内でも、配分を超えた食事があれば、その食事の価格の重みだけ上げて組み直す
       over.forEach((o, j) => { if (o) slotW[j] *= 2.5; });
     }
-    return { ...result, lambda, level };
+    return { ...result, lambda, level, slotOver: slotOver(result) };
   };
-  let result = search(0);
-  for (let lv = 1; budgetWeek && lv <= 2 && result.cost > budgetWeek; lv++) {
-    const alt = search(lv);
-    if (alt.cost < result.cost) result = alt;
+
+  // 朝・昼・夜それぞれの下限（いちばん切りつめたときの食費）。割り振りが下限を下回っていたら、下限まで引き上げ、その分を他の食事から減らす
+  let slotB = null, slotFloor = null, splitAdjusted = [];
+  if (shares && budgetWeek) {
+    slotFloor = search(2, 1, null).slotCost.slice(0, 3);
+    let b = shares.map((x) => x * budgetWeek);
+    const pinned = new Set();
+    for (let iter = 0; iter < 3; iter++) {
+      let changed = false;
+      for (let j = 0; j < 3; j++) if (!pinned.has(j) && b[j] < slotFloor[j]) { pinned.add(j); changed = true; }
+      const pinnedSum = [...pinned].reduce((a, j) => a + slotFloor[j], 0), free = [0, 1, 2].filter((j) => !pinned.has(j));
+      const rest = budgetWeek - pinnedSum, fs = free.reduce((a, j) => a + shares[j], 0);
+      b = [0, 1, 2].map((j) => (pinned.has(j) ? slotFloor[j] : rest > 0 && fs > 0 ? (rest * shares[j]) / fs : slotFloor[j]));
+      if (!changed) break;
+    }
+    slotB = b; splitAdjusted = [...pinned];
+  }
+  let result = search(0, budgetWeek, slotB);
+  for (let lv = 1; budgetWeek && lv <= 2 && (result.cost > budgetWeek || result.slotOver.some(Boolean)); lv++) {
+    const alt = search(lv, budgetWeek, slotB);
+    if (better(alt, result, budgetWeek)) result = alt;
   }
   const lambda = result.lambda;
-  result.slotBudget = slotBudget ? slotBudget.map(Math.round) : null;
+  result.slotBudget = slotB ? slotB.map(Math.round) : null;
+  result.slotFloor = slotFloor;
   const over = budgetWeek && result.cost > budgetWeek;
   const suggest = Math.ceil(result.cost / 500) * 500;
   if (over) warnings.push(`食費の目安が予算を約${Math.round(result.cost - budgetWeek).toLocaleString("ja-JP")}円超えています。これ以上は下げられない最安の組み合わせです（品数を減らし、ご飯を多めにしています）。この家族の下限は週${suggest.toLocaleString("ja-JP")}円くらいです。予算を上げてください。`);
+  if (splitAdjusted.length && !over) {
+    const nm = ["朝", "昼", "夜"];
+    warnings.push(`${splitAdjusted.map((j) => nm[j]).join("・")}の割り振りが下限(${splitAdjusted.map((j) => Math.round(slotFloor[j]).toLocaleString("ja-JP") + "円").join("・")})を下回っていたので、下限に合わせ、他の食事の割り振りを減らしました。`);
+  }
   if (result.slotBudget && !over) {
     const nm = ["朝", "昼", "夜"];
     result.slotCost.slice(0, 3).forEach((c, j) => { if (c > result.slotBudget[j] * 1.05 + 100) warnings.push(`${nm[j]}の食費が、割り振りの${result.slotBudget[j].toLocaleString("ja-JP")}円より約${Math.round(c - result.slotBudget[j]).toLocaleString("ja-JP")}円多くなっています。これ以上は安くできませんでした。割り振りを見直してください。`); });
