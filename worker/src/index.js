@@ -7,7 +7,7 @@
 //   POST /admin/refresh?token=.. 今すぐ更新する
 //   Cron                         毎月自動で更新する
 import { MAPPING, DERIVED } from "./mapping.js";
-import { asArray, buildPrices, mergeAreas } from "./logic.js";
+import { asArray, buildPrices, mergeAreas, compactPrices, marketTable, etagOf } from "./logic.js";
 
 const API = "https://api.e-stat.go.jp/rest/3.0/app/json";
 const CREDIT = "このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。";
@@ -52,7 +52,7 @@ async function loadMeta(env) {
 }
 
 // 1つの地域について、使う品目の価格を取って、食品ごとの価格表にする
-async function pricesFor(meta, areaName, times, env) {
+async function pricesFor(meta, areaName, times, env, months) {
   const area = meta.areas.find((a) => a.name.includes(areaName));
   if (!area) throw new Error(`地域「${areaName}」が統計表にありません`);
   const values = [];
@@ -72,7 +72,7 @@ async function pricesFor(meta, areaName, times, env) {
     }
   }
   const label = area.name.replace(/【.*$/, "");   // 「豊橋市【2010年1月～…】」→「豊橋市」
-  return { label, ...buildPrices(meta.items, values, MAPPING, DERIVED) };
+  return { label, ...buildPrices(meta.items, values, MAPPING, DERIVED, months) };
 }
 
 // opts.area: 地域名を一時的に変えて試す（「豊橋,名古屋」のように、カンマで並べると優先順）。
@@ -85,7 +85,8 @@ async function refresh(env, opts = {}) {
   // （みかん・いちごなど、時期外れで調査のない品目は、最後に載っていた月の価格になる）
   const times = meta.times.map((t) => t.code).sort().reverse().slice(0, 12);
   const results = [];
-  for (const n of names) results.push(await pricesFor(meta, n, times, env));
+  const months = [...times].reverse();                      // 古い月から新しい月へ（相場タブの推移用）
+  for (const n of names) results.push(await pricesFor(meta, n, times, env, months));
   const prices = mergeAreas(results.map((r) => ({ label: r.label, prices: r.prices })));
   // 全地域で取れなかった品目（診断用）
   const unresolved = results[results.length - 1].unresolved.filter((u) => results.every((r) => r.unresolved.some((x) => x.item === u.item)));
@@ -109,15 +110,22 @@ async function refresh(env, opts = {}) {
     const sample = Object.fromEntries(Object.entries(key).map(([k, id]) => [k, prices[id] ? `${prices[id].yen100g}${prices[id].fromArea ? "(" + prices[id].fromArea + ")" : ""}` : null]));
     return { dry: true, area: areaLabel, count: out.count, filledFromOtherArea: filled, staleMonths: stale, unmatched, unresolved, sample, times };
   }
-  await env.PRICES.put("prices", JSON.stringify(out));
+  // アプリに配るのは2つ。起動のたびに読む軽い価格表と、相場タブを開いたときだけ読む詳しい表。
+  const light = JSON.stringify(compactPrices(out));
+  const market = JSON.stringify(marketTable(out, months));
+  await env.PRICES.put("prices", light, { metadata: { etag: etagOf(light) } });
+  await env.PRICES.put("market", market, { metadata: { etag: etagOf(market) } });
   await env.PRICES.put("diag", JSON.stringify({ updatedAt: out.updatedAt, unmatched, unresolved }));
-  return { count: out.count, filledFromOtherArea: filled, staleMonths: stale, unmatched: unmatched.length, unresolved: unresolved.length, area: areaLabel, times };
+  return { count: out.count, filledFromOtherArea: filled, staleMonths: stale, unmatched: unmatched.length, unresolved: unresolved.length, area: areaLabel, times, bytes: { "prices.json": light.length, "market.json": market.length } };
 }
 
 function cors(env) {
   return {
     "access-control-allow-origin": env.ALLOW_ORIGIN || "*",
     "access-control-allow-methods": "GET, OPTIONS",
+    "access-control-allow-headers": "if-none-match",
+    "access-control-expose-headers": "etag",
+    "access-control-max-age": "86400",
     "content-type": "application/json; charset=utf-8"
   };
 }
@@ -133,17 +141,37 @@ function authorized(request, url, env) {
   return diff === 0;
 }
 
+// 価格表を返す。中身が変わっていなければ 304 だけを返し、本体は送らない（通信量をおさえる）。
+// 一度配ったものは Cloudflare のキャッシュに置き、同じ内容の配信でKVを読み直さない。
+async function serve(request, env, ctx, key) {
+  // workers.dev のアドレスではこのキャッシュは働かない（独自ドメインにすると効く）
+  let cache = null, hit = null;
+  try { cache = caches.default; hit = await cache.match(request.url); } catch (e) { cache = null; }
+  let body, etag;
+  if (hit) { body = await hit.text(); etag = hit.headers.get("etag"); }
+  else {
+    const got = await env.PRICES.getWithMetadata(key);
+    body = got.value;
+    if (!body) return new Response(JSON.stringify({ error: "価格表がまだありません。管理画面から更新してください。" }), { status: 404, headers: cors(env) });
+    etag = (got.metadata && got.metadata.etag) || etagOf(body);
+  }
+  const headers = { ...cors(env), etag, "cache-control": "public, max-age=86400, stale-while-revalidate=2592000", vary: "accept-encoding" };
+  if (!hit && cache) { try { ctx.waitUntil(cache.put(request.url, new Response(body, { headers }))); } catch (e) {} }
+  // ブラウザが前回と同じ印を送ってきたら、本体は送らない
+  const sent = request.headers.get("if-none-match");
+  if (sent && sent.split(",").some((t) => t.trim() === etag)) return new Response(null, { status: 304, headers });
+  return new Response(body, { headers });
+}
+
 const ADMIN_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") return new Response(null, { headers: cors(env) });
 
-    if (url.pathname === "/prices.json") {
-      const body = await env.PRICES.get("prices");
-      if (!body) return new Response(JSON.stringify({ error: "価格表がまだありません。管理画面から更新してください。" }), { status: 404, headers: cors(env) });
-      return new Response(body, { headers: { ...cors(env), "cache-control": "public, max-age=3600" } });
+    if (url.pathname === "/prices.json" || url.pathname === "/market.json") {
+      return serve(request, env, ctx, url.pathname === "/prices.json" ? "prices" : "market");
     }
 
     if (url.pathname === "/admin/meta") {

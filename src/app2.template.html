@@ -80,6 +80,14 @@ th:first-child,td:first-child{text-align:left}
 .item .q b{display:block;font-size:16px}
 .item .q span{font-size:15px;font-weight:900;color:var(--red);font-variant-numeric:tabular-nums}
 .item.done .q{opacity:.55}
+/* 相場 */
+.mkrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;min-height:60px}
+.mkrow .nm{flex:1;min-width:0;font-size:16px;font-weight:900;line-height:1.35}
+.mkrow .nm small{display:block;font-size:12px;font-weight:500;color:var(--sub);line-height:1.5}
+.mkrow .q{text-align:right;line-height:1.3;flex:0 0 auto}
+.mkrow .q b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.mkrow .q>span{display:block;font-size:11px;font-weight:700;color:var(--sub)}
+.mkd{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;white-space:nowrap}
 .edit{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--sub);cursor:pointer}
 .itemrow{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line)}
 .itemrow .item{border-top:0;flex:1;min-width:0}
@@ -89,7 +97,7 @@ th:first-child,td:first-child{text-align:left}
 .basket{display:none;background:var(--ink);color:var(--paper);padding:10px 16px;justify-content:space-between;gap:12px;font-weight:900}
 .basket.on{display:flex}.basket small{font-weight:500;opacity:.85}
 nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav button{flex:1;min-width:0;border:0;background:none;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;color:var(--sub);cursor:pointer;min-height:60px}
+nav button{flex:1;min-width:0;border:0;background:none;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--sub);cursor:pointer;min-height:60px}
 nav button.on{color:var(--green);font-weight:700}
 nav svg{width:24px;height:24px}
 /* 家族 */
@@ -185,6 +193,12 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   <div id="spBody" style="display:flex;flex-direction:column;gap:12px;margin-top:14px"></div>
 </section>
 
+<section class="pane" id="p-market">
+  <h2>相場とくらべる</h2>
+  <p class="small" id="priceDate2"></p>
+  <div id="mkBody"></div>
+</section>
+
 <section class="pane" id="p-family">
   <h1>家族と予算</h1>
   <p class="date">ここを変えると、献立と食費がすぐ作り直されます。</p>
@@ -229,12 +243,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   </div>
   <details><summary>家族の好み(感想の記録)</summary><div id="tasteList" style="margin-top:8px"></div></details>
   <details><summary>苦手な料理をはずす</summary><div class="chips" id="dislikes" style="margin-top:8px"></div></details>
-  <details><summary>食材ごとの値段を見る・直す</summary>
-    <p class="small" id="priceDate2" style="margin:8px 0 0"></p>
-    <div class="field" style="margin:8px 0"><input type="search" id="priceFilter" placeholder="食材名でさがす(例: たまご)" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>
-    <div id="priceTable"></div>
-    <button type="button" class="btn link" id="resetPrices">入力した値段をぜんぶ仮の値にもどす</button>
-  </details>
+  <div class="card"><div class="lab">食材ごとの値段</div><div class="small">「相場」タブで、公式統計の相場と自分の値段をくらべたり、値段を直したりできます。</div><button type="button" class="btn" data-go="market">相場をひらく</button></div>
   <details><summary>データの控えをとる・もどす</summary>
     <div class="small" style="margin-top:8px">この記録はこの端末の中だけに保存されています。機種変更や、ブラウザのデータを消したときに備えて、ときどき控えを取っておくと安心です。</div>
     <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
@@ -253,6 +262,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     <button type="button" data-tab="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>1週間</button>
     <button type="button" data-tab="cal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 14h2M14 14h2M8 17.5h2"/></svg>予定</button>
     <button type="button" data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11L21 7H6"/></svg>買い物</button>
+    <button type="button" data-tab="market"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 4 5-7"/><path d="M15 8h4v4"/><path d="M3 21h18"/></svg>相場</button>
     <button type="button" data-tab="family"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4.5 2 4.5 5"/></svg>家族</button>
   </nav>
 </div></div>
@@ -324,7 +334,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   var CAT_ORDER = ["主食", "いも", "大豆", "肉", "魚介", "卵乳", "野菜", "きのこ海藻", "果物", "調味料", "油脂", "菓子"];
   var WD = ["日", "月", "火", "水", "木", "金", "土"];
   var RICE_K = FM[RICE].kcal / 342;             // 炊いたご飯の重さ→精米の重さ
-  var LOADED = null;
+  var LOADED = null, MK_AREA = "", MK_CREDIT = "";
 
   var S = { counts: { a: { m: 1, f: 1 } }, budgetWeek: 20000, budgetSplit: [25, 30, 45], leftover: true, allergens: [], dislikes: [], overrides: {}, adj: 0, seed: 1, checked: {}, pantry: {}, spend: [], taste: {}, names: {}, manual: {}, events: [], evBudget: {}, lunch: {} };
   try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); if (p && typeof p === "object") { delete p.__proto__; delete p.constructor; delete p.prototype; } if (p && p.counts) S = Object.assign(S, p); if (!S.manual) S.manual = {}; if (!S.pantry) S.pantry = {}; if (!S.spend) S.spend = []; if (!S.taste) S.taste = {}; if (!S.names) S.names = {}; if (!S.events) S.events = []; if (!S.evBudget) S.evBudget = {}; if (!Array.isArray(S.budgetSplit) || S.budgetSplit.length !== 3) S.budgetSplit = [25, 30, 45]; if (!S.lunch) S.lunch = {}; } } catch (e) {}
@@ -550,7 +560,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     if (bh) bh.textContent = LAST && LAST.plan.overBudget ? "いまの家族(" + LAST.ms.length + "人)では、いちばん切りつめても週" + yen(LAST.plan.suggestBudget) + "円ほどかかります。これより低い予算にはできません。" : "予算は「これに収まるように組む目標」です。収まらないときは、品数を減らし、ご飯を多めにして安くします。金額を入れないと、人数から自動で決めます。";
     renderAll();
   }
-  function renderAll() { renderToday(); renderWeek(); renderShop(); renderSpend(); renderCal(); renderNames(); renderTasteList(); refreshPriceTable(); }
+  function renderAll() { renderToday(); renderWeek(); renderShop(); renderSpend(); renderCal(); renderNames(); renderTasteList(); if (TAB === "market") renderMarket(); }
 
   function emptyMsg() { return '<div class="card"><div>家族の人数がまだ入っていません。</div><button type="button" class="btn solid" data-go="family">家族を入れる</button></div>'; }
   function warnHtml(plan) { return plan.warnings.map(function (w) { return '<div class="warn">' + esc(w) + "</div>"; }).join(""); }
@@ -904,44 +914,98 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     var opts = [-30, -20, -10, 0, 10, 20, 30], near = opts.reduce(function (a, b) { return Math.abs(b - S.adj) < Math.abs(a - S.adj) ? b : a; });
     S.adj = near; $("adj").value = String(near);
   }
-  function buildPriceTable() {
-    var by = {}; FOODS.forEach(function (f) { (by[f.cat] = by[f.cat] || []).push(f); });
-    var h = "";
-    CAT_ORDER.forEach(function (c) {
-      if (!by[c]) return;
-      h += '<details data-cat="' + c + '" style="margin-bottom:6px"><summary>' + c + "(" + by[c].length + '品)</summary><div class="wrap"><table><thead><tr><th>食材</th><th>100gの値段(円)</th><th>状態</th></tr></thead><tbody>';
-      by[c].forEach(function (f) {
-        h += '<tr data-food="' + f.id + '" data-name="' + esc(f.name) + '"><td>' + esc(f.id === RICE ? "お米(精米)" : f.name) + '</td><td><input type="number" min="0" step="1" style="width:6em;min-height:36px;padding:4px 8px" data-ov="' + f.id + '" aria-label="' + esc(f.name) + 'の100gの値段"></td><td class="st"></td></tr>';
-      });
-      h += "</tbody></table></div></details>";
-    });
-    $("priceTable").innerHTML = h;
-  }
-  function refreshPriceTable() {
-    if (!PRICES) return;
-    var rows = $("priceTable").querySelectorAll("tr[data-food]");
-    for (var i = 0; i < rows.length; i++) {
-      var tr = rows[i], id = tr.getAttribute("data-food"), input = tr.querySelector("input");
-      if (document.activeElement !== input) input.value = Math.round(PRICES[id].yen100g / fac(id) * 10) / 10;
-      tr.querySelector(".st").textContent = priceHas(id) ? "入力済み" : (LOADED && LOADED[id] ? (LOADED[id].fromArea || LOADED[id].asOf ? "公式統計(" + esc([LOADED[id].fromArea, LOADED[id].asOf ? LOADED[id].asOf + "分" : ""].filter(Boolean).join("・")) + ")" : "公式統計") : "仮");
-    }
-  }
-  function filterPrices() {
-    var q = $("priceFilter").value.trim(), ds = $("priceTable").querySelectorAll("details");
-    for (var i = 0; i < ds.length; i++) {
-      var any = false, trs = ds[i].querySelectorAll("tr[data-food]");
-      for (var j = 0; j < trs.length; j++) { var show = !q || trs[j].getAttribute("data-name").indexOf(q) >= 0; trs[j].hidden = !show; if (show) any = true; }
-      ds[i].hidden = !any; if (q && any) ds[i].open = true;
-    }
-  }
+  // ---- 相場(公式統計)と自分の値段をくらべる
+  var MARKET = null, MKQ = "", MK_TRIED = false;
+  var MK_SORTS = [["diff", "差が大きい順"], ["up", "値上がり順"], ["down", "値下がり順"], ["cat", "分類順"], ["name", "名前順"]];
+  function p1(x) { return Math.round(x * 10) / 10; }
+  function pct(x) { return (x > 0 ? "+" : "") + Math.round(x * 1000) / 10 + "%"; }
 
+  function mkRows() {
+    var out = [];
+    FOODS.forEach(function (f) {
+      var id = f.id, k = fac(id);
+      var it = (MARKET && MARKET.items) ? MARKET.items[id] : null;
+      var off = !!(LOADED && LOADED[id]);
+      var mk = off ? LOADED[id].yen100g : (it ? it.y : BASE_PRICES[id].yen100g);   // 相場。公式統計になければ仮の値
+      var mine = priceHas(id) ? +S.overrides[id] : null;
+      var hist = (it && it.h) ? it.h.filter(function (x) { return x !== null; }) : [];
+      var now = hist.length ? hist[hist.length - 1] : null, prev = hist.length >= 2 ? hist[hist.length - 2] : null;
+      out.push({
+        id: id, name: id === RICE ? "お米(精米)" : f.name, cat: f.cat,
+        mk: mk === null ? null : mk / k, mine: mine === null ? null : mine / k,
+        diff: (mk !== null && mine !== null && mk > 0) ? (mine - mk) / mk : null,
+        mom: (prev > 0 && now !== null) ? (now - prev) / prev : null,
+        lo: hist.length ? Math.min.apply(null, hist) / k : null,
+        hi: hist.length ? Math.max.apply(null, hist) / k : null,
+        it: it, official: off,
+        area: off ? LOADED[id].fromArea : null, asOf: off ? LOADED[id].asOf : null
+      });
+    });
+    return out;
+  }
+  function mkSort(rows) {
+    var key = S.mkSort || "diff";
+    var ci = function (r) { var i = CAT_ORDER.indexOf(r.cat); return i < 0 ? 99 : i; };
+    return rows.sort(function (x, y) {
+      if (key === "diff") return (y.diff === null ? (y.mom === null ? -1 : Math.abs(y.mom) / 1000) : 1 + Math.abs(y.diff)) - (x.diff === null ? (x.mom === null ? -1 : Math.abs(x.mom) / 1000) : 1 + Math.abs(x.diff));
+      if (key === "up") return (y.mom === null ? -9 : y.mom) - (x.mom === null ? -9 : x.mom);
+      if (key === "down") return (x.mom === null ? 9 : x.mom) - (y.mom === null ? 9 : y.mom);
+      if (key === "cat") return ci(x) - ci(y) || x.name.localeCompare(y.name, "ja");
+      return x.name.localeCompare(y.name, "ja");
+    });
+  }
+  function renderMarket() {
+    var box = $("mkBody"); if (!box) return;
+    var rows = mkRows(), h = "";
+    var hasMk = rows.some(function (r) { return r.official; });
+    var ent = rows.filter(function (r) { return r.diff !== null; });
+    var cheap = ent.filter(function (r) { return r.diff < -0.02; }), high = ent.filter(function (r) { return r.diff > 0.02; });
+
+    h += '<div class="card"><div class="lab">いまの相場</div>';
+    if (hasMk) {
+      h += '<div class="small">' + esc(MK_AREA || "") + "の公式統計(小売物価統計調査)の小売価格を、100gあたりに直したものです。</div>";
+      if (ent.length) h += '<div class="small">自分で値段を入れたのは' + ent.length + "品。そのうち相場より安いお店が" + cheap.length + "品、高いお店が" + high.length + "品です。</div>";
+      else h += '<div class="small">自分の値段をまだ入れていません。下の行を押すと、いつも買っている値段を入れられます。相場とのちがいが出ます。</div>';
+      if (!MARKET) h += '<div class="small">先月とくらべた動きは、いま読み込んでいます。</div>';
+    } else h += '<div class="small">まだ公式統計の相場を取り込めていません。いまは仮の値段で動いています。</div>';
+    h += "</div>";
+
+    h += '<div class="card"><div class="lab">ならべ替え</div><div class="tabs">' + MK_SORTS.map(function (o) {
+      return '<button type="button" data-mks="' + o[0] + '" class="' + ((S.mkSort || "diff") === o[0] ? "on" : "") + '">' + o[1] + "</button>";
+    }).join("") + '</div><input type="search" id="mkQ" placeholder="食材名でさがす(例: たまご)" value="' + esc(MKQ) + '" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>';
+
+    var all = mkSort(rows).filter(function (r) { return !MKQ || r.name.indexOf(MKQ) >= 0; });
+    var list = all.filter(function (r) { return r.official; }), rest = all.filter(function (r) { return !r.official; });
+    var rowHtml = function (r) {
+      var sub = [];
+      if (r.mine !== null) sub.push('自分 <b>' + p1(r.mine) + "円</b>");
+      if (r.mom !== null) sub.push('先月比 <b style="color:var(' + (r.mom > 0 ? "--red" : "--green") + ')">' + pct(r.mom) + "</b>");
+      if (r.lo !== null && r.hi !== null && r.hi > r.lo) sub.push("1年の幅 " + p1(r.lo) + "〜" + p1(r.hi) + "円");
+      var badge = "";
+      if (r.diff !== null && r.official) {
+        var good = r.diff < -0.02, bad = r.diff > 0.02;
+        badge = '<span class="mkd" style="background:var(' + (good ? "--n3" : bad ? "--n2" : "--paper") + ')">' + (good ? "相場より" + pct(-r.diff).replace("+", "") + "安い" : bad ? "相場より" + pct(r.diff).replace("+", "") + "高い" : "相場どおり") + "</span>";
+      }
+      return '<button type="button" class="mkrow" data-price="' + r.id + '"><span class="nm">' + esc(r.name) +
+        (!r.official ? '<span class="tag">仮</span>' : "") + (r.area ? '<span class="tag">' + esc(r.area) + "</span>" : "") + (r.asOf ? '<span class="tag">' + esc(r.asOf) + "分</span>" : "") +
+        (r.it && r.it.t ? "<small>" + esc(r.it.t) + "</small>" : r.it && r.it.n ? "<small>統計の品目: " + esc(r.it.n) + "</small>" : "") +
+        (sub.length ? '<small>' + sub.map(function (t) { return '<span style="white-space:nowrap">' + t + "</span>"; }).join(" ／ ") + "</small>" : "") + '</span><span class="q"><b>' + (r.mk === null ? "-" : p1(r.mk) + "円") + "</b><span>" + (r.official ? "相場 100g" : "仮 100g") + "</span>" + badge + "</span></button>";
+    };
+    h += '<div style="display:flex;flex-direction:column;gap:8px">' + list.map(rowHtml).join("") + "</div>";
+    if (!all.length) h += '<div class="card"><div class="small">さがした食材が見つかりませんでした。</div></div>';
+    if (rest.length) h += '<details style="margin-top:4px"' + (MKQ && !list.length ? " open" : "") + '><summary>相場のない食材(' + rest.length + '品)</summary><div class="small" style="margin:6px 0">公式統計に近い品目がないものです。仮の値段で計算しています。押すと自分の値段を入れられます。</div><div style="display:flex;flex-direction:column;gap:8px">' + rest.map(rowHtml).join("") + "</div></details>";
+    h += '<div class="btns"><button type="button" class="btn link" id="resetPrices">入力した値段をぜんぶ相場にもどす</button></div>';
+    h += '<p class="small">' + esc(MK_CREDIT || "値段は公式統計をもとにしています。") + "</p>";
+    box.innerHTML = h;
+  }
   // ---- タブと操作
   function go(tab) {
     TAB = tab;
-    ["today", "week", "cal", "shop", "family"].forEach(function (t) { $("p-" + t).classList.toggle("on", t === tab); });
+    ["today", "week", "cal", "shop", "market", "family"].forEach(function (t) { $("p-" + t).classList.toggle("on", t === tab); });
     var bs = $("nav").querySelectorAll("button");
     for (var i = 0; i < bs.length; i++) bs[i].classList.toggle("on", bs[i].getAttribute("data-tab") === tab);
     $("basket").classList.toggle("on", tab === "shop" && !!LAST);
+    if (tab === "market") { loadMarket(); renderMarket(); }
     if (tab === "today" && SEL !== 0 && arguments[1] !== "keep") { /* 選んだ日を表示 */ }
     window.scrollTo(0, 0);
   }
@@ -994,6 +1058,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     if (t.hasAttribute("data-add") && ED) { setManual(curMeal().dishes.map(function (x) { return x.id; }).concat([t.getAttribute("data-add")])); return; }
     if (t.hasAttribute("data-role") && ED) { ED.role = t.getAttribute("data-role"); renderEditor(); return; }
     if (t.hasAttribute("data-edoff") && ED) { if (t.getAttribute("data-edoff") === "1") setManual([], true); else { var k2 = dkey(ED.day); delete S.manual[k2][ED.slot]; save(); replan(); renderEditor(); } return; }
+    if (t.hasAttribute("data-mks")) { S.mkSort = t.getAttribute("data-mks"); save(); renderMarket(); return; }
     if (t.hasAttribute("data-go")) { go(t.getAttribute("data-go")); return; }
     if (t.hasAttribute("data-sel")) { SEL = +t.getAttribute("data-sel"); renderToday(); if (t.hasAttribute("data-open")) go("today"); return; }
     if (t.hasAttribute("data-ck")) { var id = t.getAttribute("data-ck"); if (S.checked[id]) delete S.checked[id]; else S.checked[id] = 1; save(); renderShop(); return; }
@@ -1006,7 +1071,9 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
       S.counts[c][sx] = Math.max(0, Math.min(9, S.counts[c][sx] + d)); save(); refreshHousehold(); replan();
     }
   });
-  $("priceFilter").addEventListener("input", filterPrices);
+  document.addEventListener("input", function (e) {
+    if (e.target && e.target.id === "mkQ") { MKQ = e.target.value.trim(); var sel = e.target.selectionStart; renderMarket(); var n = $("mkQ"); if (n) { n.focus(); try { n.setSelectionRange(sel, sel); } catch (x) {} } }
+  });
   document.addEventListener("change", function (e) {
     var t = e.target;
     if (t.hasAttribute("data-al")) {
@@ -1048,11 +1115,60 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     ["priceDate", "priceDate2"].forEach(function (id) { var el = $(id); if (el) el.textContent = s; });
   }
 
+  // ---- 値段の取り込み（通信をできるだけ減らす）
+  // ・一度読んだものは端末に控える。次からは通信せずにすぐ表示する。
+  // ・値段は月に1回しか変わらないので、問い合わせは1日1回まで。
+  // ・相場タブの詳しい表(推移・統計の品目名)は、タブを開いたときだけ読む。
+  var CK = "kondate-prices-cache-v2", CKM = "kondate-market-cache-v1";
+  var DAY = 86400000;
+  function cacheGet(k) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return (v && v.body) ? v : null; } catch (e) { return null; } }
+  function cachePut(k, body) { try { localStorage.setItem(k, JSON.stringify({ at: Date.now(), body: body })); } catch (e) {} }
+  function cacheTouch(k) { try { var v = cacheGet(k); if (v) { v.at = Date.now(); localStorage.setItem(k, JSON.stringify(v)); } } catch (e) {} }
+  function fresh(v, ms) { return !!v && (Date.now() - (v.at || 0)) < ms; }
+
+  // 価格表は v2(軽い形)。古い Worker の v1 でも読めるようにしておく。
+  function applyPrices(j) {
+    if (!j) return false;
+    var map = {};
+    if (j.p) {                                   // v2: {p:{番号:円}, f:補った地域, o:さかのぼった月}
+      var fa = j.fa || [];
+      for (var id in j.p) if (Object.prototype.hasOwnProperty.call(j.p, id)) {
+        map[id] = { yen100g: j.p[id] };
+        if (j.f && j.f[id] !== undefined) map[id].fromArea = fa[j.f[id]];
+        if (j.o && j.o[id]) map[id].asOf = j.o[id];
+      }
+    } else if (j.prices) map = j.prices;         // v1
+    else return false;
+    LOADED = map; UPDATED = j.u || j.updatedAt || "";
+    MK_AREA = j.a || j.area || ""; MK_CREDIT = j.c || j.credit || "";
+    setPriceDate();
+    $("priceNote").textContent = "値段は公式統計(小売物価統計調査・" + MK_AREA + ")の最新値です。更新: " + UPDATED.slice(0, 10) + "。";
+    replan();
+    return true;
+  }
+
   function loadRemotePrices() {
     if (!PRICES_URL) return;
+    var c = cacheGet(CK);
+    if (c) applyPrices(c.body);                  // 控えからすぐ表示（通信なし）
+    if (fresh(c, DAY)) return;                   // 1日以内に確かめていれば、何も送らない
     try {
-      fetch(PRICES_URL).then(function (r) { return r.json(); }).then(function (j) {
-        if (j && j.prices) { LOADED = j.prices; UPDATED = j.updatedAt || ""; setPriceDate(); $("priceNote").textContent = "値段は公式統計(小売物価統計調査・" + (j.area || "") + ")の最新値です。更新: " + (j.updatedAt || "").slice(0, 10) + "。" + (j.credit || ""); replan(); }
+      // つながらないときは控えのままにして、次に開いたときにまた試す
+      fetch(PRICES_URL).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) {
+        if (applyPrices(j)) cachePut(CK, j); else cacheTouch(CK);
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  // 相場タブを開いたときだけ読む。7日に1回まで。
+  function loadMarket() {
+    if (MARKET || MK_TRIED || !PRICES_URL) return;
+    var c = cacheGet(CKM);
+    if (c) { MARKET = c.body; if (fresh(c, 7 * DAY)) { MK_TRIED = true; return; } }
+    MK_TRIED = true;
+    try {
+      fetch(PRICES_URL.replace(/\/prices\.json(\?.*)?$/, "/market.json")).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+        if (j && j.items) { MARKET = j; cachePut(CKM, j); if (TAB === "market") renderMarket(); }
       }).catch(function () {});
     } catch (e) {}
   }
@@ -1076,7 +1192,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   });
 
   try {
-    buildHousehold(); buildLunch(); buildConditions(); buildPriceTable(); refreshHousehold(); setPriceDate(); replan(); loadRemotePrices();
+    buildHousehold(); buildLunch(); buildConditions(); refreshHousehold(); setPriceDate(); replan(); loadRemotePrices();
   } catch (err) {
     // 何かの理由で画面が作れなかったときも、何もできない状態にはしない
     document.getElementById("app").insertAdjacentHTML("afterbegin",

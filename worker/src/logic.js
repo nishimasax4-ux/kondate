@@ -57,14 +57,23 @@ export function monthLabel(t) {
 //   values: [{cat01, time, value}]    cat01 は品目コード。新しい月が優先される
 //   mapping: 対応表（mapping.js）。codes の順に探し、最初に価格があるものを使う
 //   返り値: { prices, unmatched, unresolved }
-export function buildPrices(items, values, mapping, derived) {
+export function buildPrices(items, values, mapping, derived, months = []) {
   const latest = new Map(); // 品目コード -> {time, value}
+  const series = new Map(); // 品目コード -> Map(月 -> 値)。相場タブの推移に使う
   for (const v of values) {
     const val = parseValue(v.value);
     if (val === null) continue;
     const cur = latest.get(v.cat01);
     if (!cur || String(v.time) > String(cur.time)) latest.set(v.cat01, { time: v.time, value: val });
+    if (!series.has(v.cat01)) series.set(v.cat01, new Map());
+    series.get(v.cat01).set(String(v.time), val);
   }
+  // 1品目の月ごとの値を、100gあたりの円に直して古い月から並べる（調査のない月は null）
+  const histOf = (code, grams, ratio) => {
+    const m = series.get(code); if (!m) return null;
+    const out = months.map((t) => { const v = m.get(String(t)); return v === undefined ? null : Math.round((v / grams) * 100 * ratio * 10) / 10; });
+    return out.some((x) => x !== null) ? out : null;
+  };
   const known = new Map(items.map((i) => [i.code, i.name]));
   // 全品目のなかで最も新しい月。これより古い月の価格は「時期外れで、さかのぼって取った値」として印を付ける
   let newest = "";
@@ -82,12 +91,13 @@ export function buildPrices(items, values, mapping, derived) {
     // 単位の取りちがいなどで極端な値になったときは、使わずに知らせる
     if (!(yen100g >= 0.5 && yen100g <= 3000)) { unresolved.push({ item: known.get(code), reason: `100gあたり${yen100g}円は不自然。gramsを確認` }); continue; }
     for (const f of entry.foods) {
-      prices[f] = { yen100g, item: known.get(code), code, price: got.value, grams: entry.grams, time: got.time, ...(String(got.time) < newest ? { asOf: monthLabel(got.time) } : {}), ...(entry.note ? { note: entry.note } : {}) };
+      const hist = histOf(code, entry.grams, entry.ratio ?? 1);
+      prices[f] = { yen100g, item: known.get(code), code, price: got.value, grams: entry.grams, time: got.time, ...(hist ? { hist } : {}), ...(String(got.time) < newest ? { asOf: monthLabel(got.time) } : {}), ...(entry.note ? { note: entry.note } : {}) };
     }
   }
   for (const d of derived) {
     const src = prices[d.from];
-    if (src && !prices[d.food]) prices[d.food] = { yen100g: Math.round(src.yen100g * d.ratio * 10) / 10, derivedFrom: d.from, note: d.note, time: src.time, ...(src.asOf ? { asOf: src.asOf } : {}) };
+    if (src && !prices[d.food]) prices[d.food] = { yen100g: Math.round(src.yen100g * d.ratio * 10) / 10, derivedFrom: d.from, note: d.note, time: src.time, ...(src.hist ? { hist: src.hist.map((x) => (x === null ? null : Math.round(x * d.ratio * 10) / 10)) } : {}), ...(src.asOf ? { asOf: src.asOf } : {}) };
   }
   return { prices, unmatched, unresolved };
 }
@@ -106,4 +116,46 @@ export function mergeAreas(list) {
     }
   });
   return prices;
+}
+
+// アプリが起動のたびに読む「軽い」価格表を作る。
+// 通信量をおさえるため、鍵を短くし、値は数値だけにする。別地域で補ったもの・さかのぼったものだけ印を付ける。
+export function compactPrices(out) {
+  const p = {}, f = {}, o = {}, areas = [];
+  for (const [id, v] of Object.entries(out.prices)) {
+    p[id] = v.yen100g;
+    if (v.fromArea) { let i = areas.indexOf(v.fromArea); if (i < 0) i = areas.push(v.fromArea) - 1; f[id] = i; }
+    if (v.asOf) o[id] = v.asOf;
+  }
+  const c = { v: 2, u: out.updatedAt, a: out.area, n: out.count, s: out.source, c: out.credit, p };
+  if (areas.length) { c.fa = areas; c.f = f; }
+  if (Object.keys(o).length) c.o = o;
+  return c;
+}
+
+// 相場タブ用の詳しい表。統計のどの品目か、何gあたりか、月ごとの推移。必要になったときだけ読む。
+export function marketTable(out, months) {
+  const items = {};
+  for (const [id, v] of Object.entries(out.prices)) {
+    items[id] = {
+      y: v.yen100g,
+      ...(v.item ? { n: String(v.item).replace(/^\d+\s*/, "") } : {}),
+      ...(v.grams ? { g: v.grams } : {}),
+      ...(v.note ? { t: v.note } : {}),
+      ...(v.fromArea ? { a: v.fromArea } : {}),
+      ...(v.hist ? { h: v.hist } : {})
+    };
+  }
+  return { v: 1, u: out.updatedAt, a: out.area, s: out.source, c: out.credit, m: months.map(monthLabel), items };
+}
+
+// 中身が変わったかどうかを見分ける短い印。変わっていなければ 304 を返し、本体を送らない。
+export function etagOf(text) {
+  let h1 = 0x811c9dc5, h2 = 0x01000193;
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;
+    h2 = Math.imul(h2 + c, 2246822519) >>> 0;
+  }
+  return '"' + h1.toString(36) + h2.toString(36) + text.length.toString(36) + '"';
 }
