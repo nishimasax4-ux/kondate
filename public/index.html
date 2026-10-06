@@ -174,6 +174,8 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
 .two{display:flex;gap:10px}.two .field{flex:1;min-width:0}.two input{width:100%}
 .res{background:var(--card);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline}
 .res b{font-size:24px;color:var(--red);font-variant-numeric:tabular-nums}
+.res.tax{flex-direction:column;align-items:stretch;gap:4px}.trow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums;font-size:14px}.trow.big{font-size:13px;border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.seg{display:flex;gap:6px}.seg button{flex:1;min-height:44px;border:2px solid var(--line);background:var(--card);border-radius:10px;font:inherit;font-size:14px;color:inherit}.seg button.on{border-color:var(--green);background:var(--green);color:var(--green-ink)}
 :focus-visible{outline:3px solid var(--green);outline-offset:2px}
 @media (max-width:380px){#app{padding-left:40px;padding-right:12px}#app::before{left:26px}}
 </style>
@@ -265,7 +267,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
   </details>
-  <p class="small" id="verLine">献立ノート バージョン 1.13.0(2026.10.06版)</p>
+  <p class="small" id="verLine">献立ノート バージョン 1.14.0(2026.10.06版)</p>
   <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
 </section>
 
@@ -316,12 +318,23 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
   <h3 id="shTitle">食材</h3>
   <div class="small" id="shNow"></div>
   <div class="two">
-    <div class="field"><label for="shPrice">パックの値段(円)</label><input type="number" id="shPrice" inputmode="decimal" min="0" placeholder="例 398"></div>
-    <div class="field"><label for="shWeight">パックの重さ(g)</label><input type="number" id="shWeight" inputmode="decimal" min="0" placeholder="例 300"></div>
+    <div class="field"><label for="shPrice">値札の金額(円)</label><input type="number" id="shPrice" inputmode="decimal" min="0" placeholder="例 398"></div>
+    <div class="field"><label for="shCount">買う数(個・パック)</label><input type="number" id="shCount" inputmode="decimal" min="1" step="1" value="1"></div>
   </div>
-  <div class="res"><span class="small">100gあたり</span><b id="shRes">-</b></div>
-  <div class="small" id="shHint">重さがわからないときは、下の「100gの値段」を直接入れてください。</div>
-  <div class="field"><label for="shDirect">100gの値段(円)</label><input type="number" id="shDirect" inputmode="decimal" min="0"></div>
+  <div class="two">
+    <div class="field"><label for="shWeight">1つの重さ(g)</label><input type="number" id="shWeight" inputmode="decimal" min="0" placeholder="例 300"></div>
+    <div class="field"><label>値札は</label><div class="seg" id="shIncl"><button type="button" data-incl="1">税込</button><button type="button" data-incl="0">税抜</button></div></div>
+  </div>
+  <div class="field"><label>税率</label><div class="seg" id="shRate"><button type="button" data-rate="8">8%(食品)</button><button type="button" data-rate="10">10%(お酒・外食)</button></div></div>
+  <div class="res tax" id="shTaxBox">
+    <div class="trow"><span>1つ</span><span id="shOne">-</span></div>
+    <div class="trow" id="shAllRow"><span id="shAllLbl">合計</span><span id="shAll">-</span></div>
+    <div class="trow big"><span>100gあたり(税込)</span><b id="shRes">-</b></div>
+    <div class="trow"><span>100gあたり(税抜)</span><span id="shNet">-</span></div>
+    <div class="trow" id="shCmpRow"><span>相場とくらべて</span><span id="shCmp">-</span></div>
+  </div>
+  <div class="small" id="shHint">相場(統計の価格)は税込です。重さがわからないときは、下の「100gの値段」を税込で直接入れてください。</div>
+  <div class="field"><label for="shDirect">100gの値段(円・税込)</label><input type="number" id="shDirect" inputmode="decimal" min="0"></div>
   <div class="btns"><button type="button" class="btn" id="shReset">仮の値にもどす</button><button type="button" class="btn solid" id="shOk">この値段にする</button></div>
   <button type="button" class="btn link" id="shClose">とじる</button>
 </div></div>
@@ -1153,19 +1166,53 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     var f = FM[id], k = fac(id), per = PRICES[id].yen100g / k;
     $("shTitle").textContent = id === RICE ? "お米(精米)" : f.name;
     $("shNow").textContent = "いまの値段: 100gあたり " + (Math.round(per * 10) / 10) + "円" + (isTemp(id) ? "(仮の値)" : "");
-    $("shPrice").value = ""; $("shWeight").value = ""; $("shDirect").value = ""; $("shRes").textContent = "-";
+    $("shPrice").value = ""; $("shWeight").value = ""; $("shDirect").value = ""; $("shCount").value = "1"; updateRes();
     $("shReset").style.visibility = priceHas(id) ? "visible" : "hidden";
     $("veil").classList.add("on"); setTimeout(function () { $("shPrice").focus(); }, 50);
   }
   function closeSheet() { $("veil").classList.remove("on"); EDIT = null; }
+  // 税: 食品は軽減税率8%、お酒・外食は10%。統計の相場は税込なので、保存するのも税込の100g値段
+  function taxRate() { return S.taxRate === 10 ? 10 : 8; }
+  function taxIncl() { return S.taxIncl !== false; }
+  function yen(x) { return (Math.round(x * 10) / 10).toLocaleString("ja-JP") + "円"; }
+  function mkOf(id) {                                      // 相場(100g・税込)。なければ仮の値
+    var it = (MARKET && MARKET.items) ? MARKET.items[id] : null, k = fac(id);
+    var v = (LOADED && LOADED[id]) ? LOADED[id].yen100g : (it ? it.y : BASE_PRICES[id].yen100g);
+    return { v: v / k, official: !!(LOADED && LOADED[id]) || !!it };
+  }
+  function sheetCalc() {
+    var p = +$("shPrice").value, w = +$("shWeight").value, n = Math.max(1, Math.floor(+$("shCount").value || 1));
+    if (!(p > 0 && w > 0)) return null;
+    var r = 1 + taxRate() / 100, gross = taxIncl() ? p : p * r, net = taxIncl() ? p / r : p;
+    return { gross: gross, net: net, n: n, w: w, g100: gross / w * 100, n100: net / w * 100 };
+  }
   function sheetValue() {
-    var p = +$("shPrice").value, w = +$("shWeight").value, d = +$("shDirect").value;
-    if (p > 0 && w > 0) return p / w * 100;
+    var c = sheetCalc(), d = +$("shDirect").value;
+    if (c) return c.g100;
     if (d > 0) return d;
     return null;
   }
-  function updateRes() { var v = sheetValue(); $("shRes").textContent = v === null ? "-" : (Math.round(v * 10) / 10) + "円"; }
-  ["shPrice", "shWeight", "shDirect"].forEach(function (id) { $(id).addEventListener("input", updateRes); });
+  function updateRes() {
+    var c = sheetCalc(), v = sheetValue();
+    $("shIncl").querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", (b.getAttribute("data-incl") === "1") === taxIncl()); });
+    $("shRate").querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", +b.getAttribute("data-rate") === taxRate()); });
+    if (c) {
+      $("shOne").textContent = "税込 " + yen(c.gross) + " / 税抜 " + yen(c.net);
+      $("shAllRow").style.display = c.n > 1 ? "" : "none";
+      $("shAllLbl").textContent = c.n + "つで";
+      $("shAll").textContent = "税込 " + yen(c.gross * c.n) + " / 税抜 " + yen(c.net * c.n) + "(" + Math.round(c.w * c.n).toLocaleString("ja-JP") + "g)";
+      $("shNet").textContent = yen(c.n100);
+    } else { $("shOne").textContent = "-"; $("shAllRow").style.display = "none"; $("shNet").textContent = "-"; }
+    $("shRes").textContent = v === null ? "-" : yen(v);
+    var cmp = $("shCmp");
+    if (v === null || !EDIT) { cmp.textContent = "-"; return; }
+    var m = mkOf(EDIT), d = (v - m.v) / m.v;
+    cmp.textContent = "相場 " + yen(m.v) + (m.official ? "" : "(仮)") + " より " + (Math.abs(d) < 0.005 ? "ほぼ同じ" : (d > 0 ? "+" : "-") + Math.round(Math.abs(d) * 100) + "%" + (d > 0 ? " 高い" : " 安い"));
+    cmp.style.color = d > 0.05 ? "var(--red)" : (d < -0.05 ? "var(--green)" : "inherit");
+  }
+  ["shPrice", "shWeight", "shDirect", "shCount"].forEach(function (id) { $(id).addEventListener("input", updateRes); });
+  $("shIncl").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; S.taxIncl = b.getAttribute("data-incl") === "1"; save(); updateRes(); });
+  $("shRate").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; S.taxRate = +b.getAttribute("data-rate"); save(); updateRes(); });
   $("shOk").addEventListener("click", function () {
     var v = sheetValue(); if (v === null || !EDIT) return;
     S.overrides[EDIT] = v * fac(EDIT); save(); closeSheet(); replan();
@@ -1409,7 +1456,7 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     }
     if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
     if (t.id === "bkSave") {
-      var bk = { app: "kondate-note", version: "1.13.0", savedAt: new Date().toISOString(), data: S };
+      var bk = { app: "kondate-note", version: "1.14.0", savedAt: new Date().toISOString(), data: S };
       var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
       var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
