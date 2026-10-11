@@ -267,7 +267,7 @@ input[type=number]{width:9em;text-align:right;font-variant-numeric:tabular-nums}
     <div class="btns" style="margin-top:8px"><button type="button" class="btn" id="bkSave">控えを書き出す</button><button type="button" class="btn" id="bkLoad">控えから戻す</button></div>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
   </details>
-  <p class="small" id="verLine">献立ノート バージョン 1.14.0(2026.10.06版)</p>
+  <p class="small" id="verLine">献立ノート バージョン 1.14.1(2026.10.12版)</p>
   <p class="small">食品の成分は文部科学省「日本食品標準成分表(八訂)増補2023」、必要な量は厚生労働省「日本人の食事摂取基準(2025年版)」をもとにしています。栄養や食費はめやすです。</p>
 </section>
 
@@ -1406,7 +1406,18 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     h += '<div class="card"><div class="lab">ならべ替え</div><div class="tabs">' + MK_SORTS.map(function (o) {
       return '<button type="button" data-mks="' + o[0] + '" class="' + ((S.mkSort || "diff") === o[0] ? "on" : "") + '">' + o[1] + "</button>";
     }).join("") + '</div><input type="search" id="mkQ" placeholder="食材名でさがす(例: たまご)" value="' + esc(MKQ) + '" style="border:2px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;min-height:44px;width:100%"></div>';
-
+    h += '<div id="mkList">' + mkListHtml(rows) + "</div>";
+    box.innerHTML = h;
+  }
+  // 検索中は一覧だけ入れ替える(入力欄を作り直すと、日本語入力が二重になり、画面も動く)
+  function renderMarketList() {
+    var l = $("mkList"); if (!l) { renderMarket(); return; }
+    var y = window.pageYOffset;
+    l.innerHTML = mkListHtml(mkRows());
+    window.scrollTo(0, y);
+  }
+  function mkListHtml(rows) {
+    var h = "";
     var all = mkSort(rows).filter(function (r) { return !MKQ || r.name.indexOf(MKQ) >= 0; });
     var list = all.filter(function (r) { return r.official; }), rest = all.filter(function (r) { return !r.official; });
     var rowHtml = function (r) {
@@ -1429,7 +1440,7 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     if (rest.length) h += '<details style="margin-top:4px"' + (MKQ && !list.length ? " open" : "") + '><summary>相場のない食材(' + rest.length + '品)</summary><div class="small" style="margin:6px 0">公式統計に近い品目がないものです。仮の値段で計算しています。押すと自分の値段を入れられます。</div><div style="display:flex;flex-direction:column;gap:8px">' + rest.map(rowHtml).join("") + "</div></details>";
     h += '<div class="btns"><button type="button" class="btn link" id="resetPrices">入力した値段をぜんぶ相場にもどす</button></div>';
     h += '<p class="small">' + esc(MK_CREDIT || "値段は公式統計をもとにしています。") + "</p>";
-    box.innerHTML = h;
+    return h;
   }
   // ---- タブと操作
   function go(tab) {
@@ -1456,7 +1467,7 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     }
     if (t.hasAttribute("data-evdel")) { var eid = t.getAttribute("data-evdel"); S.events = S.events.filter(function (x) { return x.id !== eid; }); delete S.evBudget["c:" + eid]; save(); replan(); return; }
     if (t.id === "bkSave") {
-      var bk = { app: "kondate-note", version: "1.14.0", savedAt: new Date().toISOString(), data: S };
+      var bk = { app: "kondate-note", version: "1.14.1", savedAt: new Date().toISOString(), data: S };
       var url = URL.createObjectURL(new Blob([JSON.stringify(bk)], { type: "application/json" }));
       var a = document.createElement("a"); a.href = url; a.download = "献立ノートの控え-" + ymd(new Date()) + ".json";
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
@@ -1505,7 +1516,10 @@ function round(n) { return Object.fromEntries(Object.entries(n).map(([k, v]) => 
     }
   });
   document.addEventListener("input", function (e) {
-    if (e.target && e.target.id === "mkQ") { MKQ = e.target.value.trim(); var sel = e.target.selectionStart; renderMarket(); var n = $("mkQ"); if (n) { n.focus(); try { n.setSelectionRange(sel, sel); } catch (x) {} } }
+    if (e.target && e.target.id === "mkQ") { if (e.isComposing) return; MKQ = e.target.value.trim(); renderMarketList(); }
+  });
+  document.addEventListener("compositionend", function (e) {
+    if (e.target && e.target.id === "mkQ") { MKQ = e.target.value.trim(); renderMarketList(); }
   });
   document.addEventListener("change", function (e) {
     var t = e.target;
